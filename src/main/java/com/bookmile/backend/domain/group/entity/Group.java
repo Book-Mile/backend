@@ -2,6 +2,8 @@ package com.bookmile.backend.domain.group.entity;
 
 import com.bookmile.backend.domain.book.entity.Book;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -21,6 +23,7 @@ public class Group {
 
     private String description;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     private Long code;
