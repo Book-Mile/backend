@@ -1,6 +1,7 @@
 package com.bookmile.backend.domain.group.entity;
 
 import com.bookmile.backend.domain.book.entity.Book;
+import com.bookmile.backend.domain.checkpoint.entity.CheckPoint;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,9 @@ public class Group {
 
     @OneToMany(mappedBy = "group")
     private List<UserGroup> userGroup = new ArrayList<>();
+
+    @OneToOne(mappedBy = "group")
+    private CheckPoint checkPoint;
 
     private String team;
 
