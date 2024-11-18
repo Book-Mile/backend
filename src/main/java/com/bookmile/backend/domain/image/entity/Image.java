@@ -23,4 +23,6 @@ public class Image {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "record_id")
     private Record record;
+
+    private String imageUrl;
 }
