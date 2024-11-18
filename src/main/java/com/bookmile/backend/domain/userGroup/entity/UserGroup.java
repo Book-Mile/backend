@@ -26,7 +26,7 @@ public class UserGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user")
+    @Column(name = "usergroup_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,7 +37,7 @@ public class UserGroup {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @OneToMany
+    @OneToMany(mappedBy = "userGroup")
     private List<Record> record = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
