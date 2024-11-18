@@ -12,8 +12,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

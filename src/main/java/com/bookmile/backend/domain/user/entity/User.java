@@ -9,8 +9,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class User {
 
     @Id
