@@ -30,4 +30,9 @@ public class User {
     private String password;
 
     private String image;
+
+    public void addUserGroup(UserGroup userGroup) {
+        this.userGroup.add(userGroup);
+        userGroup.addUser(this);
+    }
 }
