@@ -37,7 +37,7 @@ public class UserGroup {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @OneToMany(mappedBy = "userGroup")
+    @OneToMany
     private List<Record> record = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
