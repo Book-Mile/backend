@@ -11,8 +11,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 
 @Entity
@@ -29,7 +30,7 @@ public class Group {
     private Book book;
 
     @OneToMany(mappedBy = "group")
-    private Set<UserGroup> userGroup = new HashSet<>();
+    private List<UserGroup> userGroup = new ArrayList<>();
 
     private String team;
 
@@ -40,6 +41,10 @@ public class Group {
     private Boolean isOpen;
 
     private Boolean isEnd;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
     private Boolean isDeleted;
 

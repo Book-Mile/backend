@@ -1,12 +1,14 @@
 package com.bookmile.backend.domain.book.entity;
 
 import com.bookmile.backend.domain.group.entity.Group;
+import com.bookmile.backend.domain.review.entity.Review;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -23,6 +25,9 @@ public class Book {
     @OneToMany(mappedBy = "book")
     private List<Group> group = new ArrayList<>();
 
+    @OneToMany(mappedBy = "book")
+    private List<Review> review = new ArrayList<>();
+
     private String bookName;
 
     private Integer page;
@@ -36,4 +41,10 @@ public class Book {
     private String link;
 
     private Double rating;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    private Boolean isDeleted;
 }

@@ -34,7 +34,11 @@ public class UserGroup {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private LocalDateTime joinedAt = LocalDateTime.now();
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt;
+
+    private Boolean isDeleted;
 
     public void addUser(User user) {
         this.user = user;
