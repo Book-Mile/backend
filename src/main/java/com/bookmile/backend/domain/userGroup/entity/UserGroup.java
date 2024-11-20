@@ -37,17 +37,23 @@ public class UserGroup {
     @JoinColumn(name = "group_id")
     private Group group;
 
+    @Column
     @OneToMany(mappedBy = "userGroup")
     private List<Record> record = new ArrayList<>();
 
+    @Column
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column
     private LocalDateTime updatedAt;
 
-    private Boolean isDeleted;
+
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
 
     public void addUser(User user) {
         this.user = user;

@@ -30,13 +30,18 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     private Book book;
 
+    @Column
     private Double rating;
 
+    @Column
     private String text;
 
-    private LocalDateTime createdAt;
+    @Column
+    private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column
     private LocalDateTime updatedAt;
 
-    private Boolean isDeleted;
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
 }

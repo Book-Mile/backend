@@ -37,21 +37,29 @@ public class Group {
     @OneToOne(mappedBy = "group")
     private CheckPoint checkPoint;
 
+    @Column
     private String team;
 
+    @Column
     private String description;
 
+    @Column
     private Long code;
 
+    @Column
     private Boolean isOpen;
 
+    @Column
     private Boolean isEnd;
 
-    private LocalDateTime createdAt;
+    @Column
+    private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column
     private LocalDateTime updatedAt;
 
-    private Boolean isDeleted;
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
 
     public void addUserGroup(UserGroup userGroup) {
         this.userGroup.add(userGroup);

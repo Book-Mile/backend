@@ -27,8 +27,10 @@ public class CheckPoint {
     @JoinColumn(name = "group_id")
     private Group group;
 
+    @Column
     @Enumerated(EnumType.STRING)
     private Type type;
 
+    @Column
     private String FreeType;
 }

@@ -28,19 +28,27 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Review> review = new ArrayList<>();
 
+    @Column
     private String name;
 
+    @Column
     private String email;
 
+    @Column
     private String password;
 
+    @Column
     private String image;
 
-    private LocalDateTime createdAt;
+    @Column
+    private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column
     private LocalDateTime updatedAt;
 
-    private Boolean isDeleted;
+
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
 
     public void addUserGroup(UserGroup userGroup) {
         this.userGroup.add(userGroup);

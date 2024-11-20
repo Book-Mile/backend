@@ -24,5 +24,6 @@ public class Image {
     @JoinColumn(name = "record_id")
     private Record record;
 
+    @Column
     private String imageUrl;
 }

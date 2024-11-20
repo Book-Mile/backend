@@ -28,23 +28,33 @@ public class Book {
     @OneToMany(mappedBy = "book")
     private List<Review> review = new ArrayList<>();
 
+    @Column
     private String bookName;
 
+    @Column
     private Integer page;
 
+    @Column
     private String thumbNail;
 
+    @Column
     private String publisher;
 
+    @Column
     private String description;
 
+    @Column
     private String link;
 
+    @Column
     private Double rating;
 
+    @Column
     private LocalDateTime createdAt;
 
+    @Column
     private LocalDateTime updatedAt;
 
-    private Boolean isDeleted;
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
 }

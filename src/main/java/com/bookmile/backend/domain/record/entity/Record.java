@@ -27,10 +27,13 @@ public class Record {
     @JoinColumn(name = "usergroup_id")
     private UserGroup userGroup;
 
+    @Column
     @OneToMany(mappedBy = "record")
     private List<Image> image;
 
+    @Column
     private String text;
 
+    @Column
     private Integer currentPage;
 }
