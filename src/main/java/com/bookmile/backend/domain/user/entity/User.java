@@ -28,13 +28,13 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Review> review = new ArrayList<>();
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private String email;
 
-    @Column
+    @Column(nullable = false)
     private String password;
 
     @Column

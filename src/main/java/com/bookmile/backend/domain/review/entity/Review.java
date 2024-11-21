@@ -30,7 +30,7 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     private Book book;
 
-    @Column
+    @Column(nullable = false)
     private Double rating;
 
     @Column

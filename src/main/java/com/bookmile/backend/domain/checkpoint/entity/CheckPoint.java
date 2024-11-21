@@ -24,13 +24,11 @@ public class CheckPoint {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
-    @Column
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @Column
     private String FreeType;
 }

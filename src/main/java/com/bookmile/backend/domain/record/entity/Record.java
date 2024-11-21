@@ -28,12 +28,12 @@ public class Record {
     private UserGroup userGroup;
 
     @Column
-    @OneToMany(mappedBy = "record")
+    @OneToMany
     private List<Image> image;
 
     @Column
     private String text;
 
-    @Column
+    @Column(nullable = false)
     private Integer currentPage;
 }

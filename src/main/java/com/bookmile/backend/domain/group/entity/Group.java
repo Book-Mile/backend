@@ -28,28 +28,29 @@ public class Group {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id")
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
     @OneToMany(mappedBy = "group")
     private List<UserGroup> userGroup = new ArrayList<>();
 
     @OneToOne(mappedBy = "group")
+    @Column(nullable = false)
     private CheckPoint checkPoint;
 
-    @Column
-    private String team;
+    @Column(nullable = false)
+    private String groupName;
 
     @Column
     private String description;
 
-    @Column
+    @Column(nullable = false)
     private Long code;
 
-    @Column
+    @Column(nullable = false)
     private Boolean isOpen;
 
-    @Column
+    @Column(nullable = false)
     private Boolean isEnd;
 
     @Column
