@@ -3,6 +3,7 @@ package com.bookmile.backend.global.config;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,8 +17,10 @@ public class BaseEntity {
 
     @CreatedDate
     @Column(updatable = false)
+    @NotNull
     private LocalDateTime createdAt;
 
     @LastModifiedDate
+    @NotNull
     private LocalDateTime modifiedAt;
 }
