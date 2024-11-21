@@ -57,9 +57,4 @@ public class Group extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
-
-    public void addUserGroup(UserGroup userGroup) {
-        this.userGroup.add(userGroup);
-        userGroup.addGroup(this);
-    }
 }
