@@ -1,6 +1,7 @@
 package com.bookmile.backend.domain.image.entity;
 
 import com.bookmile.backend.domain.record.entity.Record;
+import com.bookmile.backend.global.config.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,7 +13,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class Image {
+public class Image extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,6 +4,7 @@ import com.bookmile.backend.domain.group.entity.Group;
 import com.bookmile.backend.domain.group.entity.Role;
 import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.user.entity.User;
+import com.bookmile.backend.global.config.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,14 +16,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 
 @Entity
 @Getter
-public class UserGroup {
+public class UserGroup extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,13 +44,6 @@ public class UserGroup {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    @Column
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column
-    private LocalDateTime updatedAt;
-
 
     @Column(nullable = false)
     private Boolean isDeleted = false;

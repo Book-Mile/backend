@@ -3,6 +3,7 @@ package com.bookmile.backend.domain.group.entity;
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.checkpoint.entity.CheckPoint;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
+import com.bookmile.backend.global.config.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,14 +14,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 
 @Entity
 @Getter
-public class Group {
+public class Group extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +35,6 @@ public class Group {
     private List<UserGroup> userGroup = new ArrayList<>();
 
     @OneToOne(mappedBy = "group")
-    @Column(nullable = false)
     private CheckPoint checkPoint;
 
     @Column(nullable = false)
@@ -52,12 +51,6 @@ public class Group {
 
     @Column(nullable = false)
     private Boolean isEnd;
-
-    @Column
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column
-    private LocalDateTime updatedAt;
 
     @Column(nullable = false)
     private Boolean isDeleted = false;

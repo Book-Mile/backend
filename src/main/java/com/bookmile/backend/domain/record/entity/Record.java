@@ -2,6 +2,7 @@ package com.bookmile.backend.domain.record.entity;
 
 import com.bookmile.backend.domain.image.entity.Image;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
+import com.bookmile.backend.global.config.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,7 +17,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class Record {
+public class Record extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

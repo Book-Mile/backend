@@ -2,20 +2,20 @@ package com.bookmile.backend.domain.user.entity;
 
 import com.bookmile.backend.domain.review.entity.Review;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
+import com.bookmile.backend.global.config.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 
 @Entity
 @Getter
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,13 +39,6 @@ public class User {
 
     @Column
     private String image;
-
-    @Column
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column
-    private LocalDateTime updatedAt;
-
 
     @Column(nullable = false)
     private Boolean isDeleted = false;

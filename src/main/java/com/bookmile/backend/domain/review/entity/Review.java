@@ -2,6 +2,7 @@ package com.bookmile.backend.domain.review.entity;
 
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.user.entity.User;
+import com.bookmile.backend.global.config.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,12 +11,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Entity
 @Getter
-public class Review {
+public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,12 +35,6 @@ public class Review {
 
     @Column
     private String text;
-
-    @Column
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column
-    private LocalDateTime updatedAt;
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
