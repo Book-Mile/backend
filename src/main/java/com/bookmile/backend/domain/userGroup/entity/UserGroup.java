@@ -40,8 +40,8 @@ public class UserGroup extends BaseEntity {
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
-    @Column
-    @OneToMany(mappedBy = "userGroup")
+    @OneToMany
+    @JoinColumn(name = "usergroup_id")
     private List<Record> record = new ArrayList<>();
 
     @Column(nullable = false)
