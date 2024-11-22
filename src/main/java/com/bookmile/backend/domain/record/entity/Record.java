@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -31,9 +32,9 @@ public class Record extends BaseEntity {
     @JoinColumn(name = "usergroup_id")
     private UserGroup userGroup;
 
-    @Column
     @OneToMany
-    private List<Image> image;
+    @JoinColumn(name = "record_id")
+    private List<Image> image = new ArrayList<>();
 
     @Column
     private String text;
