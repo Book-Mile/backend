@@ -54,8 +54,4 @@ public class UserGroup extends BaseEntity {
     public void addUser(User user) {
         this.user = user;
     }
-
-    public void addGroup(Group group) {
-        this.group = group;
-    }
 }
