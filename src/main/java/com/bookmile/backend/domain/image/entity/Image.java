@@ -20,6 +20,6 @@ public class Image extends BaseEntity {
     @Column(name = "image_id")
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String imageUrl;
 }
