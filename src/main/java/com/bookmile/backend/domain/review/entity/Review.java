@@ -12,12 +12,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Review extends BaseEntity {
 
     @Id
@@ -41,4 +43,11 @@ public class Review extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
+
+    public Review(User user, Book book, Double rating, String text) {
+        this.user = user;
+        this.book = book;
+        this.rating = rating;
+        this.text = text;
+    }
 }

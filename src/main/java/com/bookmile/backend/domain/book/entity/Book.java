@@ -12,12 +12,14 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Book extends BaseEntity {
 
     @Id
@@ -54,4 +56,15 @@ public class Book extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
+
+    public Book(String bookName, Integer page, String thumbNail, String publisher, String description, String link,
+                Double rating) {
+        this.bookName = bookName;
+        this.page = page;
+        this.thumbNail = thumbNail;
+        this.publisher = publisher;
+        this.description = description;
+        this.link = link;
+        this.rating = rating;
+    }
 }

@@ -13,12 +13,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class CheckPoint {
 
     @Id
@@ -33,5 +35,11 @@ public class CheckPoint {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    private String FreeType;
+    private String freeType;
+
+    public CheckPoint(Group group, Type type, String freeType) {
+        this.group = group;
+        this.type = type;
+        this.freeType = freeType;
+    }
 }

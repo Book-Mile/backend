@@ -12,12 +12,14 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class User extends BaseEntity {
 
     @Id
@@ -49,5 +51,12 @@ public class User extends BaseEntity {
     public void addUserGroup(UserGroup userGroup) {
         this.userGroup.add(userGroup);
         userGroup.addUser(this);
+    }
+
+    public User(String name, String email, String password, String image) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.image = image;
     }
 }
