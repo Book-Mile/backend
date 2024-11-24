@@ -12,12 +12,14 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Record extends BaseEntity {
 
     @Id
@@ -34,4 +36,9 @@ public class Record extends BaseEntity {
 
     @Column(nullable = false)
     private Integer currentPage;
+
+    public Record(String text, Integer currentPage) {
+        this.text = text;
+        this.currentPage = currentPage;
+    }
 }

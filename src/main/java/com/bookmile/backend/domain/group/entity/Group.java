@@ -17,12 +17,14 @@ import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Group extends BaseEntity {
 
     @Id
@@ -57,4 +59,17 @@ public class Group extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
+
+    public Group(Book book, List<UserGroup> userGroup, CheckPoint checkPoint, String groupName, String description,
+                 Long code, Boolean isOpen, Boolean isEnd) {
+        this.book = book;
+        this.userGroup = userGroup;
+        this.checkPoint = checkPoint;
+        this.groupName = groupName;
+        this.description = description;
+        this.code = code;
+        this.isOpen = isOpen;
+        this.isEnd = isEnd;
+    }
 }
+

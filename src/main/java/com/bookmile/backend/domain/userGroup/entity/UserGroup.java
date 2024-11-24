@@ -19,12 +19,14 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class UserGroup extends BaseEntity {
 
     @Id
@@ -53,5 +55,11 @@ public class UserGroup extends BaseEntity {
 
     public void addUser(User user) {
         this.user = user;
+    }
+
+    public UserGroup(User user, Group group, Role role) {
+        this.user = user;
+        this.group = group;
+        this.role = role;
     }
 }
