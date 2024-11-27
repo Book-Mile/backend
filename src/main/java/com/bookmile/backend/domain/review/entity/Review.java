@@ -1,6 +1,7 @@
 package com.bookmile.backend.domain.review.entity;
 
 import com.bookmile.backend.domain.book.entity.Book;
+import com.bookmile.backend.domain.review.dto.ReviewRequest;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.global.config.BaseEntity;
 import jakarta.persistence.Column;
@@ -49,5 +50,14 @@ public class Review extends BaseEntity {
         this.book = book;
         this.rating = rating;
         this.text = text;
+    }
+
+    public static Review from(User user, Book book, ReviewRequest reviewRequest) {
+        return new Review(
+                user,
+                book,
+                reviewRequest.getRating(),
+                reviewRequest.getText()
+        );
     }
 }

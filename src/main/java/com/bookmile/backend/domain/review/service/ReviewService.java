@@ -1,7 +1,11 @@
 package com.bookmile.backend.domain.review.service;
 
+import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.review.dto.ReviewListResponse;
+import com.bookmile.backend.domain.review.dto.ReviewRequest;
+import com.bookmile.backend.domain.review.entity.Review;
 import com.bookmile.backend.domain.review.repository.ReviewRepository;
+import com.bookmile.backend.domain.user.entity.User;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -13,19 +17,28 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 //    private final BookRepository bookRepository;
 
-
     public List<ReviewListResponse> viewReviewList(Long bookId) {
-        // 책 조회 및 예외처리
-//        validateBook(bookId);
 
-        // 리뷰 리스트 조회 및 엔티티 -> DTO 변환
+//        Book book = bookRepository.findById(bookId)
+//                .orElseThrow(() -> new IllegalArgumentException("없는 책입니다."));
+
         return reviewRepository.findAllByBookId(bookId).stream()
                 .map(ReviewListResponse::createReview)
                 .collect(Collectors.toList());
     }
 
-//    private void validateBook(Long bookId){
-//        bookRepository.findById(bookId)
-//                .orElseThrow(() -> new IllegalArgumentException("없는 소원입니다."));
-//    }
+    public Long createReview(Long bookId, Long userId, ReviewRequest reviewRequest) {
+
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("없는 책입니다."));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("없는 사용자입니다."));
+
+        Review review = Review.from(user, book, reviewRequest);
+
+        reviewRepository.save(review);
+
+        return review.getId();
+    }
 }

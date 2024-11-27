@@ -9,7 +9,7 @@ import lombok.Getter;
 public class ReviewListResponse {
     private Long userId;
     private String name;
-    private double rating;
+    private Double rating;
     private String text;
 
     public static ReviewListResponse createReview(Review review) {
