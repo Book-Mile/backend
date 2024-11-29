@@ -15,12 +15,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-//    private final BookRepository bookRepository;
+    private final BookRepository bookRepository;
+    private final UserRepository userRepository;
 
     public List<ReviewListResponse> viewReviewList(Long bookId) {
 
-//        Book book = bookRepository.findById(bookId)
-//                .orElseThrow(() -> new IllegalArgumentException("없는 책입니다."));
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("없는 책입니다."));
 
         return reviewRepository.findAllByBookId(bookId).stream()
                 .map(ReviewListResponse::createReview)
