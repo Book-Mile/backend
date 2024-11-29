@@ -60,4 +60,9 @@ public class Review extends BaseEntity {
                 reviewRequest.getText()
         );
     }
+
+    public void update(ReviewRequest reviewRequest) {
+        this.rating = reviewRequest.getRating();
+        this.text = reviewRequest.getText();
+    }
 }

@@ -19,7 +19,6 @@ public class ReviewService {
     private final UserRepository userRepository;
 
     public List<ReviewListResponse> viewReviewList(Long bookId) {
-
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("없는 책입니다."));
 
@@ -29,7 +28,6 @@ public class ReviewService {
     }
 
     public Long createReview(Long bookId, Long userId, ReviewRequest reviewRequest) {
-
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("없는 책입니다."));
 
@@ -41,5 +39,15 @@ public class ReviewService {
         reviewRepository.save(review);
 
         return review.getId();
+    }
+
+    public Long updateReview(Long reviewId, ReviewRequest reviewRequest) {
+        Review target = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("없는 리뷰입니다."));
+
+        target.update(reviewRequest);
+        reviewRepository.save(target);
+
+        return target.getId();
     }
 }
