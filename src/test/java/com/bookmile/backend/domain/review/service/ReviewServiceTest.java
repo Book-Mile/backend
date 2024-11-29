@@ -99,4 +99,25 @@ class ReviewServiceTest {
         assertEquals(1.0, updateReview.getRating());
         assertEquals("다시 생각해보니 별로네요.", updateReview.getText());
     }
+
+    @Test
+    void 리뷰_삭제하기() {
+        // Given
+        User user = new User("김진용", "kje@naver.com", "1234", "urlurl");
+        Book book = new Book("김진용의 인생", 456, "image", "김진용", "책설명", "링크url", 5.0);
+
+        userRepository.save(user);
+        bookRepository.save(book);
+
+        Review review = new Review(user, book, 4.5, "굳이에요 굳");
+
+        reviewRepository.save(review);
+
+        // When
+        Long reviewId = reviewService.deleteReview(review.getId());
+
+        // Then
+        Review deleteReview = reviewRepository.findById(reviewId).orElseThrow();
+        assertEquals(Boolean.TRUE, deleteReview.getIsDeleted());
+    }
 }

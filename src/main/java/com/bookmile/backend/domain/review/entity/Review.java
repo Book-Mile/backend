@@ -65,4 +65,8 @@ public class Review extends BaseEntity {
         this.rating = reviewRequest.getRating();
         this.text = reviewRequest.getText();
     }
+
+    public void delete(Review review) {
+        this.isDeleted = Boolean.TRUE;
+    }
 }

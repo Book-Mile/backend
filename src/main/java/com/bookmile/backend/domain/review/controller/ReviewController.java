@@ -6,6 +6,7 @@ import com.bookmile.backend.domain.review.service.ReviewService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,5 +39,11 @@ public class ReviewController {
     public ResponseEntity<Long> updateReview(@PathVariable Long reviewId, @RequestBody ReviewRequest reviewRequest) {
         Long updateReview = reviewService.updateReview(reviewId, reviewRequest);
         return ResponseEntity.ok(updateReview);
+    }
+
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Long> deleteReview(@PathVariable Long reviewId) {
+        Long deleteReview = reviewService.deleteReview(reviewId);
+        return ResponseEntity.ok(deleteReview);
     }
 }

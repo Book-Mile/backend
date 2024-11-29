@@ -42,12 +42,23 @@ public class ReviewService {
     }
 
     public Long updateReview(Long reviewId, ReviewRequest reviewRequest) {
-        Review target = reviewRepository.findById(reviewId)
+        Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("없는 리뷰입니다."));
 
-        target.update(reviewRequest);
-        reviewRepository.save(target);
+        review.update(reviewRequest);
+        reviewRepository.save(review);
 
-        return target.getId();
+        return review.getId();
+    }
+
+    public Long deleteReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("없는 리뷰입니다."));
+
+        review.delete(review);
+
+        reviewRepository.save(review);
+
+        return review.getId();
     }
 }
