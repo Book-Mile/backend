@@ -25,33 +25,37 @@ public class Book extends BaseEntity {
     @Column(name = "book_id")
     private long id;
 
-    @OneToMany(mappedBy = "book")
-    private List<Group> group = new ArrayList<>();
+    //@OneToMany(mappedBy = "book")
+    //private List<Group> group = new ArrayList<>();
 
-    @OneToMany(mappedBy = "book")
-    private List<Review> review = new ArrayList<>();
-
-    @Column(nullable = false)
-    private String bookName;
+    //@OneToMany(mappedBy = "book")
+    //private List<Review> review = new ArrayList<>();
 
     @Column(nullable = false)
-    private Integer page;
+    private String title;
 
     @Column(nullable = false)
-    private String thumbNail;
+    private String author;
 
     @Column(nullable = false)
     private String publisher;
 
     @Column(nullable = false)
-    private String description;
+    private String cover;
 
     @Column(nullable = false)
     private String link;
 
     @Column(nullable = false)
-    private Double rating;
+    private String description;
+
+    @Column
+    private Integer itemPage = null; //상품 조회하면 업데이트
+
+    @Column
+    private Integer bestSellerRank = null; //상품 조회하면 업데이트
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
+
 }
