@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Book extends BaseEntity {
 
     @Id
@@ -58,4 +57,15 @@ public class Book extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
+    public Book(String title, String author, String publisher, String cover, String link, String description) {
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.cover = cover;
+        this.link = link;
+        this.description = description;
+    }
+
+    protected Book() {
+    }
 }
