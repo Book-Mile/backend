@@ -6,6 +6,7 @@ import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.group.entity.Group;
 import com.bookmile.backend.domain.group.entity.Role;
 import com.bookmile.backend.domain.record.dto.RecordListResponse;
+import com.bookmile.backend.domain.record.dto.RequestRecord;
 import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.record.repository.RecordRepository;
 import com.bookmile.backend.domain.review.service.BookRepository;
@@ -65,5 +66,29 @@ class RecordServiceTest {
         assertEquals(2, records.size());
         assertEquals("첫 번째 기록", records.get(0).getText());
         assertEquals("두 번째 기록", records.get(1).getText());
+    }
+
+    @Test
+    void 사용자의_그룹에서의_기록_생성() {
+        //Given
+        Book book = new Book("김진용의 인생", 456, "image", "김진용", "책설명", "링크url", 5.0);
+        bookRepository.save(book);
+
+        User user = new User("김진용", "kje@naver.com", "1234", "urlurl");
+        userRepository.save(user);
+
+        Group group = new Group(book, null, null, "독서 그룹", "독서를 위한 그룹", 1234L, true, false);
+        groupRepository.save(group);
+
+        UserGroup userGroup = new UserGroup(user, group, Role.MASTER);
+        userGroupRepository.save(userGroup);
+
+        //When
+        Long recordId1 = recordService.createRecord(group.getId(), user.getId(), new RequestRecord("나의 기록1", 193));
+//        Long recordId2 = recordService.createRecord(group.getId(), user.getId(), new RequestRecord("나의 기록2", 389));
+        Record record = recordRepository.findById(recordId1).orElseThrow();
+
+        assertEquals("나의 기록1", record.getText());
+        assertEquals(193, record.getCurrentPage());
     }
 }

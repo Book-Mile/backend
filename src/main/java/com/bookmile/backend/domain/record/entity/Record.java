@@ -1,6 +1,7 @@
 package com.bookmile.backend.domain.record.entity;
 
 import com.bookmile.backend.domain.image.entity.Image;
+import com.bookmile.backend.domain.record.dto.RequestRecord;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import com.bookmile.backend.global.config.BaseEntity;
 import jakarta.persistence.Column;
@@ -48,5 +49,13 @@ public class Record extends BaseEntity {
         this.userGroup = userGroup;
         this.text = text;
         this.currentPage = currentPage;
+    }
+
+    public static Record From(UserGroup userGroup, RequestRecord requestRecord) {
+        return new Record(
+                userGroup,
+                requestRecord.getText(),
+                requestRecord.getCurrentPage()
+        );
     }
 }
