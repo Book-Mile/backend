@@ -20,16 +20,19 @@ public class AladinClient {
     }
 
     public String searchBooks(String query, String queryType, int maxResults) throws Exception {
+        System.out.println("AladinClient.searchBooks() called with query: " + query);
 
         String url = UriComponentsBuilder.fromHttpUrl(config.getBaseUrl() + "/ItemSearch.aspx")
                 .queryParam("ttbkey", config.getTtbKey())
                 .queryParam("Query", URLEncoder.encode(query, "UTF-8"))
                 .queryParam("QueryType", queryType)
                 .queryParam("MaxResults", maxResults)
+                .queryParam("start", "1")
                 .queryParam("SearchTarget", "Book")
                 .queryParam("output", "xml")
+                //.queryParam("Version", "20070901")
                 .toUriString();
-
+        System.out.println("Request URL: " + url); // 요청 URL 출력
         return restTemplate.getForObject(url, String.class);
     }
 }
