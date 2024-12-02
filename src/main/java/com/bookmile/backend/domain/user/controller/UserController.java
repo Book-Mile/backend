@@ -1,5 +1,6 @@
 package com.bookmile.backend.domain.user.controller;
 
+import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignUpReqDto;
 import com.bookmile.backend.domain.user.dto.res.UserResDto;
 import com.bookmile.backend.domain.user.service.UserService;
@@ -21,6 +22,11 @@ public class UserController {
     @PostMapping("/sign-up")
     public ResponseEntity<UserResDto> signUp(@RequestBody @Valid SignUpReqDto signUpReqDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.signUp(signUpReqDto));
+    }
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<UserResDto> signIn(@RequestBody @Valid SignInReqDto signInReqDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.signIn(signInReqDto));
     }
 }
 
