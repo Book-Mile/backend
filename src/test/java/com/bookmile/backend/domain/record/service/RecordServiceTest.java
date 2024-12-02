@@ -100,6 +100,7 @@ class RecordServiceTest {
         assertEquals(3, records.get(1).getImages().size());
     }
 
+    @Transactional
     @Test
     void 기록_수정() {
         //When
@@ -107,12 +108,20 @@ class RecordServiceTest {
         Long recordId = recordService.createRecord(group.getId(), user.getId(),
                 new RequestRecord("나의 기록1", 193, List.of()));
         Record record1 = recordRepository.findById(recordId).orElseThrow();
+
+        // 수정 전
+        assertEquals("나의 기록1", record1.getText());
+        assertEquals(0, record1.getImages().size());
+
         // 그리고 수정
-        Long updateRecord = recordService.updateRecord(recordId, new RequestRecord("나의 수정한 기록1", 193, List.of()));
+        Long updateRecord = recordService.updateRecord(recordId,
+                new RequestRecord("나의 수정한 기록1", 193, List.of("url1", "url2", "url3")));
         Record record2 = recordRepository.findById(updateRecord).orElseThrow();
+
         //Then
         assertEquals(record1.getId(), record2.getId());
-        assertEquals("나의 기록1", record1.getText()); // 수정 전
-        assertEquals("나의 수정한 기록1", record2.getText()); // 수정 후
+        // 수정 후
+        assertEquals("나의 수정한 기록1", record2.getText());
+        assertEquals(3, record2.getImages().size());
     }
 }

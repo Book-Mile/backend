@@ -68,7 +68,13 @@ public class Record extends BaseEntity {
     }
 
     public void update(RequestRecord requestRecord) {
+        List<Image> imageList = new ArrayList<>();
+        for (String imageUrl : requestRecord.getImageUrls()) {
+            Image image = new Image(imageUrl);
+            imageList.add(image);
+        }
         this.text = requestRecord.getText();
         this.currentPage = requestRecord.getCurrentPage();
+        this.images = imageList;
     }
 }
