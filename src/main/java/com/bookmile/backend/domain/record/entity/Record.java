@@ -37,7 +37,7 @@ public class Record extends BaseEntity {
 
     @OneToMany
     @JoinColumn(name = "record_id")
-    private List<Image> image = new ArrayList<>();
+    private List<Image> images = new ArrayList<>();
 
     @Column
     private String text;
@@ -45,17 +45,25 @@ public class Record extends BaseEntity {
     @Column(nullable = false)
     private Integer currentPage;
 
-    public Record(UserGroup userGroup, String text, Integer currentPage) {
+    public Record(UserGroup userGroup, String text, Integer currentPage, List<Image> images) {
         this.userGroup = userGroup;
         this.text = text;
         this.currentPage = currentPage;
+        this.images = images;
     }
 
     public static Record From(UserGroup userGroup, RequestRecord requestRecord) {
+        List<Image> imageList = new ArrayList<>();
+        for (String imageUrl : requestRecord.getImageUrls()) {
+            Image image = new Image(imageUrl);
+            imageList.add(image);
+        }
+
         return new Record(
                 userGroup,
                 requestRecord.getText(),
-                requestRecord.getCurrentPage()
+                requestRecord.getCurrentPage(),
+                imageList
         );
     }
 

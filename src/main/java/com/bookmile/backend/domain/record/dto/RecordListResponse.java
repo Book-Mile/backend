@@ -4,6 +4,7 @@ import com.bookmile.backend.domain.image.entity.Image;
 import com.bookmile.backend.domain.record.entity.Record;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,7 +15,7 @@ public class RecordListResponse {
     private String text;
     private Integer current_page;
     private LocalDateTime createdAt;
-    private List<Image> images;
+    private List<String> images;
 
     public static RecordListResponse createRecord(Record record) {
         return new RecordListResponse(
@@ -22,7 +23,9 @@ public class RecordListResponse {
                 record.getText(),
                 record.getCurrentPage(),
                 record.getCreatedAt(),
-                record.getImage()
+                record.getImages().stream()
+                        .map(Image::getImageUrl)
+                        .collect(Collectors.toList())
         );
     }
 }
