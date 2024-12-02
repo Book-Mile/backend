@@ -37,10 +37,10 @@ public class BookService {
         bookSearchResponses.forEach(response -> {
             Book book = new Book(
                     response.title(),
+                    response.link(),
                     response.author(),
                     response.publisher(),
                     response.cover(),
-                    response.link(),
                     response.description()
             );
             bookRepository.save(book);
@@ -55,6 +55,7 @@ public class BookService {
         JSONArray items = jsonObject.getJSONArray("item");
 
         // JSON 배열을 List<BookSearchResponse>로 매핑
-        return objectMapper.readValue(items.toString(), new TypeReference<List<BooklistSearchResponseDto>>() {});
+        return objectMapper.readValue(items.toString(), new TypeReference<>() {
+        });
     }
 }
