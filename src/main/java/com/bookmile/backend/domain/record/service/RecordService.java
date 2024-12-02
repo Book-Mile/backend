@@ -9,7 +9,6 @@ import com.bookmile.backend.domain.review.service.UserRepository;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +31,7 @@ public class RecordService {
 
         return recordRepository.findAllByUserGroupId(userGroupId).stream()
                 .map(RecordListResponse::createRecord)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Long createRecord(Long groupId, Long userId, RequestRecord requestRecord) {
@@ -57,8 +56,6 @@ public class RecordService {
                 .orElseThrow(() -> new IllegalArgumentException("없는 기록입니다."));
 
         record.update(requestRecord);
-
-        recordRepository.save(record);
 
         return record.getId();
     }
