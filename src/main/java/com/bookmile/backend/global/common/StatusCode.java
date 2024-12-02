@@ -11,11 +11,16 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 @RequiredArgsConstructor
 public enum StatusCode {
 
+    /* User */
+    SIGN_UP(CREATED, "회원가입이 완료되었습니다."),
+    SIGN_IN(OK, "로그인에 성공하였습니다."),
+
     /* 400 BAD_REQUEST : 잘못된 요청 */
     PASSWORD_NOT_MATCH(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 
     /* 401 UNAUTHORIZED : 비인증 사용자 */
     AUTHENTICATION_FAILED(UNAUTHORIZED, "회원의 정보가 일치하지 않습니다."),
+
     /* 403 FORBIDDEN : 권한 없음 */
 
     /* 404 NOT_FOUND : 존재하지 않는 리소스 */
