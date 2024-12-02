@@ -61,23 +61,6 @@ class RecordServiceTest {
     }
 
     @Test
-    void 사용자의_그룹에_해당하는_기록_불러오기() {
-        //Given
-        Record record1 = new Record(userGroup, "첫 번째 기록", 50);
-        Record record2 = new Record(userGroup, "두 번째 기록", 1000);
-        recordRepository.save(record1);
-        recordRepository.save(record2);
-
-        //When
-        List<RecordListResponse> records = recordService.viewRecordList(group.getId(), user.getId());
-
-        //Then
-        assertEquals(2, records.size());
-        assertEquals("첫 번째 기록", records.get(0).getText());
-        assertEquals("두 번째 기록", records.get(1).getText());
-    }
-
-    @Test
     void 사용자의_그룹에서의_기록_생성() {
         //When
         Long recordId1 = recordService.createRecord(group.getId(), user.getId(), new RequestRecord("나의 기록1", 193));
@@ -86,6 +69,28 @@ class RecordServiceTest {
         //Then
         assertEquals("나의 기록1", record.getText());
         assertEquals(193, record.getCurrentPage());
+    }
+
+    @Test
+    void 사용자의_그룹에_해당하는_기록_불러오기() {
+        //Given
+        recordService.createRecord(
+                group.getId(),
+                user.getId(),
+                new RequestRecord("첫 번째 기록", 193));
+
+        recordService.createRecord(
+                group.getId(),
+                user.getId(),
+                new RequestRecord("두 번째 기록", 193));
+
+        //When
+        List<RecordListResponse> records = recordService.viewRecordList(group.getId(), user.getId());
+
+        //Then
+        assertEquals(2, records.size());
+        assertEquals("첫 번째 기록", records.get(0).getText());
+        assertEquals("두 번째 기록", records.get(1).getText());
     }
 
     @Test
