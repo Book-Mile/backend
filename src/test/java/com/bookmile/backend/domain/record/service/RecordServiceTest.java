@@ -14,6 +14,7 @@ import com.bookmile.backend.domain.review.service.UserRepository;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,21 +40,29 @@ class RecordServiceTest {
     @Autowired
     private RecordService recordService;
 
+    private Book book;
+    private User user;
+    private Group group;
+    private UserGroup userGroup;
+
+    @BeforeEach
+    void setUp() {
+        book = new Book("김진용의 인생", 456, "image", "김진용", "책설명", "링크url", 5.0);
+        bookRepository.save(book);
+
+        user = new User("김진용", "kje@naver.com", "1234", "urlurl");
+        userRepository.save(user);
+
+        group = new Group(book, null, null, "독서 그룹", "독서를 위한 그룹", 1234L, true, false);
+        groupRepository.save(group);
+
+        userGroup = new UserGroup(user, group, Role.MASTER);
+        userGroupRepository.save(userGroup);
+    }
+
     @Test
     void 사용자의_그룹에_해당하는_기록_불러오기() {
         //Given
-        Book book = new Book("김진용의 인생", 456, "image", "김진용", "책설명", "링크url", 5.0);
-        bookRepository.save(book);
-
-        User user = new User("김진용", "kje@naver.com", "1234", "urlurl");
-        userRepository.save(user);
-
-        Group group = new Group(book, null, null, "독서 그룹", "독서를 위한 그룹", 1234L, true, false);
-        groupRepository.save(group);
-
-        UserGroup userGroup = new UserGroup(user, group, Role.MASTER);
-        userGroupRepository.save(userGroup);
-
         Record record1 = new Record(userGroup, "첫 번째 기록", 50);
         Record record2 = new Record(userGroup, "두 번째 기록", 1000);
         recordRepository.save(record1);
@@ -70,25 +79,27 @@ class RecordServiceTest {
 
     @Test
     void 사용자의_그룹에서의_기록_생성() {
-        //Given
-        Book book = new Book("김진용의 인생", 456, "image", "김진용", "책설명", "링크url", 5.0);
-        bookRepository.save(book);
-
-        User user = new User("김진용", "kje@naver.com", "1234", "urlurl");
-        userRepository.save(user);
-
-        Group group = new Group(book, null, null, "독서 그룹", "독서를 위한 그룹", 1234L, true, false);
-        groupRepository.save(group);
-
-        UserGroup userGroup = new UserGroup(user, group, Role.MASTER);
-        userGroupRepository.save(userGroup);
-
         //When
         Long recordId1 = recordService.createRecord(group.getId(), user.getId(), new RequestRecord("나의 기록1", 193));
-//        Long recordId2 = recordService.createRecord(group.getId(), user.getId(), new RequestRecord("나의 기록2", 389));
         Record record = recordRepository.findById(recordId1).orElseThrow();
 
+        //Then
         assertEquals("나의 기록1", record.getText());
         assertEquals(193, record.getCurrentPage());
+    }
+
+    @Test
+    void 기록_수정() {
+        //When
+        // 일단 생성
+        Long recordId = recordService.createRecord(group.getId(), user.getId(), new RequestRecord("나의 기록1", 193));
+        Record record1 = recordRepository.findById(recordId).orElseThrow();
+        // 그리고 수정
+        Long updateRecord = recordService.updateRecord(recordId, new RequestRecord("나의 수정한 기록1", 193));
+        Record record2 = recordRepository.findById(updateRecord).orElseThrow();
+        //Then
+        assertEquals(record1.getId(), record2.getId());
+        assertEquals("나의 기록1", record1.getText()); // 수정 전
+        assertEquals("나의 수정한 기록1", record2.getText()); // 수정 후
     }
 }

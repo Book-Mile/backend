@@ -51,4 +51,15 @@ public class RecordService {
 
         return record.getId();
     }
+
+    public Long updateRecord(Long recordId, RequestRecord requestRecord) {
+        Record record = recordRepository.findById(recordId)
+                .orElseThrow(() -> new IllegalArgumentException("없는 기록입니다."));
+
+        record.update(requestRecord);
+
+        recordRepository.save(record);
+
+        return record.getId();
+    }
 }

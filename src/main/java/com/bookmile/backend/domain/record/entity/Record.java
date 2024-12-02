@@ -58,4 +58,9 @@ public class Record extends BaseEntity {
                 requestRecord.getCurrentPage()
         );
     }
+
+    public void update(RequestRecord requestRecord) {
+        this.text = requestRecord.getText();
+        this.currentPage = requestRecord.getCurrentPage();
+    }
 }
