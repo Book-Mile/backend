@@ -8,6 +8,7 @@ import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.user.service.UserService;
 import com.bookmile.backend.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.bookmile.backend.global.common.StatusCode.*;
@@ -16,16 +17,19 @@ import static com.bookmile.backend.global.common.StatusCode.*;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResDto signUp(SignUpReqDto signUpReqDto) {
         existsByEmail(signUpReqDto.getEmail());
 
-        // 비밀번호 일치 확인
-        if (!((signUpReqDto.getPassword()).equals(signUpReqDto.getCheckPassword())))
+        // 비밀번호 일치 여부 확인
+        if (!(signUpReqDto.getPassword().equals(signUpReqDto.getCheckPassword())))
             throw new CustomException(PASSWORD_NOT_MATCH);
 
-        User user = userRepository.save(signUpReqDto.toEntity(signUpReqDto.getEmail(), signUpReqDto.getPassword()));
+        String enCodePassword = passwordEncoder.encode(signUpReqDto.getPassword());
+
+        User user = userRepository.save(signUpReqDto.toEntity(signUpReqDto.getEmail(), enCodePassword));
         return UserResDto.toDto(user);
     }
 
@@ -33,8 +37,9 @@ public class UserServiceImpl implements UserService {
     public UserResDto signIn(SignInReqDto signInReqDto) {
         User user = findByEmail(signInReqDto.getEmail());
 
-        if(!user.getPassword().equals(signInReqDto.getPassword()))
+        if(!passwordEncoder.matches(signInReqDto.getPassword(), user.getPassword()))
             throw new CustomException(AUTHENTICATION_FAILED); // 유저는 아이디, 비밀번호 중 한개만 틀려도 '일치하는 정보가 없음' 메세지 표시
+
         return UserResDto.toDto(user);
     }
 
@@ -49,3 +54,5 @@ public class UserServiceImpl implements UserService {
         return  userRepository.findByEmail(email).orElseThrow(() -> new CustomException(AUTHENTICATION_FAILED));
     }
 }
+
+

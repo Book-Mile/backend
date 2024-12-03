@@ -30,11 +30,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
-//    public void addUserGroup(UserGroup userGroup) {
-//        this.userGroup.add(userGroup);
-//        userGroup.addUser(this);
-//    }
-
     @Builder
     public User(String nickname, String email, String password, String image) {
         this.nickname = nickname;
