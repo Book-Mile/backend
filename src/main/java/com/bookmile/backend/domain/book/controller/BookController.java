@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/books")
+@RequestMapping("/api/v1/books")
 public class BookController {
 
     private final BookService bookService;
@@ -19,7 +19,7 @@ public class BookController {
     }
 
     // 도서 검색 API
-    @GetMapping
+    @GetMapping("/search")
     public ResponseEntity<List<BooklistSearchResponseDto>> searchBooks(@RequestParam String query) throws Exception {
         // BookSearchRequest 생성
         BooklistSearchRequestDto request = new BooklistSearchRequestDto(query);
