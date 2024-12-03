@@ -50,11 +50,11 @@ public class BookService {
     }
 
     private List<BooklistSearchResponseDto> parseSearchResponse(String jsonResponse) throws Exception {
-        // JSON 응답에서 "item" 배열 추출
+        // JSON 응답에서 item 배열 추출
         JSONObject jsonObject = new JSONObject(jsonResponse);
         JSONArray items = jsonObject.getJSONArray("item");
 
-        // JSON 배열을 List<BookSearchResponse>로 매핑
+        // JSON 배열을 List<BooklistSearchResponseDto>로 매핑
         return objectMapper.readValue(items.toString(), new TypeReference<>() {
         });
     }

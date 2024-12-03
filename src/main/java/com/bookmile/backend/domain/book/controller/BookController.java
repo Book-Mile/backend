@@ -21,7 +21,6 @@ public class BookController {
     // 도서 검색 API
     @GetMapping("/search")
     public ResponseEntity<List<BooklistSearchResponseDto>> searchBooks(@RequestParam String query) throws Exception {
-        // BookSearchRequest 생성
         BooklistSearchRequestDto request = new BooklistSearchRequestDto(query);
 
         // 서비스 호출 및 결과 반환
