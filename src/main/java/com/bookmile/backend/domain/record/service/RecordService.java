@@ -45,7 +45,7 @@ public class RecordService {
 
         UserGroup userGroup = userGroupRepository.findUserGroupById(userGroupId);
 
-        Record record = Record.From(userGroup, requestRecord);
+        Record record = Record.from(userGroup, requestRecord);
         recordRepository.save(record);
 
         return record.getId();

@@ -52,7 +52,7 @@ public class Record extends BaseEntity {
         this.images = images;
     }
 
-    public static Record From(UserGroup userGroup, RequestRecord requestRecord) {
+    public static Record from(UserGroup userGroup, RequestRecord requestRecord) {
         List<Image> imageList = new ArrayList<>();
         for (String imageUrl : requestRecord.getImageUrls()) {
             Image image = new Image(imageUrl);
