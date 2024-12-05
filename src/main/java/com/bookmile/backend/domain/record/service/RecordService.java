@@ -3,6 +3,7 @@ package com.bookmile.backend.domain.record.service;
 import com.bookmile.backend.domain.group.entity.Group;
 import com.bookmile.backend.domain.record.dto.RecordListResponse;
 import com.bookmile.backend.domain.record.dto.RequestRecord;
+import com.bookmile.backend.domain.record.dto.RequestUpdateRecord;
 import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.record.repository.RecordRepository;
 import com.bookmile.backend.domain.review.service.UserRepository;
@@ -51,11 +52,11 @@ public class RecordService {
         return record.getId();
     }
 
-    public Long updateRecord(Long recordId, RequestRecord requestRecord) {
+    public Long updateRecord(Long recordId, RequestUpdateRecord requestUpdateRecord) {
         Record record = recordRepository.findById(recordId)
                 .orElseThrow(() -> new IllegalArgumentException("없는 기록입니다."));
 
-        record.update(requestRecord);
+        record.update(requestUpdateRecord);
 
         return record.getId();
     }

@@ -7,6 +7,7 @@ import com.bookmile.backend.domain.group.entity.Group;
 import com.bookmile.backend.domain.group.entity.Role;
 import com.bookmile.backend.domain.record.dto.RecordListResponse;
 import com.bookmile.backend.domain.record.dto.RequestRecord;
+import com.bookmile.backend.domain.record.dto.RequestUpdateRecord;
 import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.record.repository.RecordRepository;
 import com.bookmile.backend.domain.review.service.BookRepository;
@@ -65,7 +66,7 @@ class RecordServiceTest {
     void 사용자의_그룹에서의_기록_생성() {
         //When
         Long recordId1 = recordService.createRecord(group.getId(), user.getId(),
-                new RequestRecord("나의 기록1", 193, List.of("url1", "url2", "url3")));
+                new RequestRecord("나의 기록1", 193));
         Record record = recordRepository.findById(recordId1).orElseThrow();
 
         //Then
@@ -80,12 +81,12 @@ class RecordServiceTest {
         recordService.createRecord(
                 group.getId(),
                 user.getId(),
-                new RequestRecord("기록1", 193, List.of()));
+                new RequestRecord("기록1", 193));
 
         recordService.createRecord(
                 group.getId(),
                 user.getId(),
-                new RequestRecord("기록2", 234, List.of("url1", "url2", "url3")));
+                new RequestRecord("기록2", 234));
 
         //When
         List<RecordListResponse> records = recordService.viewRecordList(group.getId(), user.getId());
@@ -96,8 +97,6 @@ class RecordServiceTest {
         assertEquals("기록2", records.get(1).getText());
         assertEquals(193, records.get(0).getCurrent_page());
         assertEquals(234, records.get(1).getCurrent_page());
-        assertEquals(0, records.get(0).getImages().size());
-        assertEquals(3, records.get(1).getImages().size());
     }
 
     @Transactional
@@ -106,22 +105,20 @@ class RecordServiceTest {
         //When
         // 일단 생성
         Long recordId = recordService.createRecord(group.getId(), user.getId(),
-                new RequestRecord("나의 기록1", 193, List.of()));
+                new RequestRecord("나의 기록1", 193));
         Record record1 = recordRepository.findById(recordId).orElseThrow();
 
         // 수정 전
         assertEquals("나의 기록1", record1.getText());
-        assertEquals(0, record1.getImages().size());
 
         // 그리고 수정
         Long updateRecord = recordService.updateRecord(recordId,
-                new RequestRecord("나의 수정한 기록1", 193, List.of("url1", "url2", "url3")));
+                new RequestUpdateRecord("나의 수정한 기록1", 193));
         Record record2 = recordRepository.findById(updateRecord).orElseThrow();
 
         //Then
         assertEquals(record1.getId(), record2.getId());
         // 수정 후
         assertEquals("나의 수정한 기록1", record2.getText());
-        assertEquals(3, record2.getImages().size());
     }
 }

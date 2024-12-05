@@ -2,6 +2,7 @@ package com.bookmile.backend.domain.record.controller;
 
 import com.bookmile.backend.domain.record.dto.RecordListResponse;
 import com.bookmile.backend.domain.record.dto.RequestRecord;
+import com.bookmile.backend.domain.record.dto.RequestUpdateRecord;
 import com.bookmile.backend.domain.record.service.RecordService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +37,9 @@ public class RecordController {
     }
 
     @PutMapping("/{recordId}")
-    public ResponseEntity<Long> updateRecord(@PathVariable Long recordId, @RequestBody RequestRecord requestRecord) {
-        Long updateRecord = recordService.updateRecord(recordId, requestRecord);
+    public ResponseEntity<Long> updateRecord(@PathVariable Long recordId,
+                                             @RequestBody RequestUpdateRecord requestUpdateRecord) {
+        Long updateRecord = recordService.updateRecord(recordId, requestUpdateRecord);
         return ResponseEntity.ok(updateRecord);
     }
 }
