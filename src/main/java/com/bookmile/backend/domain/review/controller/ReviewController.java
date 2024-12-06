@@ -1,0 +1,49 @@
+package com.bookmile.backend.domain.review.controller;
+
+import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
+import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
+import com.bookmile.backend.domain.review.service.ReviewService;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/v1/reviews")
+@RequiredArgsConstructor
+public class ReviewController {
+    private final ReviewService reviewService;
+
+    @GetMapping
+    public ResponseEntity<List<ReviewListResDto>> viewReviewList(@RequestParam Long bookId) {
+        List<ReviewListResDto> reviews = reviewService.viewReviewList(bookId);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @PostMapping
+    public ResponseEntity<Long> createReview(@RequestParam Long bookId, @RequestParam Long userId,
+                                             @RequestBody ReviewReqDto reviewReqDto) {
+        Long createReview = reviewService.createReview(bookId, userId, reviewReqDto);
+        return ResponseEntity.ok(createReview);
+    }
+
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<Long> updateReview(@PathVariable Long reviewId, @RequestBody ReviewReqDto reviewReqDto) {
+        Long updateReview = reviewService.updateReview(reviewId, reviewReqDto);
+        return ResponseEntity.ok(updateReview);
+    }
+
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Long> deleteReview(@PathVariable Long reviewId) {
+        Long deleteReview = reviewService.deleteReview(reviewId);
+        return ResponseEntity.ok(deleteReview);
+    }
+}
