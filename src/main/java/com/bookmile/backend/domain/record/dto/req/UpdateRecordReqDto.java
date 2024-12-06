@@ -1,4 +1,4 @@
-package com.bookmile.backend.domain.record.dto;
+package com.bookmile.backend.domain.record.dto.req;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class RequestUpdateRecord {
+public class UpdateRecordReqDto {
     private String text;
     private Integer currentPage;
 }

@@ -1,7 +1,7 @@
 package com.bookmile.backend.domain.image.service;
 
-import com.bookmile.backend.domain.image.dto.req.ImageSaveRequest;
-import com.bookmile.backend.domain.image.dto.res.ImageListResponse;
+import com.bookmile.backend.domain.image.dto.req.ImageSaveReqDto;
+import com.bookmile.backend.domain.image.dto.res.ImageListResDto;
 import com.bookmile.backend.domain.image.entity.Image;
 import com.bookmile.backend.domain.image.repository.ImageRepository;
 import com.bookmile.backend.domain.record.entity.Record;
@@ -16,22 +16,22 @@ public class ImageService {
 
     private final ImageRepository imageRepository;
     private final RecordRepository recordRepository;
-    
-    public List<ImageListResponse> viewImages(Long recordId) {
+
+    public List<ImageListResDto> viewImages(Long recordId) {
         recordRepository.findById(recordId)
                 .orElseThrow(() -> new IllegalArgumentException("없는 recordId 입니다."));
 
         return imageRepository.findAllByRecordId(recordId)
                 .stream()
-                .map(ImageListResponse::createImage)
+                .map(ImageListResDto::createImage)
                 .toList();
     }
 
-    public void saveImages(Long recordId, ImageSaveRequest imageSaveRequest) {
+    public void saveImages(Long recordId, ImageSaveReqDto imageSaveReqDto) {
         Record record = recordRepository.findById(recordId)
                 .orElseThrow(() -> new IllegalArgumentException("없는 기록 ID 입니다."));
 
-        List<Image> images = imageSaveRequest.getImageUrls().stream()
+        List<Image> images = imageSaveReqDto.getImageUrls().stream()
                 .map(url -> new Image(record, url))
                 .toList();
 

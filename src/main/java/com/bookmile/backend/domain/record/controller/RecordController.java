@@ -1,8 +1,8 @@
 package com.bookmile.backend.domain.record.controller;
 
-import com.bookmile.backend.domain.record.dto.RecordListResponse;
-import com.bookmile.backend.domain.record.dto.RequestRecord;
-import com.bookmile.backend.domain.record.dto.RequestUpdateRecord;
+import com.bookmile.backend.domain.record.dto.req.RecordReqDto;
+import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
+import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
 import com.bookmile.backend.domain.record.service.RecordService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,23 +23,23 @@ public class RecordController {
     private RecordService recordService;
 
     @GetMapping
-    public ResponseEntity<List<RecordListResponse>> viewRecordList(@RequestParam Long groupId,
-                                                                   @RequestParam Long userId) {
-        List<RecordListResponse> records = recordService.viewRecordList(groupId, userId);
+    public ResponseEntity<List<RecordListResDto>> viewRecordList(@RequestParam Long groupId,
+                                                                 @RequestParam Long userId) {
+        List<RecordListResDto> records = recordService.viewRecordList(groupId, userId);
         return ResponseEntity.ok(records);
     }
 
     @PostMapping
     public ResponseEntity<Long> createRecord(@RequestParam Long groupId,
-                                             @RequestParam Long userId, @RequestBody RequestRecord requestRecord) {
-        Long recordId = recordService.createRecord(groupId, userId, requestRecord);
+                                             @RequestParam Long userId, @RequestBody RecordReqDto recordReqDto) {
+        Long recordId = recordService.createRecord(groupId, userId, recordReqDto);
         return ResponseEntity.ok(recordId);
     }
 
     @PutMapping("/{recordId}")
     public ResponseEntity<Long> updateRecord(@PathVariable Long recordId,
-                                             @RequestBody RequestUpdateRecord requestUpdateRecord) {
-        Long updateRecord = recordService.updateRecord(recordId, requestUpdateRecord);
+                                             @RequestBody UpdateRecordReqDto updateRecordReqDto) {
+        Long updateRecord = recordService.updateRecord(recordId, updateRecordReqDto);
         return ResponseEntity.ok(updateRecord);
     }
 }

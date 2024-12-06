@@ -6,11 +6,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ImageListResponse {
+public class ImageListResDto {
     private String imageUrls;
 
-    public static ImageListResponse createImage(Image image) {
-        return new ImageListResponse(
+    public static ImageListResDto createImage(Image image) {
+        return new ImageListResDto(
                 image.getImageUrl()
         );
     }

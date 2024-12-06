@@ -1,11 +1,11 @@
-package com.bookmile.backend.domain.review.dto;
+package com.bookmile.backend.domain.record.dto.req;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ReviewRequest {
-    private Double rating;
+public class RecordReqDto {
     private String text;
+    private Integer currentPage;
 }

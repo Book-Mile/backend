@@ -1,7 +1,7 @@
 package com.bookmile.backend.domain.record.entity;
 
-import com.bookmile.backend.domain.record.dto.RequestRecord;
-import com.bookmile.backend.domain.record.dto.RequestUpdateRecord;
+import com.bookmile.backend.domain.record.dto.req.RecordReqDto;
+import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import com.bookmile.backend.global.config.BaseEntity;
 import jakarta.persistence.Column;
@@ -44,17 +44,17 @@ public class Record extends BaseEntity {
         this.currentPage = currentPage;
     }
 
-    public static Record from(UserGroup userGroup, RequestRecord requestRecord) {
+    public static Record from(UserGroup userGroup, RecordReqDto recordReqDto) {
 
         return new Record(
                 userGroup,
-                requestRecord.getText(),
-                requestRecord.getCurrentPage()
+                recordReqDto.getText(),
+                recordReqDto.getCurrentPage()
         );
     }
 
-    public void update(RequestUpdateRecord requestUpdateRecord) {
-        this.text = requestUpdateRecord.getText();
-        this.currentPage = requestUpdateRecord.getCurrentPage();
+    public void update(UpdateRecordReqDto updateRecordReqDto) {
+        this.text = updateRecordReqDto.getText();
+        this.currentPage = updateRecordReqDto.getCurrentPage();
     }
 }

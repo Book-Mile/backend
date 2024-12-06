@@ -3,11 +3,12 @@ package com.bookmile.backend.domain.review.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.bookmile.backend.domain.book.entity.Book;
-import com.bookmile.backend.domain.review.dto.ReviewListResponse;
-import com.bookmile.backend.domain.review.dto.ReviewRequest;
+import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
+import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
 import com.bookmile.backend.domain.review.entity.Review;
 import com.bookmile.backend.domain.review.repository.ReviewRepository;
 import com.bookmile.backend.domain.user.entity.User;
+import com.bookmile.backend.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,7 @@ class ReviewServiceTest {
         reviewRepository.save(review2);
 
         // When
-        List<ReviewListResponse> reviews = reviewService.viewReviewList(book.getId());
+        List<ReviewListResDto> reviews = reviewService.viewReviewList(book.getId());
 
         // Then
         assertEquals(2, reviews.size());
@@ -66,10 +67,10 @@ class ReviewServiceTest {
         userRepository.save(user);
         bookRepository.save(book);
 
-        ReviewRequest reviewRequest = new ReviewRequest(4.5, "굳굳");
+        ReviewReqDto reviewReqDto = new ReviewReqDto(4.5, "굳굳");
 
         // When
-        Long reviewId = reviewService.createReview(book.getId(), user.getId(), reviewRequest);
+        Long reviewId = reviewService.createReview(book.getId(), user.getId(), reviewReqDto);
 
         // Then
         Review review = reviewRepository.findById(reviewId).orElseThrow();
@@ -90,10 +91,10 @@ class ReviewServiceTest {
 
         reviewRepository.save(review);
 
-        ReviewRequest reviewRequest = new ReviewRequest(1.0, "다시 생각해보니 별로네요.");
+        ReviewReqDto reviewReqDto = new ReviewReqDto(1.0, "다시 생각해보니 별로네요.");
 
         // When
-        Long reviewId = reviewService.updateReview(review.getId(), reviewRequest);
+        Long reviewId = reviewService.updateReview(review.getId(), reviewReqDto);
 
         // Then
         Review updateReview = reviewRepository.findById(reviewId).orElseThrow();

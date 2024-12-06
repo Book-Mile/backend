@@ -1,7 +1,7 @@
 package com.bookmile.backend.domain.image.controller;
 
-import com.bookmile.backend.domain.image.dto.req.ImageSaveRequest;
-import com.bookmile.backend.domain.image.dto.res.ImageListResponse;
+import com.bookmile.backend.domain.image.dto.req.ImageSaveReqDto;
+import com.bookmile.backend.domain.image.dto.res.ImageListResDto;
 import com.bookmile.backend.domain.image.service.ImageService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +23,15 @@ public class ImageController {
     private ImageService imageService;
 
     @GetMapping("{recordId}")
-    public ResponseEntity<List<ImageListResponse>> viewImages(@PathVariable Long recordId) {
-        List<ImageListResponse> images = imageService.viewImages(recordId);
+    public ResponseEntity<List<ImageListResDto>> viewImages(@PathVariable Long recordId) {
+        List<ImageListResDto> images = imageService.viewImages(recordId);
 
         return ResponseEntity.ok(images);
     }
 
     @PostMapping
-    public ResponseEntity<?> saveImages(@RequestParam Long recordId, @RequestBody ImageSaveRequest imageSaveRequest) {
-        imageService.saveImages(recordId, imageSaveRequest);
+    public ResponseEntity<?> saveImages(@RequestParam Long recordId, @RequestBody ImageSaveReqDto imageSaveReqDto) {
+        imageService.saveImages(recordId, imageSaveReqDto);
 
         return ResponseEntity.ok("생성 완료!");
     }

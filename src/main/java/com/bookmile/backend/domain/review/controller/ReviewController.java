@@ -1,7 +1,7 @@
 package com.bookmile.backend.domain.review.controller;
 
-import com.bookmile.backend.domain.review.dto.ReviewListResponse;
-import com.bookmile.backend.domain.review.dto.ReviewRequest;
+import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
+import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
 import com.bookmile.backend.domain.review.service.ReviewService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,21 +23,21 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping
-    public ResponseEntity<List<ReviewListResponse>> viewReviewList(@RequestParam Long bookId) {
-        List<ReviewListResponse> reviews = reviewService.viewReviewList(bookId);
+    public ResponseEntity<List<ReviewListResDto>> viewReviewList(@RequestParam Long bookId) {
+        List<ReviewListResDto> reviews = reviewService.viewReviewList(bookId);
         return ResponseEntity.ok(reviews);
     }
 
     @PostMapping
     public ResponseEntity<Long> createReview(@RequestParam Long bookId, @RequestParam Long userId,
-                                             @RequestBody ReviewRequest reviewRequest) {
-        Long createReview = reviewService.createReview(bookId, userId, reviewRequest);
+                                             @RequestBody ReviewReqDto reviewReqDto) {
+        Long createReview = reviewService.createReview(bookId, userId, reviewReqDto);
         return ResponseEntity.ok(createReview);
     }
 
     @PutMapping("/{reviewId}")
-    public ResponseEntity<Long> updateReview(@PathVariable Long reviewId, @RequestBody ReviewRequest reviewRequest) {
-        Long updateReview = reviewService.updateReview(reviewId, reviewRequest);
+    public ResponseEntity<Long> updateReview(@PathVariable Long reviewId, @RequestBody ReviewReqDto reviewReqDto) {
+        Long updateReview = reviewService.updateReview(reviewId, reviewReqDto);
         return ResponseEntity.ok(updateReview);
     }
 

@@ -5,14 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.group.entity.Group;
 import com.bookmile.backend.domain.group.entity.Role;
-import com.bookmile.backend.domain.record.dto.RecordListResponse;
-import com.bookmile.backend.domain.record.dto.RequestRecord;
-import com.bookmile.backend.domain.record.dto.RequestUpdateRecord;
+import com.bookmile.backend.domain.record.dto.req.RecordReqDto;
+import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
+import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
 import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.record.repository.RecordRepository;
 import com.bookmile.backend.domain.review.service.BookRepository;
-import com.bookmile.backend.domain.review.service.UserRepository;
 import com.bookmile.backend.domain.user.entity.User;
+import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -67,7 +67,7 @@ class RecordServiceTest {
     void 사용자의_그룹에서의_기록_생성() {
         //When
         Long recordId1 = recordService.createRecord(group.getId(), user.getId(),
-                new RequestRecord("나의 기록1", 193));
+                new RecordReqDto("나의 기록1", 193));
         Record record = recordRepository.findById(recordId1).orElseThrow();
 
         //Then
@@ -82,15 +82,15 @@ class RecordServiceTest {
         recordService.createRecord(
                 group.getId(),
                 user.getId(),
-                new RequestRecord("기록1", 193));
+                new RecordReqDto("기록1", 193));
 
         recordService.createRecord(
                 group.getId(),
                 user.getId(),
-                new RequestRecord("기록2", 234));
+                new RecordReqDto("기록2", 234));
 
         //When
-        List<RecordListResponse> records = recordService.viewRecordList(group.getId(), user.getId());
+        List<RecordListResDto> records = recordService.viewRecordList(group.getId(), user.getId());
 
         //Then
         assertEquals(2, records.size());
@@ -106,7 +106,7 @@ class RecordServiceTest {
         //When
         // 일단 생성
         Long recordId = recordService.createRecord(group.getId(), user.getId(),
-                new RequestRecord("나의 기록1", 193));
+                new RecordReqDto("나의 기록1", 193));
         Record record1 = recordRepository.findById(recordId).orElseThrow();
 
         // 수정 전
@@ -114,7 +114,7 @@ class RecordServiceTest {
 
         // 그리고 수정
         Long updateRecord = recordService.updateRecord(recordId,
-                new RequestUpdateRecord("나의 수정한 기록1", 193));
+                new UpdateRecordReqDto("나의 수정한 기록1", 193));
         Record record2 = recordRepository.findById(updateRecord).orElseThrow();
 
         //Then

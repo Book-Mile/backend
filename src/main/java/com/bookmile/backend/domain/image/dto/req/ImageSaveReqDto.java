@@ -6,6 +6,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ImageSaveRequest {
+public class ImageSaveReqDto {
     private List<String> imageUrls;
 }
