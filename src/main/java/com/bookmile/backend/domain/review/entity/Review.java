@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,6 +46,7 @@ public class Review extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
+    @Builder
     public Review(User user, Book book, Double rating, String text) {
         this.user = user;
         this.book = book;
@@ -53,12 +55,18 @@ public class Review extends BaseEntity {
     }
 
     public static Review from(User user, Book book, ReviewReqDto reviewReqDto) {
-        return new Review(
-                user,
-                book,
-                reviewReqDto.getRating(),
-                reviewReqDto.getText()
-        );
+//        return new Review(
+//                user,
+//                book,
+//                reviewReqDto.getRating(),
+//                reviewReqDto.getText()
+//        );
+        return Review.builder()
+                .user(user)
+                .book(book)
+                .rating(reviewReqDto.getRating())
+                .text(reviewReqDto.getText())
+                .build();
     }
 
     public void update(ReviewReqDto reviewReqDto) {
