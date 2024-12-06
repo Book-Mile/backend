@@ -96,8 +96,8 @@ class RecordServiceTest {
         assertEquals(2, records.size());
         assertEquals("기록1", records.get(0).getText());
         assertEquals("기록2", records.get(1).getText());
-        assertEquals(193, records.get(0).getCurrent_page());
-        assertEquals(234, records.get(1).getCurrent_page());
+        assertEquals(193, records.get(0).getCurrentPage());
+        assertEquals(234, records.get(1).getCurrentPage());
     }
 
     @Transactional
