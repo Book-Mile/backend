@@ -55,12 +55,6 @@ public class Review extends BaseEntity {
     }
 
     public static Review from(User user, Book book, ReviewReqDto reviewReqDto) {
-//        return new Review(
-//                user,
-//                book,
-//                reviewReqDto.getRating(),
-//                reviewReqDto.getText()
-//        );
         return Review.builder()
                 .user(user)
                 .book(book)
