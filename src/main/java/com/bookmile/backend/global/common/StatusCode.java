@@ -51,6 +51,7 @@ public enum StatusCode {
     REVIEW_NOT_FOUND(NOT_FOUND, "존재하는 리뷰가 없습니다."),
     GROUP_NOT_FOUND(NOT_FOUND, "존재하는 그룹이 없습니다."),
     RECORD_NOT_FOUND(NOT_FOUND, "존재하는 기록이 없습니다."),
+    IMAGE_NOT_FOUND(NOT_FOUND, "존재하는 이미지가 없습니다."),
     NO_USER_OR_NO_GROUP(NOT_FOUND, "사용자 또는 그룹이 존재하지 않습니다."),
 
     /* 409 CONFLICT : 리소스 충돌 */
