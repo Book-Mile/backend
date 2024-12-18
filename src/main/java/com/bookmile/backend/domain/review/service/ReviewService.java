@@ -1,5 +1,9 @@
 package com.bookmile.backend.domain.review.service;
 
+import static com.bookmile.backend.global.common.StatusCode.BOOK_NOT_FOUND;
+import static com.bookmile.backend.global.common.StatusCode.REVIEW_NOT_FOUND;
+import static com.bookmile.backend.global.common.StatusCode.USER_NOT_FOUND;
+
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
 import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
@@ -7,6 +11,7 @@ import com.bookmile.backend.domain.review.entity.Review;
 import com.bookmile.backend.domain.review.repository.ReviewRepository;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
+import com.bookmile.backend.global.exception.CustomException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +26,7 @@ public class ReviewService {
 
     public List<ReviewListResDto> viewReviewList(Long bookId) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new IllegalArgumentException("없는 책입니다."));
+                .orElseThrow(() -> new CustomException(BOOK_NOT_FOUND));
 
         return reviewRepository.findAllByBookId(bookId).stream()
                 .map(ReviewListResDto::createReview)
@@ -30,10 +35,10 @@ public class ReviewService {
 
     public Long createReview(Long bookId, Long userId, ReviewReqDto reviewReqDto) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new IllegalArgumentException("없는 책입니다."));
+                .orElseThrow(() -> new CustomException(BOOK_NOT_FOUND));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("없는 사용자입니다."));
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         Review review = Review.from(user, book, reviewReqDto);
 
@@ -44,7 +49,7 @@ public class ReviewService {
 
     public Long updateReview(Long reviewId, ReviewReqDto reviewReqDto) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("없는 리뷰입니다."));
+                .orElseThrow(() -> new CustomException(REVIEW_NOT_FOUND));
 
         review.update(reviewReqDto);
         reviewRepository.save(review);
@@ -54,7 +59,7 @@ public class ReviewService {
 
     public Long deleteReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("없는 리뷰입니다."));
+                .orElseThrow(() -> new CustomException(REVIEW_NOT_FOUND));
 
         review.delete(review);
 

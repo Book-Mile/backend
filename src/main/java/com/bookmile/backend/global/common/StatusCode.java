@@ -38,6 +38,8 @@ public enum StatusCode {
     /* 404 NOT_FOUND : 존재하지 않는 리소스 */
     INPUT_VALUE_INVALID(NOT_FOUND, "유효하지 않은 입력입니다."),
     USER_NOT_FOUND(NOT_FOUND, "존재하는 회원이 없습니다."),
+    BOOK_NOT_FOUND(NOT_FOUND, "존재하는 책이 없습니다."),
+    REVIEW_NOT_FOUND(NOT_FOUND, "존재하는 리뷰가 없습니다."),
 
     /* 409 CONFLICT : 리소스 충돌 */
     USER_ALREADY_EXISTS(CONFLICT, "이미 존재하는 회원입니다.");
