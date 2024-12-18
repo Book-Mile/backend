@@ -1,11 +1,16 @@
 package com.bookmile.backend.global.common;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.RESET_CONTENT;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.HttpStatus.CONFLICT;
 
 @Getter
 @RequiredArgsConstructor
@@ -14,6 +19,13 @@ public enum StatusCode {
     /* User */
     SIGN_UP(CREATED, "회원가입이 완료되었습니다."),
     SIGN_IN(OK, "로그인에 성공하였습니다."),
+
+    /* Review */
+    VIEW_REVIEW(OK, "리뷰가 조회 되었습니다."),
+    CREATE_REVIEW(CREATED, "리뷰 생성이 되었습니다."),
+    UPDATE_REVIEW(RESET_CONTENT, "리뷰 수정이 되었습니다."),
+    DELETE_REVIEW(RESET_CONTENT, "리뷰 삭제가 되었습니다."),
+
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
     PASSWORD_NOT_MATCH(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
