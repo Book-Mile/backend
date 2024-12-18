@@ -26,6 +26,11 @@ public enum StatusCode {
     UPDATE_REVIEW(RESET_CONTENT, "리뷰 수정이 되었습니다."),
     DELETE_REVIEW(RESET_CONTENT, "리뷰 삭제가 되었습니다."),
 
+    /* Record */
+    VIEW_RECORD(OK, "기록이 조회 되었습니다."),
+    CREATE_RECORD(CREATED, "기록 작성이 완료 되었습니다."),
+    UPDATE_RECORD(RESET_CONTENT, "기록 수정이 완료 되었습니다."),
+
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
     PASSWORD_NOT_MATCH(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
