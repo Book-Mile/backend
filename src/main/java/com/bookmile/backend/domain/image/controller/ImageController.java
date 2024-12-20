@@ -8,6 +8,7 @@ import com.bookmile.backend.domain.image.dto.req.ImageSaveReqDto;
 import com.bookmile.backend.domain.image.dto.res.ImageListResDto;
 import com.bookmile.backend.domain.image.service.ImageService;
 import com.bookmile.backend.global.common.CommonResponse;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,8 @@ public class ImageController {
     }
 
     @PostMapping
-    public ResponseEntity<?> saveImages(@RequestParam Long recordId, @RequestBody ImageSaveReqDto imageSaveReqDto) {
+    public ResponseEntity<?> saveImages(@RequestParam Long recordId,
+                                        @Valid @RequestBody ImageSaveReqDto imageSaveReqDto) {
         imageService.saveImages(recordId, imageSaveReqDto);
         return ResponseEntity.status(SAVE_IMAGE.getStatus())
                 .body(CommonResponse.from(SAVE_IMAGE.getMessage(), null));
