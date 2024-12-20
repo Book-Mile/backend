@@ -9,6 +9,7 @@ import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
 import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
 import com.bookmile.backend.domain.record.service.RecordService;
 import com.bookmile.backend.global.common.CommonResponse;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class RecordController {
     @PostMapping
     public ResponseEntity<CommonResponse<Long>> createRecord(@RequestParam Long groupId,
                                                              @RequestParam Long userId,
-                                                             @RequestBody RecordReqDto recordReqDto) {
+                                                             @Valid @RequestBody RecordReqDto recordReqDto) {
         Long recordId = recordService.createRecord(groupId, userId, recordReqDto);
         return ResponseEntity.status(CREATE_RECORD.getStatus())
                 .body(CommonResponse.from(CREATE_RECORD.getMessage(), recordId));
@@ -46,7 +47,7 @@ public class RecordController {
 
     @PutMapping("/{recordId}")
     public ResponseEntity<CommonResponse<Long>> updateRecord(@PathVariable Long recordId,
-                                                             @RequestBody UpdateRecordReqDto updateRecordReqDto) {
+                                                             @Valid @RequestBody UpdateRecordReqDto updateRecordReqDto) {
         Long updateRecord = recordService.updateRecord(recordId, updateRecordReqDto);
         return ResponseEntity.status(UPDATE_RECORD.getStatus())
                 .body(CommonResponse.from(UPDATE_RECORD.getMessage(), updateRecord));
