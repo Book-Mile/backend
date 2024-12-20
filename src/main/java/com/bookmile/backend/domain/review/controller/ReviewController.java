@@ -9,6 +9,7 @@ import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
 import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
 import com.bookmile.backend.domain.review.service.ReviewService;
 import com.bookmile.backend.global.common.CommonResponse;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class ReviewController {
 
     @PostMapping
     public ResponseEntity<CommonResponse<Long>> createReview(@RequestParam Long bookId, @RequestParam Long userId,
-                                                             @RequestBody ReviewReqDto reviewReqDto) {
+                                                             @Valid @RequestBody ReviewReqDto reviewReqDto) {
         Long createReview = reviewService.createReview(bookId, userId, reviewReqDto);
         return ResponseEntity.status(CREATE_REVIEW.getStatus())
                 .body(CommonResponse.from(CREATE_REVIEW.getMessage(), createReview));
@@ -45,7 +46,7 @@ public class ReviewController {
 
     @PutMapping("/{reviewId}")
     public ResponseEntity<CommonResponse<Long>> updateReview(@PathVariable Long reviewId,
-                                                             @RequestBody ReviewReqDto reviewReqDto) {
+                                                             @Valid @RequestBody ReviewReqDto reviewReqDto) {
         Long updateReview = reviewService.updateReview(reviewId, reviewReqDto);
         return ResponseEntity.status(UPDATE_REVIEW.getStatus())
                 .body(CommonResponse.from(UPDATE_REVIEW.getMessage(), updateReview));
