@@ -7,7 +7,7 @@ import static com.bookmile.backend.global.common.StatusCode.VIEW_REVIEW;
 
 import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
 import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
-import com.bookmile.backend.domain.review.service.ReviewService;
+import com.bookmile.backend.domain.review.service.Impl.ReviewServiceImpl;
 import com.bookmile.backend.global.common.CommonResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -27,11 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
-    private final ReviewService reviewService;
+    private final ReviewServiceImpl reviewServiceImpl;
 
     @GetMapping
     public ResponseEntity<CommonResponse<List<ReviewListResDto>>> viewReviewList(@RequestParam Long bookId) {
-        List<ReviewListResDto> reviews = reviewService.viewReviewList(bookId);
+        List<ReviewListResDto> reviews = reviewServiceImpl.viewReviewList(bookId);
         return ResponseEntity.status(VIEW_REVIEW.getStatus())
                 .body(CommonResponse.from(VIEW_REVIEW.getMessage(), reviews));
     }
@@ -39,7 +39,7 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<CommonResponse<Long>> createReview(@RequestParam Long bookId, @RequestParam Long userId,
                                                              @Valid @RequestBody ReviewReqDto reviewReqDto) {
-        Long createReview = reviewService.createReview(bookId, userId, reviewReqDto);
+        Long createReview = reviewServiceImpl.createReview(bookId, userId, reviewReqDto);
         return ResponseEntity.status(CREATE_REVIEW.getStatus())
                 .body(CommonResponse.from(CREATE_REVIEW.getMessage(), createReview));
     }
@@ -47,14 +47,14 @@ public class ReviewController {
     @PutMapping("/{reviewId}")
     public ResponseEntity<CommonResponse<Long>> updateReview(@PathVariable Long reviewId,
                                                              @Valid @RequestBody ReviewReqDto reviewReqDto) {
-        Long updateReview = reviewService.updateReview(reviewId, reviewReqDto);
+        Long updateReview = reviewServiceImpl.updateReview(reviewId, reviewReqDto);
         return ResponseEntity.status(UPDATE_REVIEW.getStatus())
                 .body(CommonResponse.from(UPDATE_REVIEW.getMessage(), updateReview));
     }
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<CommonResponse<Long>> deleteReview(@PathVariable Long reviewId) {
-        Long deleteReview = reviewService.deleteReview(reviewId);
+        Long deleteReview = reviewServiceImpl.deleteReview(reviewId);
         return ResponseEntity.status(DELETE_REVIEW.getStatus())
                 .body(CommonResponse.from(DELETE_REVIEW.getMessage(), deleteReview));
     }

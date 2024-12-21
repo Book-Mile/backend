@@ -7,6 +7,7 @@ import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
 import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
 import com.bookmile.backend.domain.review.entity.Review;
 import com.bookmile.backend.domain.review.repository.ReviewRepository;
+import com.bookmile.backend.domain.review.service.Impl.ReviewServiceImpl;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -17,10 +18,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 @Transactional
-class ReviewServiceTest {
+class ReviewServiceImplTest {
 
     @Autowired
-    private ReviewService reviewService;
+    private ReviewServiceImpl reviewServiceImpl;
 
     @Autowired
     private ReviewRepository reviewRepository;
@@ -50,7 +51,7 @@ class ReviewServiceTest {
         reviewRepository.save(review2);
 
         // When
-        List<ReviewListResDto> reviews = reviewService.viewReviewList(book.getId());
+        List<ReviewListResDto> reviews = reviewServiceImpl.viewReviewList(book.getId());
 
         // Then
         assertEquals(2, reviews.size());
@@ -70,7 +71,7 @@ class ReviewServiceTest {
         ReviewReqDto reviewReqDto = new ReviewReqDto(4.5, "굳굳");
 
         // When
-        Long reviewId = reviewService.createReview(book.getId(), user.getId(), reviewReqDto);
+        Long reviewId = reviewServiceImpl.createReview(book.getId(), user.getId(), reviewReqDto);
 
         // Then
         Review review = reviewRepository.findById(reviewId).orElseThrow();
@@ -94,7 +95,7 @@ class ReviewServiceTest {
         ReviewReqDto reviewReqDto = new ReviewReqDto(1.0, "다시 생각해보니 별로네요.");
 
         // When
-        Long reviewId = reviewService.updateReview(review.getId(), reviewReqDto);
+        Long reviewId = reviewServiceImpl.updateReview(review.getId(), reviewReqDto);
 
         // Then
         Review updateReview = reviewRepository.findById(reviewId).orElseThrow();
@@ -116,7 +117,7 @@ class ReviewServiceTest {
         reviewRepository.save(review);
 
         // When
-        Long reviewId = reviewService.deleteReview(review.getId());
+        Long reviewId = reviewServiceImpl.deleteReview(review.getId());
 
         // Then
         Review deleteReview = reviewRepository.findById(reviewId).orElseThrow();
