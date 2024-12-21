@@ -1,6 +1,7 @@
 package com.bookmile.backend.domain.review.entity;
 
 import com.bookmile.backend.domain.book.entity.Book;
+import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.global.config.BaseEntity;
 import jakarta.persistence.Column;
@@ -13,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -44,10 +46,29 @@ public class Review extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
+    @Builder
     public Review(User user, Book book, Double rating, String text) {
         this.user = user;
         this.book = book;
         this.rating = rating;
         this.text = text;
+    }
+
+    public static Review from(User user, Book book, ReviewReqDto reviewReqDto) {
+        return Review.builder()
+                .user(user)
+                .book(book)
+                .rating(reviewReqDto.getRating())
+                .text(reviewReqDto.getText())
+                .build();
+    }
+
+    public void update(ReviewReqDto reviewReqDto) {
+        this.rating = reviewReqDto.getRating();
+        this.text = reviewReqDto.getText();
+    }
+
+    public void delete(Review review) {
+        this.isDeleted = Boolean.TRUE;
     }
 }
