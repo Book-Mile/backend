@@ -10,6 +10,7 @@ import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
 import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
 import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.record.repository.RecordRepository;
+import com.bookmile.backend.domain.record.service.Impl.RecordServiceImpl;
 import com.bookmile.backend.domain.review.service.BookRepository;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
@@ -23,7 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 @Transactional
-class RecordServiceTest {
+class RecordServiceImplTest {
 
     @Autowired
     private BookRepository bookRepository;
@@ -41,7 +42,7 @@ class RecordServiceTest {
     private RecordRepository recordRepository;
 
     @Autowired
-    private RecordService recordService;
+    private RecordServiceImpl recordServiceImpl;
 
     private Book book;
     private User user;
@@ -66,7 +67,7 @@ class RecordServiceTest {
     @Test
     void 사용자의_그룹에서의_기록_생성() {
         //When
-        Long recordId1 = recordService.createRecord(group.getId(), user.getId(),
+        Long recordId1 = recordServiceImpl.createRecord(group.getId(), user.getId(),
                 new RecordReqDto("나의 기록1", 193));
         Record record = recordRepository.findById(recordId1).orElseThrow();
 
@@ -79,18 +80,18 @@ class RecordServiceTest {
     @Test
     void 사용자의_그룹에_해당하는_기록_불러오기() {
         //Given
-        recordService.createRecord(
+        recordServiceImpl.createRecord(
                 group.getId(),
                 user.getId(),
                 new RecordReqDto("기록1", 193));
 
-        recordService.createRecord(
+        recordServiceImpl.createRecord(
                 group.getId(),
                 user.getId(),
                 new RecordReqDto("기록2", 234));
 
         //When
-        List<RecordListResDto> records = recordService.viewRecordList(group.getId(), user.getId());
+        List<RecordListResDto> records = recordServiceImpl.viewRecordList(group.getId(), user.getId());
 
         //Then
         assertEquals(2, records.size());
@@ -105,7 +106,7 @@ class RecordServiceTest {
     void 기록_수정() {
         //When
         // 일단 생성
-        Long recordId = recordService.createRecord(group.getId(), user.getId(),
+        Long recordId = recordServiceImpl.createRecord(group.getId(), user.getId(),
                 new RecordReqDto("나의 기록1", 193));
         Record record1 = recordRepository.findById(recordId).orElseThrow();
 
@@ -113,7 +114,7 @@ class RecordServiceTest {
         assertEquals("나의 기록1", record1.getText());
 
         // 그리고 수정
-        Long updateRecord = recordService.updateRecord(recordId,
+        Long updateRecord = recordServiceImpl.updateRecord(recordId,
                 new UpdateRecordReqDto("나의 수정한 기록1", 193));
         Record record2 = recordRepository.findById(updateRecord).orElseThrow();
 

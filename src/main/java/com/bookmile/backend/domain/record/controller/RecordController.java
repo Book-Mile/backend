@@ -7,7 +7,7 @@ import static com.bookmile.backend.global.common.StatusCode.VIEW_RECORD;
 import com.bookmile.backend.domain.record.dto.req.RecordReqDto;
 import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
 import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
-import com.bookmile.backend.domain.record.service.RecordService;
+import com.bookmile.backend.domain.record.service.Impl.RecordServiceImpl;
 import com.bookmile.backend.global.common.CommonResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -26,12 +26,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/records")
 @RequiredArgsConstructor
 public class RecordController {
-    private RecordService recordService;
+    private RecordServiceImpl recordServiceImpl;
 
     @GetMapping
     public ResponseEntity<CommonResponse<List<RecordListResDto>>> viewRecordList(@RequestParam Long groupId,
                                                                                  @RequestParam Long userId) {
-        List<RecordListResDto> records = recordService.viewRecordList(groupId, userId);
+        List<RecordListResDto> records = recordServiceImpl.viewRecordList(groupId, userId);
         return ResponseEntity.status(VIEW_RECORD.getStatus())
                 .body(CommonResponse.from(VIEW_RECORD.getMessage(), records));
     }
@@ -40,7 +40,7 @@ public class RecordController {
     public ResponseEntity<CommonResponse<Long>> createRecord(@RequestParam Long groupId,
                                                              @RequestParam Long userId,
                                                              @Valid @RequestBody RecordReqDto recordReqDto) {
-        Long recordId = recordService.createRecord(groupId, userId, recordReqDto);
+        Long recordId = recordServiceImpl.createRecord(groupId, userId, recordReqDto);
         return ResponseEntity.status(CREATE_RECORD.getStatus())
                 .body(CommonResponse.from(CREATE_RECORD.getMessage(), recordId));
     }
@@ -48,7 +48,7 @@ public class RecordController {
     @PutMapping("/{recordId}")
     public ResponseEntity<CommonResponse<Long>> updateRecord(@PathVariable Long recordId,
                                                              @Valid @RequestBody UpdateRecordReqDto updateRecordReqDto) {
-        Long updateRecord = recordService.updateRecord(recordId, updateRecordReqDto);
+        Long updateRecord = recordServiceImpl.updateRecord(recordId, updateRecordReqDto);
         return ResponseEntity.status(UPDATE_RECORD.getStatus())
                 .body(CommonResponse.from(UPDATE_RECORD.getMessage(), updateRecord));
     }

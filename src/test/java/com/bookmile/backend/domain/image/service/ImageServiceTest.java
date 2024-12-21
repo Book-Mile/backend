@@ -12,7 +12,7 @@ import com.bookmile.backend.domain.image.repository.ImageRepository;
 import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.record.repository.RecordRepository;
 import com.bookmile.backend.domain.record.service.GroupRepository;
-import com.bookmile.backend.domain.record.service.RecordService;
+import com.bookmile.backend.domain.record.service.Impl.RecordServiceImpl;
 import com.bookmile.backend.domain.record.service.UserGroupRepository;
 import com.bookmile.backend.domain.review.service.BookRepository;
 import com.bookmile.backend.domain.user.entity.User;
@@ -44,7 +44,7 @@ class ImageServiceTest {
     private RecordRepository recordRepository;
 
     @Autowired
-    private RecordService recordService;
+    private RecordServiceImpl recordServiceImpl;
 
     @Autowired
     private ImageRepository imageRepository;
