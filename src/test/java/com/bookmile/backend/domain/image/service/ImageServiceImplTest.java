@@ -9,6 +9,7 @@ import com.bookmile.backend.domain.image.dto.req.ImageSaveReqDto;
 import com.bookmile.backend.domain.image.dto.res.ImageListResDto;
 import com.bookmile.backend.domain.image.entity.Image;
 import com.bookmile.backend.domain.image.repository.ImageRepository;
+import com.bookmile.backend.domain.image.service.Impl.ImageServiceImpl;
 import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.record.repository.RecordRepository;
 import com.bookmile.backend.domain.record.service.GroupRepository;
@@ -27,7 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 @Transactional
-class ImageServiceTest {
+class ImageServiceImplTest {
     @Autowired
     private BookRepository bookRepository;
 
@@ -50,7 +51,7 @@ class ImageServiceTest {
     private ImageRepository imageRepository;
 
     @Autowired
-    private ImageService imageService;
+    private ImageServiceImpl imageServiceImpl;
 
     private Book book;
     private User user;
@@ -79,7 +80,7 @@ class ImageServiceTest {
     @Test
     void 기록에_이미지_저장() {
         //When
-        imageService.saveImages(record.getId(), new ImageSaveReqDto(List.of("url1", "url2", "url3")));
+        imageServiceImpl.saveImages(record.getId(), new ImageSaveReqDto(List.of("url1", "url2", "url3")));
 
         List<Image> images = imageRepository.findAllByRecordId(record.getId());
 
@@ -90,8 +91,8 @@ class ImageServiceTest {
     @Test
     void 기록_이미지_조회() {
         //When
-        imageService.saveImages(record.getId(), new ImageSaveReqDto(List.of("url1", "url2", "url3")));
-        List<ImageListResDto> imageUrls = imageService.viewImages(record.getId());
+        imageServiceImpl.saveImages(record.getId(), new ImageSaveReqDto(List.of("url1", "url2", "url3")));
+        List<ImageListResDto> imageUrls = imageServiceImpl.viewImages(record.getId());
 
         //Then
         assertEquals("url1", imageUrls.get(0).getImageUrls());
@@ -102,7 +103,7 @@ class ImageServiceTest {
     @Test
     void 기록_이미지_삭제() {
         //When
-        imageService.saveImages(record.getId(), new ImageSaveReqDto(List.of("url1", "url2", "url3")));
+        imageServiceImpl.saveImages(record.getId(), new ImageSaveReqDto(List.of("url1", "url2", "url3")));
         List<Image> images = imageRepository.findAllByRecordId(record.getId());
 
         // 삭제 전
@@ -111,7 +112,7 @@ class ImageServiceTest {
         assertEquals(Boolean.FALSE, images.get(2).getIsDeleted());
 
         //Then
-        imageService.deleteImage(images.get(1).getId());
+        imageServiceImpl.deleteImage(images.get(1).getId());
 
         // 삭제 후
         assertEquals(Boolean.FALSE, images.get(0).getIsDeleted());

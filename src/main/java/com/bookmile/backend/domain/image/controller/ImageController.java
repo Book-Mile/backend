@@ -6,7 +6,7 @@ import static com.bookmile.backend.global.common.StatusCode.VIEW_IMAGE;
 
 import com.bookmile.backend.domain.image.dto.req.ImageSaveReqDto;
 import com.bookmile.backend.domain.image.dto.res.ImageListResDto;
-import com.bookmile.backend.domain.image.service.ImageService;
+import com.bookmile.backend.domain.image.service.Impl.ImageServiceImpl;
 import com.bookmile.backend.global.common.CommonResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -26,11 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ImageController {
 
-    private ImageService imageService;
+    private ImageServiceImpl imageServiceImpl;
 
     @GetMapping("{recordId}")
     public ResponseEntity<CommonResponse<List<ImageListResDto>>> viewImages(@PathVariable Long recordId) {
-        List<ImageListResDto> images = imageService.viewImages(recordId);
+        List<ImageListResDto> images = imageServiceImpl.viewImages(recordId);
         return ResponseEntity.status(VIEW_IMAGE.getStatus())
                 .body(CommonResponse.from(VIEW_IMAGE.getMessage(), images));
     }
@@ -38,14 +38,14 @@ public class ImageController {
     @PostMapping
     public ResponseEntity<?> saveImages(@RequestParam Long recordId,
                                         @Valid @RequestBody ImageSaveReqDto imageSaveReqDto) {
-        imageService.saveImages(recordId, imageSaveReqDto);
+        imageServiceImpl.saveImages(recordId, imageSaveReqDto);
         return ResponseEntity.status(SAVE_IMAGE.getStatus())
                 .body(CommonResponse.from(SAVE_IMAGE.getMessage(), null));
     }
 
     @DeleteMapping("{imageId}")
     public ResponseEntity<?> deleteImage(@PathVariable Long imageId) {
-        imageService.deleteImage(imageId);
+        imageServiceImpl.deleteImage(imageId);
         return ResponseEntity.status(DELETE_IMAGE.getStatus())
                 .body(CommonResponse.from(DELETE_IMAGE.getMessage(), null));
     }

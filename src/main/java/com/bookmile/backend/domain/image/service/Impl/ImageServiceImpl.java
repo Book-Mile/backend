@@ -1,4 +1,4 @@
-package com.bookmile.backend.domain.image.service;
+package com.bookmile.backend.domain.image.service.Impl;
 
 import static com.bookmile.backend.global.common.StatusCode.IMAGE_NOT_FOUND;
 import static com.bookmile.backend.global.common.StatusCode.RECORD_NOT_FOUND;
@@ -16,11 +16,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ImageService {
+public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
     private final RecordRepository recordRepository;
 
+    @Override
     public List<ImageListResDto> viewImages(Long recordId) {
         recordRepository.findById(recordId)
                 .orElseThrow(() -> new CustomException(RECORD_NOT_FOUND));
@@ -31,6 +32,7 @@ public class ImageService {
                 .toList();
     }
 
+    @Override
     public void saveImages(Long recordId, ImageSaveReqDto imageSaveReqDto) {
         Record record = recordRepository.findById(recordId)
                 .orElseThrow(() -> new CustomException(RECORD_NOT_FOUND));
@@ -42,6 +44,7 @@ public class ImageService {
         imageRepository.saveAll(images);
     }
 
+    @Override
     public void deleteImage(Long imageId) {
         Image image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new CustomException(IMAGE_NOT_FOUND));
