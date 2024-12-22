@@ -1,16 +1,17 @@
 package com.bookmile.backend.domain.record.entity;
 
-import com.bookmile.backend.domain.image.entity.Image;
+import com.bookmile.backend.domain.record.dto.req.RecordReqDto;
+import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
+import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import com.bookmile.backend.global.config.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,9 +28,9 @@ public class Record extends BaseEntity {
     @Column(name = "record_id")
     private Long id;
 
-    @OneToMany
-    @JoinColumn(name = "record_id")
-    private List<Image> image = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usergroup_id", nullable = false)
+    private UserGroup userGroup;
 
     @Column
     private String text;
@@ -37,8 +38,23 @@ public class Record extends BaseEntity {
     @Column(nullable = false)
     private Integer currentPage;
 
-    public Record(String text, Integer currentPage) {
+    public Record(UserGroup userGroup, String text, Integer currentPage) {
+        this.userGroup = userGroup;
         this.text = text;
         this.currentPage = currentPage;
+    }
+
+    public static Record from(UserGroup userGroup, RecordReqDto recordReqDto) {
+
+        return new Record(
+                userGroup,
+                recordReqDto.getText(),
+                recordReqDto.getCurrentPage()
+        );
+    }
+
+    public void update(UpdateRecordReqDto updateRecordReqDto) {
+        this.text = updateRecordReqDto.getText();
+        this.currentPage = updateRecordReqDto.getCurrentPage();
     }
 }
