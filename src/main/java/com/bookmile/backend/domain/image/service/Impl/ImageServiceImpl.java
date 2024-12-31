@@ -4,7 +4,6 @@ import static com.bookmile.backend.global.common.StatusCode.IMAGE_NOT_FOUND;
 import static com.bookmile.backend.global.common.StatusCode.RECORD_NOT_FOUND;
 
 import com.bookmile.backend.domain.image.dto.req.ImageSaveReqDto;
-import com.bookmile.backend.domain.image.dto.res.ImageListResDto;
 import com.bookmile.backend.domain.image.entity.Image;
 import com.bookmile.backend.domain.image.repository.ImageRepository;
 import com.bookmile.backend.domain.record.entity.Record;
@@ -22,13 +21,13 @@ public class ImageServiceImpl implements ImageService {
     private final RecordRepository recordRepository;
 
     @Override
-    public List<ImageListResDto> viewImages(Long recordId) {
+    public List<String> viewImages(Long recordId) {
         recordRepository.findById(recordId)
                 .orElseThrow(() -> new CustomException(RECORD_NOT_FOUND));
 
         return imageRepository.findAllByRecordId(recordId)
                 .stream()
-                .map(ImageListResDto::createImage)
+                .map(Image::getImageUrl)
                 .toList();
     }
 

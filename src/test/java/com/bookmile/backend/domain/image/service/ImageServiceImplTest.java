@@ -6,7 +6,6 @@ import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.group.entity.Group;
 import com.bookmile.backend.domain.group.entity.Role;
 import com.bookmile.backend.domain.image.dto.req.ImageSaveReqDto;
-import com.bookmile.backend.domain.image.dto.res.ImageListResDto;
 import com.bookmile.backend.domain.image.entity.Image;
 import com.bookmile.backend.domain.image.repository.ImageRepository;
 import com.bookmile.backend.domain.image.service.Impl.ImageServiceImpl;
@@ -92,12 +91,12 @@ class ImageServiceImplTest {
     void 기록_이미지_조회() {
         //When
         imageServiceImpl.saveImages(record.getId(), new ImageSaveReqDto(List.of("url1", "url2", "url3")));
-        List<ImageListResDto> imageUrls = imageServiceImpl.viewImages(record.getId());
+        List<String> imageUrls = imageServiceImpl.viewImages(record.getId());
 
         //Then
-        assertEquals("url1", imageUrls.get(0).getImageUrls());
-        assertEquals("url2", imageUrls.get(1).getImageUrls());
-        assertEquals("url3", imageUrls.get(2).getImageUrls());
+        assertEquals("url1", imageUrls.get(0));
+        assertEquals("url2", imageUrls.get(1));
+        assertEquals("url3", imageUrls.get(2));
     }
 
     @Test
