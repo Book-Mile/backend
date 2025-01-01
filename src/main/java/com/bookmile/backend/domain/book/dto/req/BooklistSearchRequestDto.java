@@ -1,4 +1,4 @@
-package com.bookmile.backend.domain.book.dto;
+package com.bookmile.backend.domain.book.dto.req;
 
 public record BooklistSearchRequestDto (
         String query,

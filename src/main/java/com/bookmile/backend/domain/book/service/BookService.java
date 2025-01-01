@@ -1,7 +1,7 @@
 package com.bookmile.backend.domain.book.service;
 
-import com.bookmile.backend.domain.book.dto.BooklistSearchRequestDto;
-import com.bookmile.backend.domain.book.dto.BooklistSearchResponseDto;
+import com.bookmile.backend.domain.book.dto.req.BooklistSearchRequestDto;
+import com.bookmile.backend.domain.book.dto.res.BooklistSearchResponseDto;
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.book.repository.BookRepository;
 import com.bookmile.backend.global.utils.AladinClient;

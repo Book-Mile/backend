@@ -1,7 +1,7 @@
 package com.bookmile.backend.domain.book.controller;
 
-import com.bookmile.backend.domain.book.dto.BooklistSearchRequestDto;
-import com.bookmile.backend.domain.book.dto.BooklistSearchResponseDto;
+import com.bookmile.backend.domain.book.dto.req.BooklistSearchRequestDto;
+import com.bookmile.backend.domain.book.dto.res.BooklistSearchResponseDto;
 import com.bookmile.backend.domain.book.service.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

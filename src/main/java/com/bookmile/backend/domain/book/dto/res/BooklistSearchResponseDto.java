@@ -1,4 +1,4 @@
-package com.bookmile.backend.domain.book.dto;
+package com.bookmile.backend.domain.book.dto.res;
 
 public record BooklistSearchResponseDto (
         String title,
