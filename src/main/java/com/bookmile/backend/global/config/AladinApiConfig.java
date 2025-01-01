@@ -22,5 +22,5 @@ public class AladinApiConfig {
         return builder
                 .defaultHeader("Accept", "application/json") // JSON 응답을 요청
                 .build();
-    }
+    }   
 }
