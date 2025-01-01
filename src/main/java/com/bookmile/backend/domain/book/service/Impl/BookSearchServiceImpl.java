@@ -1,6 +1,7 @@
-package com.bookmile.backend.domain.book.service.impl;
+package com.bookmile.backend.domain.book.service.Impl;
 
 import com.bookmile.backend.domain.book.dto.req.BookSearchRequestDto;
+import com.bookmile.backend.domain.book.dto.res.BookSearchApiResponse;
 import com.bookmile.backend.domain.book.dto.res.BookSearchResponseDto;
 import com.bookmile.backend.domain.book.service.BookSearchService;
 import lombok.RequiredArgsConstructor;
@@ -25,24 +26,13 @@ public class BookSearchServiceImpl implements BookSearchService {
         String url = String.format("%s?ttbkey=%s&Query=%s&QueryType=%s&MaxResults=%d&Sort=%s&output=js&Version=20131101",
                 API_URL, TTB_KEY, requestDto.getQuery(), requestDto.getQueryType(), requestDto.getMaxResults(), requestDto.getSort());
 
-        // API 호출
-        ResponseEntity<BookSearchResponseDto[]> response = restTemplate.getForEntity(url, BookSearchResponseDto[].class);
+        // JSON 응답을 BookSearchApiResponse로 매핑
+        ResponseEntity<BookSearchApiResponse> response = restTemplate.getForEntity(url, BookSearchApiResponse.class);
 
-        // 응답
-        BookSearchResponseDto[] books = response.getBody();
-        if (books != null) {
-            List<BookSearchResponseDto> result = new ArrayList<>();
-            for (BookSearchResponseDto book : books) {
-                result.add(BookSearchResponseDto.builder()
-                        .title(book.getTitle())
-                        .author(book.getAuthor())
-                        .publisher(book.getPublisher())
-                        .cover(book.getCover())
-                        .link(book.getLink())
-                        .isbn13(book.getIsbn13())
-                        .build());
-            }
-            return result;
+        // BookSearchApiResponse에서 items 추출
+        BookSearchApiResponse apiResponse = response.getBody();
+        if (apiResponse != null) {
+            return apiResponse.getItems();
         }
         return List.of();
     }
