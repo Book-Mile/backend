@@ -22,7 +22,7 @@ public class BookSearchServiceImpl implements BookSearchService {
     @Override
     public List<BookSearchResponseDto> searchBooks(BookSearchRequestDto requestDto) {
         // 알라딘 API 요청 URL 구성
-        String url = String.format("%s?ttbkey=%s&Query=%s&QueryType=%s&MaxResults=%d&Sort=%s&output=xml&Version=20131101",
+        String url = String.format("%s?ttbkey=%s&Query=%s&QueryType=%s&MaxResults=%d&Sort=%s&output=js&Version=20131101",
                 API_URL, TTB_KEY, requestDto.getQuery(), requestDto.getQueryType(), requestDto.getMaxResults(), requestDto.getSort());
 
         // API 호출
