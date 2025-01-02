@@ -11,6 +11,6 @@ import java.util.List;
 public class BookSearchApiResponse {
     private String title;
 
-    @JsonProperty("item") // JSON의 "item" 필드를 매핑
+    @JsonProperty("item") // item 필드 매핑
     private List<BookSearchResponseDto> items;
 }

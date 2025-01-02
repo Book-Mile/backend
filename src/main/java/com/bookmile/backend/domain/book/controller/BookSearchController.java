@@ -25,7 +25,6 @@ public class BookSearchController {
             @Validated @RequestBody BookSearchRequestDto requestDto) {
 
         List<BookSearchResponseDto> books = bookSearchService.searchBooks(requestDto);
-        System.out.println("Books from Service: " + books); // 디버깅용 로그
         return ResponseEntity.ok(CommonResponse.from("도서 검색 결과", books));
     }
 }
