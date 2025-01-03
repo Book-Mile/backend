@@ -1,8 +1,10 @@
 package com.bookmile.backend.domain.book.dto.res;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
@@ -27,5 +29,14 @@ public class BookDetailResponseDto {
     private String description;
 
     @Schema(description = "상품 페이지", example = "100")
-    private int totalPage;
+    //private int totalPage;
+    @JsonProperty("subInfo")
+    private SubInfo subInfo; // subInfo 매핑을 위한 필드
+
+    // SubInfo 내부 클래스
+    @Getter
+    @NoArgsConstructor
+    public static class SubInfo {
+        private int itemPage;
+    }
 }
