@@ -19,7 +19,7 @@ public class BookSearchController {
 
     private final BookSearchService bookSearchService;
 
-    @Operation(summary = "도서 검색", description = "알라딘 API를 사용하여 도서를 검색합니다.")
+    @Operation(summary = "도서 리스트 검색")
     @PostMapping("/search")
     public ResponseEntity<CommonResponse<List<BookSearchResponseDto>>> searchBooks(
             @Validated @RequestBody BookSearchRequestDto requestDto) {

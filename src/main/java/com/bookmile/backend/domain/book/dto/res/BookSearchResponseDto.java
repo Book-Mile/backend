@@ -1,5 +1,6 @@
 package com.bookmile.backend.domain.book.dto.res;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,9 +20,6 @@ public class BookSearchResponseDto {
 
     @Schema(description = "도서 커버 이미지 URL", example = "http://example.com/cover.jpg")
     private String cover;
-
-    @Schema(description = "도서 상세 페이지 URL", example = "http://example.com/book")
-    private String link;
 
     @Schema(description = "ISBN 번호", example = "12345678987654")
     private String isbn13;
