@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class BookSearchApiResponse {
+public class BookListApiResponse {
     private String title;
 
     @JsonProperty("item") // item 필드 매핑

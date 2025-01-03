@@ -2,7 +2,7 @@ package com.bookmile.backend.domain.book.controller;
 
 import com.bookmile.backend.domain.book.dto.req.BookListRequestDto;
 import com.bookmile.backend.domain.book.dto.res.BookListResponseDto;
-import com.bookmile.backend.domain.book.service.BookSearchService;
+import com.bookmile.backend.domain.book.service.BookListService;
 import com.bookmile.backend.global.common.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import static com.bookmile.backend.global.common.StatusCode.BOOKLIST_SEARCH;
 @RequiredArgsConstructor
 public class BookSearchController {
 
-    private final BookSearchService bookSearchService;
+    private final BookListService bookSearchService;
 
     @Operation(summary = "도서 리스트 검색")
     @PostMapping("/search")

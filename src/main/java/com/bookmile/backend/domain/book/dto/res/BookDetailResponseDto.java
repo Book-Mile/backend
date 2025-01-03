@@ -26,5 +26,6 @@ public class BookDetailResponseDto {
     @Schema(description = "상품 설명", example = "어쩌구")
     private String description;
 
+    //@Schema(description = "상품 페이지", example = "100")
     //private int totalPage;
 }

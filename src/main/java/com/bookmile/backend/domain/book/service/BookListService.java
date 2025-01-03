@@ -5,6 +5,6 @@ import com.bookmile.backend.domain.book.dto.res.BookListResponseDto;
 
 import java.util.List;
 
-public interface BookSearchService {
+public interface BookListService {
     List<BookListResponseDto> searchBooks(BookListRequestDto requestDto);
 }
