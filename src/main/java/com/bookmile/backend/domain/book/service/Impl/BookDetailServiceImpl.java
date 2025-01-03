@@ -19,14 +19,14 @@ public class BookDetailServiceImpl implements BookDetailService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${aladin.api.url}")
+    @Value("${aladin.api.url.detail}")
     private String API_URL;
 
     @Value("${aladin.api.key}")
     private String TTB_KEY;
 
     @Override
-    public List<BookDetailResponseDto> searchBookDetails(BookDetailRequestDto bookDetailRequestDto) {
+    public List<BookDetailResponseDto> detailBooks(BookDetailRequestDto bookDetailRequestDto) {
         String url = String.format("%s?ttbkey=%s&ItemIdType=ISBN13&ItemId=%s&output=js&Version=20131101",
                 API_URL, TTB_KEY, bookDetailRequestDto.getIsbn13());
 

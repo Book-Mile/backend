@@ -13,4 +13,5 @@ public class BookDetailApiResponse {
 
     @JsonProperty("item") // item 필드 매핑
     private List<BookDetailResponseDto> items;
+
 }
