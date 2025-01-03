@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class BookSearchRequestDto {
+public class BookListRequestDto {
 
     @NotBlank(message = "검색어는 필수 입력 사항입니다.")
     @Schema(description = "도서 검색어", example = "This is Book")

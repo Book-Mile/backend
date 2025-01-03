@@ -1,13 +1,12 @@
 package com.bookmile.backend.domain.book.dto.res;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class BookSearchResponseDto {
+public class BookListResponseDto {
 
     @Schema(description = "도서 제목", example = "Title Result")
     private String title;

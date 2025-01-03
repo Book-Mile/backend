@@ -12,5 +12,5 @@ public class BookSearchApiResponse {
     private String title;
 
     @JsonProperty("item") // item 필드 매핑
-    private List<BookSearchResponseDto> items;
+    private List<BookListResponseDto> items;
 }

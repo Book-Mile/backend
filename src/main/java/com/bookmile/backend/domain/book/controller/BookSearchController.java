@@ -1,7 +1,7 @@
 package com.bookmile.backend.domain.book.controller;
 
-import com.bookmile.backend.domain.book.dto.req.BookSearchRequestDto;
-import com.bookmile.backend.domain.book.dto.res.BookSearchResponseDto;
+import com.bookmile.backend.domain.book.dto.req.BookListRequestDto;
+import com.bookmile.backend.domain.book.dto.res.BookListResponseDto;
 import com.bookmile.backend.domain.book.service.BookSearchService;
 import com.bookmile.backend.global.common.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,10 +23,10 @@ public class BookSearchController {
 
     @Operation(summary = "도서 리스트 검색")
     @PostMapping("/search")
-    public ResponseEntity<CommonResponse<List<BookSearchResponseDto>>> searchBooks(
-            @Validated @RequestBody BookSearchRequestDto requestDto) {
+    public ResponseEntity<CommonResponse<List<BookListResponseDto>>> searchBooks(
+            @Validated @RequestBody BookListRequestDto requestDto) {
 
-        List<BookSearchResponseDto> booklist = bookSearchService.searchBooks(requestDto);
+        List<BookListResponseDto> booklist = bookSearchService.searchBooks(requestDto);
         return ResponseEntity.ok(CommonResponse.from(BOOKLIST_SEARCH.getMessage(),booklist));
     }
 }
