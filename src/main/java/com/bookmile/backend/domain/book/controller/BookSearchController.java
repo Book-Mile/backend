@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.bookmile.backend.global.common.StatusCode.BOOKLIST_SEARCH;
+
 @RestController
 @RequestMapping("/api/v1/books")
 @RequiredArgsConstructor
@@ -24,7 +26,7 @@ public class BookSearchController {
     public ResponseEntity<CommonResponse<List<BookSearchResponseDto>>> searchBooks(
             @Validated @RequestBody BookSearchRequestDto requestDto) {
 
-        List<BookSearchResponseDto> books = bookSearchService.searchBooks(requestDto);
-        return ResponseEntity.ok(CommonResponse.from("도서 검색 결과", books));
+        List<BookSearchResponseDto> booklist = bookSearchService.searchBooks(requestDto);
+        return ResponseEntity.ok(CommonResponse.from(BOOKLIST_SEARCH.getMessage(),booklist));
     }
 }
