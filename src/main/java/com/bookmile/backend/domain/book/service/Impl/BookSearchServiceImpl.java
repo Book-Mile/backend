@@ -5,6 +5,7 @@ import com.bookmile.backend.domain.book.dto.res.BookSearchApiResponse;
 import com.bookmile.backend.domain.book.dto.res.BookSearchResponseDto;
 import com.bookmile.backend.domain.book.service.BookSearchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,12 @@ import java.util.List;
 public class BookSearchServiceImpl implements BookSearchService {
 
     private final RestTemplate restTemplate;
-    private static final String API_URL = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx";
-    private static final String TTB_KEY = "ttbsilkair0011548003";
+
+    @Value("${aladin.api.url}")
+    private String API_URL;
+
+    @Value("${aladin.api.key}")
+    private String TTB_KEY;
 
     @Override
     public List<BookSearchResponseDto> searchBooks(BookSearchRequestDto requestDto) {
