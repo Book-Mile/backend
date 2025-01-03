@@ -19,6 +19,7 @@ public enum StatusCode {
     /* User */
     SIGN_UP(CREATED, "회원가입이 완료되었습니다."),
     SIGN_IN(OK, "로그인에 성공하였습니다."),
+    GET_INFO(OK, "사용자 정보조회에 성공"),
 
     /* Review */
     VIEW_REVIEW(OK, "리뷰가 조회 되었습니다."),
