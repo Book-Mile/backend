@@ -21,7 +21,7 @@ public class GroupController {
 
     private final GroupService groupService;
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<CommonResponse<GroupCreateResponseDto>> createGroup(
             @RequestBody @Valid GroupCreateRequestDto requestDto,
             @RequestParam Long userId // userId를 직접 받음

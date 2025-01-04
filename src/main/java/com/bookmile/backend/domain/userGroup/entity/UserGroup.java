@@ -52,12 +52,6 @@ public class UserGroup extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
-    public UserGroup(User user, Group group, Role role) {
-        this.user = user;
-        this.group = group;
-        this.role = role;
-    }
-
     @Builder
     public UserGroup(User user, Group group, Role role) {
         this.user = user;

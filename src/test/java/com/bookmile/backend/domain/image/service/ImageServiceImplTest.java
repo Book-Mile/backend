@@ -4,17 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.group.entity.Group;
-import com.bookmile.backend.domain.group.entity.Role;
+import com.bookmile.backend.domain.userGroup.entity.Role;
 import com.bookmile.backend.domain.image.dto.req.ImageSaveReqDto;
 import com.bookmile.backend.domain.image.entity.Image;
 import com.bookmile.backend.domain.image.repository.ImageRepository;
 import com.bookmile.backend.domain.image.service.Impl.ImageServiceImpl;
 import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.record.repository.RecordRepository;
-import com.bookmile.backend.domain.record.service.GroupRepository;
+import com.bookmile.backend.domain.record.service.RecordGroupRepository;
 import com.bookmile.backend.domain.record.service.Impl.RecordServiceImpl;
-import com.bookmile.backend.domain.record.service.UserGroupRepository;
-import com.bookmile.backend.domain.review.service.BookRepository;
+import com.bookmile.backend.domain.record.service.RecordUserGroupRepository;
+import com.bookmile.backend.domain.review.service.ReviewBookRepository;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
@@ -29,16 +29,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Transactional
 class ImageServiceImplTest {
     @Autowired
-    private BookRepository bookRepository;
+    private ReviewBookRepository bookRepository;
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private GroupRepository groupRepository;
+    private RecordGroupRepository groupRepository;
 
     @Autowired
-    private UserGroupRepository userGroupRepository;
+    private RecordUserGroupRepository userGroupRepository;
 
     @Autowired
     private RecordRepository recordRepository;
@@ -60,7 +60,7 @@ class ImageServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        book = new Book("김진용의 인생", 456, "image", "김진용", "책설명", "링크url", 5.0);
+        book = new Book("123", "제목", "image", "김진용", "책설명", "링크url", 5);
         bookRepository.save(book);
 
         user = new User("김진용", "kje@naver.com", "1234", "urlurl");
