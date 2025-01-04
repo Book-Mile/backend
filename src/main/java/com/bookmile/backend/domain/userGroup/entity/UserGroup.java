@@ -1,7 +1,6 @@
 package com.bookmile.backend.domain.userGroup.entity;
 
 import com.bookmile.backend.domain.group.entity.Group;
-import com.bookmile.backend.domain.group.entity.Role;
 import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.global.config.BaseEntity;
