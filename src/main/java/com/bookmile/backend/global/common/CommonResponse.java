@@ -30,4 +30,5 @@ public class CommonResponse<T> {
                 .message(message)
                 .build();
     }
+
 }

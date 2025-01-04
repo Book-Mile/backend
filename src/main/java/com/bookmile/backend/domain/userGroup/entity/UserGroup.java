@@ -19,12 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class UserGroup extends BaseEntity {
 
     @Id
@@ -40,8 +42,7 @@ public class UserGroup extends BaseEntity {
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
-    @OneToMany
-    @JoinColumn(name = "usergroup_id")
+    @OneToMany(mappedBy = "userGroup")
     private List<Record> record = new ArrayList<>();
 
     @Column(nullable = false)
@@ -51,12 +52,10 @@ public class UserGroup extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
-    public void addUser(User user) {
+    public UserGroup(User user, Group group, Role role) {
         this.user = user;
-    }
-
-    public void addGroup(Group group) {
         this.group = group;
+        this.role = role;
     }
 
     @Builder
