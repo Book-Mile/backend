@@ -16,7 +16,7 @@ public class GroupCreateRequestDto {
 
     @NotBlank(message = "그룹 타입은 필수입니다.")
     @Schema(description = "그룹 타입", example = "group")
-    private String grouptype; // 개인 또는 단체
+    private String groupType; // 개인 또는 단체
 
     @NotNull(message = "최대 인원수는 필수입니다.(최대 50)")
     @Schema(description = "최대 인원수", example = "10")
@@ -33,5 +33,5 @@ public class GroupCreateRequestDto {
     @Schema(description = "도서 목표 방식", example = "CHAPTER")
     private String type;
 
-    private String customGoal; // 사용자 정의 목표 (Optional)
+    //private String customGoal; // 사용자 정의 목표 (Optional)
 }
