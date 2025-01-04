@@ -37,6 +37,13 @@ public enum StatusCode {
     SAVE_IMAGE(CREATED, "이미지 저장이 되었습니다."),
     DELETE_IMAGE(RESET_CONTENT, "이미지 삭제가 되었습니다."),
 
+    /* Book */
+    BOOKLIST_SEARCH(OK, "책 리스트 조회에 성공했습니다."),
+    BOOKDETAIL_SEARCH(OK, "책 상세 조회에 성공했습니다."),
+
+    /* Group */
+    GROUP_CREATE(CREATED, "그룹 생성에 성공했습니다."),
+
     /* 400 BAD_REQUEST : 잘못된 요청 */
     PASSWORD_NOT_MATCH(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 
@@ -60,4 +67,5 @@ public enum StatusCode {
 
     private final HttpStatus status;
     private final String message;
+
 }
