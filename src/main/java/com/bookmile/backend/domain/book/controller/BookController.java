@@ -21,7 +21,7 @@ import static com.bookmile.backend.global.common.StatusCode.BOOKLIST_SEARCH;
 @RestController
 @RequestMapping("/api/v1/books")
 @RequiredArgsConstructor
-public class BookSearchController {
+public class BookController {
 
     private final BookListService bookListService;
     private final BookDetailService bookDetailService;
