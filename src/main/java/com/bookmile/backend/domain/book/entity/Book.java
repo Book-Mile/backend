@@ -57,7 +57,7 @@ public class Book extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
-    public Book(String title, String author, String publisher, String cover, String link, String description) {
+    public Book(String title, String author, String publisher, String cover, String description, int totalPage) {
         this.isbn13 = getIsbn13();
         this.title = title;
         this.author = author;
