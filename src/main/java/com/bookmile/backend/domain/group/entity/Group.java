@@ -41,6 +41,9 @@ public class Group extends BaseEntity {
     private CheckPoint checkPoint;
 
     @Column(nullable = false)
+    private String type; // 그룹 구분 (개인/단체)
+
+    @Column(nullable = false)
     private int maxMembers; // 최대 인원수
 
     @Column(nullable = false)
@@ -61,11 +64,12 @@ public class Group extends BaseEntity {
     @Column(nullable = false)
 
     private Boolean isDeleted = false;
-    public Group(Book book, List<UserGroup> userGroup, CheckPoint checkPoint,int maxMembers, String groupName, String description,
+    public Group(Book book, List<UserGroup> userGroup, CheckPoint checkPoint,String type, int maxMembers, String groupName, String description,
                  String password, Boolean isOpen, Boolean isEnd) {
         this.book = book;
         this.userGroup = userGroup;
         this.checkPoint = checkPoint;
+        this.type = type;
         this.maxMembers = maxMembers;
         this.groupName = groupName;
         this.description = description;
