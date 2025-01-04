@@ -17,6 +17,7 @@ import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -64,6 +65,8 @@ public class Group extends BaseEntity {
     @Column(nullable = false)
 
     private Boolean isDeleted = false;
+
+    @Builder
     public Group(Book book, List<UserGroup> userGroup, CheckPoint checkPoint,String type, int maxMembers, String groupName, String description,
                  String password, Boolean isOpen, Boolean isEnd) {
         this.book = book;

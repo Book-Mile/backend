@@ -18,6 +18,7 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -56,5 +57,12 @@ public class UserGroup extends BaseEntity {
 
     public void addGroup(Group group) {
         this.group = group;
+    }
+
+    @Builder
+    public UserGroup(User user, Group group, Role role) {
+        this.user = user;
+        this.group = group;
+        this.role = role;
     }
 }
