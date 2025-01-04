@@ -12,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -57,14 +58,15 @@ public class Book extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
-    public Book(String title, String author, String publisher, String cover, String description, int totalPage) {
-        this.isbn13 = getIsbn13();
+    @Builder
+    public Book(String isbn13, String title, String author, String publisher, String cover, String description, int totalPage) {
+        this.isbn13 = isbn13;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.cover = cover;
         this.description = description;
-        this.totalPage = 0;
+        this.totalPage = totalPage;
     }
 
     protected Book() {

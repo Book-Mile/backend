@@ -29,7 +29,6 @@ public class BookDetailResponseDto {
     private String description;
 
     @Schema(description = "상품 페이지", example = "100")
-    //private int totalPage;
     @JsonProperty("subInfo")
     private SubInfo subInfo; // subInfo 매핑을 위한 필드
 
