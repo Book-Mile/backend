@@ -111,8 +111,7 @@ public class UserServiceImpl implements UserService {
     private void existsByEmail(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new CustomException(USER_ALREADY_EXISTS);
-        }
-        ;
+        };
     }
 
     private User findByEmail(String email) {
