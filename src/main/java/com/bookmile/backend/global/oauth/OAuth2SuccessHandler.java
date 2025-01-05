@@ -1,6 +1,7 @@
 package com.bookmile.backend.global.oauth;
 
 import com.bookmile.backend.global.common.UserRole;
+import com.bookmile.backend.global.exception.CustomException;
 import com.bookmile.backend.global.jwt.CustomUserDetails;
 import com.bookmile.backend.global.jwt.JwtTokenProvider;
 import jakarta.servlet.ServletException;
@@ -10,14 +11,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.security.Principal;
-import java.time.Duration;
 
 @Slf4j
 @Component
@@ -26,50 +25,57 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Value("${spring.oauth2.url.sign-in}")
-    private String signInUrl;
+    @Value("${spring.oauth2.url.callback}")
+    private String callbackUrl;
 
     @Value("${spring.oauth2.url.sign-up}")
     private String signUpUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        log.info("OAuth2SuccessHandler.onAuthenticationSuccess: 진입. Authentication: {}", authentication);
+            log.info("OAuth2SuccessHandler.onAuthenticationSuccess: 진입. Authentication: {}", authentication);
 
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            //CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        String email = userDetails.getUsername();
-        Long userId = userDetails.getUser().getId();
-        String userRole = userDetails.getUser().getRole().toString();
+//            String email = userDetails.getUsername();
+//            Long userId = userDetails.getUser().getId();
+//            String userRole = userDetails.getUser().getRole().toString();
+            String email = oAuth2User.getAttribute("email");
+            String provider = oAuth2User.getAttribute("provider");
+            String role = oAuth2User.getAuthorities().stream()
+                    .findFirst()
+                    .orElseThrow(IllegalAccessError::new)
+                    .getAuthority();
 
-        // 이 로그 나중에 삭제
-        log.info("OAuth2SuccessHandler.onAuthenticationSuccess(): 회원 정보 추출 email - {}, userId - {}", email, userId);
+            boolean isExist = oAuth2User.getAttribute("exist");
 
-        String accessToken = jwtTokenProvider.createAccessToken(email, userId, userRole);
-        String refreshToken = jwtTokenProvider.createRefreshToken(email,userId);
+            if(isExist) {
+                Long userId = (Long) oAuth2User.getAttributes().get("userId");
+                String accessToken = jwtTokenProvider.createAccessToken(email, userId, role);
+                String refreshToken = jwtTokenProvider.createRefreshToken(email, userId);
+                log.info("OAuth2SuccessHandler: isExist 유저 - userId {}", userId);
 
-        String redirectUrl;
-        if(userDetails.getUser().getRole().equals(UserRole.GUEST)){
-            log.info("OAuth2SuccessHandler.onAuthenticationSuccess(): {} 이므로 회원가입 Redirect", userDetails.getUser().getRole().toString());
+                String redirectUrl = UriComponentsBuilder.fromHttpUrl(callbackUrl)
+                        .queryParam("accessToken", accessToken)
+                        .queryParam("refreshToken", refreshToken)
+                        .toUriString();
 
-            redirectUrl =  UriComponentsBuilder.fromHttpUrl(signUpUrl)
-                    .queryParam("email", email)
-                    .queryParam("accessToken", accessToken)
-                    .queryParam("refreshToken", refreshToken)
-                    .toUriString();
-        }else{
-            log.info("OAuth2SuccessHandler.onAuthenticationSuccess(): {} 이므로 로그인 ", userDetails.getUser().getRole().toString());
-            redirectUrl= UriComponentsBuilder.fromHttpUrl(signInUrl)
-                    .queryParam("accessToken", accessToken)
-                    .queryParam("refreshToken", refreshToken)
-                    .toUriString();
-        }
+                log.info("OAuth2SuccessHandler: redirectUrl {}", redirectUrl);
+                response.sendRedirect(redirectUrl);
+            }
+            else{
+                String redirectUrl = UriComponentsBuilder.fromHttpUrl(signUpUrl)
+                        .toUriString();
+                response.sendRedirect(redirectUrl);
+            }
 
-        log.info("OAuth2SuccessHandler.onAuthenticationSuccess: 로그인 성공 리다이렉트url - {}", redirectUrl);
-        response.sendRedirect(redirectUrl);
-    }
-
-    private void addRefreshTokenToCookie(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
-
+//        }catch(CustomException e) {
+//            log.error("OAuth2SuccessHandler.onAuthenticationSuccess: 중복 회원 로그인(회원가입) 시도 - {}", e.getMessage());
+//            String redirectUrl = UriComponentsBuilder.fromHttpUrl(signUpUrl)
+//                    .queryParam("error", e.getMessage())
+//                    .toUriString();
+//            response.sendRedirect(redirectUrl);
+//        }
     }
 }

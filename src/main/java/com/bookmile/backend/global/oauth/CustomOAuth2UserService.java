@@ -2,22 +2,24 @@ package com.bookmile.backend.global.oauth;
 
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
-import com.bookmile.backend.domain.user.service.UserService;
-import com.bookmile.backend.global.common.UserRole;
+import com.bookmile.backend.global.exception.CustomException;
 import com.bookmile.backend.global.jwt.CustomUserDetails;
+import com.bookmile.backend.global.oauth.nickname.RandomNickname;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+
+import static com.bookmile.backend.global.common.StatusCode.USER_ALREADY_EXISTS;
 
 @Slf4j
 @Service
@@ -25,6 +27,7 @@ import java.util.*;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+    private final RandomNickname randomNickname;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -42,17 +45,32 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // OAuth2UserService를 사용하여 가져온 OAuth2User 정보로 OAuth2UserInfo 객체를 만든다.
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfo.of(registrationId, userNameAttributeName, oauth2User.getAttributes());
         log.info("CustomOAuth2UserService.loadUser: OAuth2UserInfo - {}", oAuth2UserInfo);
+
+        Map<String ,Object> userAttributes = oAuth2UserInfo.convertToMap();
+
+        String email = (String) userAttributes.get("email");
+
         // User 정보 반환
-        User user = getOrSave(oAuth2UserInfo);
+        Optional<User> findUser = userRepository.findByEmail(email);
 
-        // attributes를 이용해 DefaultOAuth2User 생성하여 반환
-        return new CustomUserDetails(user);
+        if(findUser.isEmpty()) {
 
-    }
+            User newUser = userRepository.save(oAuth2UserInfo.toEntity(randomNickname));
 
-    private User getOrSave(OAuth2UserInfo oAuth2UserInfo) {
-        User user = userRepository.findByEmail(oAuth2UserInfo.getEmail())
-                .orElseGet(oAuth2UserInfo::toEntity);
-        return userRepository.save(user);
+            // 존재하지 않을 경우
+            userAttributes.put("exist", false);
+            userAttributes.put("userId", newUser.getId());
+            return new DefaultOAuth2User(
+                    Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
+                    userAttributes, "email");
+        }
+
+        // 존재하는 경우
+        userAttributes.put("exist", true);
+        userAttributes.put("userId", findUser.map(User::getId).orElse(null));
+        return new DefaultOAuth2User(
+                Collections.singleton(new SimpleGrantedAuthority(findUser.get().getRole().toString())),
+                userAttributes, "email");
+
     }
 }
