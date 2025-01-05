@@ -2,8 +2,6 @@ package com.bookmile.backend.global.oauth;
 
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
-import com.bookmile.backend.global.exception.CustomException;
-import com.bookmile.backend.global.jwt.CustomUserDetails;
 import com.bookmile.backend.global.oauth.nickname.RandomNickname;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +17,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.bookmile.backend.global.common.StatusCode.USER_ALREADY_EXISTS;
 
 @Slf4j
 @Service

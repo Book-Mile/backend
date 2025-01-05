@@ -1,8 +1,5 @@
 package com.bookmile.backend.global.oauth;
 
-import com.bookmile.backend.global.common.UserRole;
-import com.bookmile.backend.global.exception.CustomException;
-import com.bookmile.backend.global.jwt.CustomUserDetails;
 import com.bookmile.backend.global.jwt.JwtTokenProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,12 +32,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
             log.info("OAuth2SuccessHandler.onAuthenticationSuccess: 진입. Authentication: {}", authentication);
 
-            //CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-//            String email = userDetails.getUsername();
-//            Long userId = userDetails.getUser().getId();
-//            String userRole = userDetails.getUser().getRole().toString();
             String email = oAuth2User.getAttribute("email");
             String provider = oAuth2User.getAttribute("provider");
             String role = oAuth2User.getAuthorities().stream()
@@ -50,6 +43,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
             boolean isExist = oAuth2User.getAttribute("exist");
 
+            // 회원 정보가 존재할 시
             if(isExist) {
                 Long userId = (Long) oAuth2User.getAttributes().get("userId");
                 String accessToken = jwtTokenProvider.createAccessToken(email, userId, role);
@@ -65,17 +59,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 response.sendRedirect(redirectUrl);
             }
             else{
+                // 회원 정보 새로 저장 -> 로그인 페이지로 이동
                 String redirectUrl = UriComponentsBuilder.fromHttpUrl(signUpUrl)
                         .toUriString();
                 response.sendRedirect(redirectUrl);
             }
 
-//        }catch(CustomException e) {
-//            log.error("OAuth2SuccessHandler.onAuthenticationSuccess: 중복 회원 로그인(회원가입) 시도 - {}", e.getMessage());
-//            String redirectUrl = UriComponentsBuilder.fromHttpUrl(signUpUrl)
-//                    .queryParam("error", e.getMessage())
-//                    .toUriString();
-//            response.sendRedirect(redirectUrl);
-//        }
     }
 }
