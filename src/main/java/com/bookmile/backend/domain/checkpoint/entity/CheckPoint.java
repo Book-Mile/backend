@@ -37,9 +37,21 @@ public class CheckPoint {
 
     private String freeType;
 
-    public CheckPoint(Group group, GoalType goalType, String freeType) {
+    @Column(nullable = false)
+    private boolean isTemplate; // 템플릿 여부
+
+    @Column(nullable = false)
+    private int usageCount; // 템플릿 사용 횟수
+
+    public CheckPoint(Group group, GoalType goalType, String freeType, boolean isTemplate) {
         this.group = group;
         this.goalType = goalType;
         this.freeType = freeType;
+        this.isTemplate = isTemplate;
+        this.usageCount = 0; // 초기값
+    }
+
+    public void incrementUsage() {
+        this.usageCount++;
     }
 }
