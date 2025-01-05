@@ -7,8 +7,10 @@ import com.bookmile.backend.domain.user.dto.res.UserResDto;
 import com.bookmile.backend.domain.user.service.UserService;
 import com.bookmile.backend.global.common.CommonResponse;
 import com.bookmile.backend.global.redis.RefreshToken;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +32,11 @@ public class UserController {
     public ResponseEntity<CommonResponse<SignInResDto>> signIn(@RequestBody @Valid SignInReqDto signInReqDto) {
         return ResponseEntity.status(SIGN_IN.getStatus())
                 .body(CommonResponse.from(SIGN_IN.getMessage(),userService.signIn(signInReqDto)));
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<CommonResponse<SignInResDto>> reissue(HttpServletRequest request) {
+        return ResponseEntity.ok(CommonResponse.from(ISSUED_TOKEN.getMessage(), userService.reIssue(request)));
     }
 
 }
