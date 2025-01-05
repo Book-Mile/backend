@@ -29,14 +29,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 헤더에서 Access Token 추출
         String accessToken = jwtTokenProvider.resolveToken(request);
-        if (accessToken == null) {
-            log.warn("JwtAuthenticationFilter: Authorization 헤더가 없거나 형식이 잘못되었습니다.");
-            filterChain.doFilter(request, response); // 다음 필터로 넘김
-            return;
-        }
         try{
             // 인증 토큰 생성 및 SecurityContext에 설정
-            if( jwtTokenProvider.validateToken(accessToken)){
+            if( accessToken != null && jwtTokenProvider.validateToken(accessToken)){
                 Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

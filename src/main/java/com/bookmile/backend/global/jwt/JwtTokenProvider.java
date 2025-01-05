@@ -51,7 +51,7 @@ public class JwtTokenProvider {
     // AccessToken 생성
     public String createAccessToken(String email, Long userId, String role) {
         Claims claims = (Claims) Jwts.claims().setSubject(email);
-        claims.put("category", "accessToken");
+        claims.put("type", "accessToken");
         claims.put("userId", userId);
         claims.put("role", role);
         Date now = new Date();
@@ -67,7 +67,7 @@ public class JwtTokenProvider {
     // RefreshToken 생성
     public String createRefreshToken(String email, Long userId) {
         Claims claims = (Claims) Jwts.claims().setSubject(email);
-        claims.put("category", "refreshToken");
+        claims.put("type", "refreshToken");
         claims.put("userId", userId);
         Date now = new Date();
 
@@ -125,7 +125,7 @@ public class JwtTokenProvider {
             Claims claims = parseClaims(token);
             Date expiration = claims.getExpiration();
             if(expiration.before(new Date())) {
-                String category = claims.get("category", String.class);
+                String category = claims.get("type", String.class);
                 if("refreshToken".equals(category)) {
                     throw new CustomException(REFRESH_TOKEN_EXPIRED);
                 }
@@ -149,10 +149,13 @@ public class JwtTokenProvider {
                     .getBody();
             log.info("JwtTokenProvider.parseClaims: 토큰 검증 완료, 파싱 클레임 - {}", claims);
             return claims;
+        }catch(ExpiredJwtException e) {
+            log.error("JwtTokenProvider.parseClaims: Jwt 만료됨");
         }catch(JwtException ex){
             log.error("JwtTokenProvider.parseClaims: Jwt 토큰 예외 발생 {}", ex.getMessage());
             throw ex;
         }
+        return null;
     }
 
 }

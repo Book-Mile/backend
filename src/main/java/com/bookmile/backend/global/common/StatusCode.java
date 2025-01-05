@@ -14,6 +14,7 @@ public enum StatusCode {
     SIGN_UP(CREATED, "회원가입이 완료되었습니다."),
     SIGN_IN(OK, "로그인에 성공하였습니다."),
     REISSUED_TOKEN(OK, "RefreshToken이 발급되었습니다."),
+    USER_FOUND(OK, "회원 조회 완료"),
 
     /* Review */
     VIEW_REVIEW(OK, "리뷰가 조회 되었습니다."),
@@ -57,6 +58,7 @@ public enum StatusCode {
     RECORD_NOT_FOUND(NOT_FOUND, "존재하는 기록이 없습니다."),
     IMAGE_NOT_FOUND(NOT_FOUND, "존재하는 이미지가 없습니다."),
     NO_USER_OR_NO_GROUP(NOT_FOUND, "사용자 또는 그룹이 존재하지 않습니다."),
+    PROVIDER_NOT_FOUND(NOT_FOUND, "존재하는 제공자가 없습니다."),
 
     /* 409 CONFLICT : 리소스 충돌 */
     USER_ALREADY_EXISTS(CONFLICT, "이미 존재하는 회원입니다."),

@@ -1,0 +1,74 @@
+package com.bookmile.backend.global.oauth;
+
+import com.bookmile.backend.domain.user.entity.User;
+import com.bookmile.backend.global.common.UserRole;
+import com.bookmile.backend.global.exception.CustomException;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
+import static com.bookmile.backend.global.common.StatusCode.PROVIDER_NOT_FOUND;
+
+@Getter
+public class OAuth2UserInfo {
+    private final String provider;
+    private final String providerId;
+    private final String name;
+    private final String email;
+    private final String profile;
+
+    @Builder
+    private OAuth2UserInfo(String provider, String providerId, String name, String email, String profile) {
+        this.provider = provider;
+        this.providerId = providerId;
+        this.name = name;
+        this.email = email;
+        this.profile = profile;
+    }
+
+    public static OAuth2UserInfo of(String provider, String providerId, Map<String, Object> attributes){
+        return switch (provider) {
+            case "google" -> ofGoogle(providerId, attributes);
+            case "kakao" -> ofKakao(providerId, attributes);
+            default -> throw new CustomException(PROVIDER_NOT_FOUND);
+        };
+    }
+
+    private static OAuth2UserInfo ofGoogle(String providerId, Map<String, Object> attributes) {
+        return OAuth2UserInfo.builder()
+                .provider("google")
+                .providerId(providerId)
+                .name(String.valueOf(attributes.get("name")))
+                .email(String.valueOf(attributes.get("email")))
+                .profile((String) attributes.get("picture"))
+                .build();
+    }
+
+    private static OAuth2UserInfo ofKakao(String providerId,Map<String, Object> attributes) {
+        Map<String, Object> account = (Map<String, Object>) attributes.get("kakao_account");
+        Map<String, Object> profile = (Map<String, Object>) account.get("profile");
+
+        return OAuth2UserInfo.builder()
+                .provider("kakao")
+                .providerId(providerId)
+                .name(String.valueOf(account.get("name")))
+                .email(String.valueOf(account.get("email")))
+                .profile(String.valueOf(account.get("profile_image_url")))
+                .build();
+    }
+
+    // OAuth2.0을 통해 유저 정보 저장
+    public User toEntity() {
+        return User.builder()
+                .nickname(name)
+                .email(email)
+                .image(profile)
+                .provider(provider)
+                .providerId(providerId)
+                .role(UserRole.USER)
+                .isDeleted(false)
+                .build();
+    }
+}

@@ -7,15 +7,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @RequiredArgsConstructor
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails implements OAuth2User,UserDetails {
 
     private final User user;
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return null;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -52,4 +59,8 @@ public class CustomUserDetails implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
+    @Override
+    public String getName() {
+        return user.getEmail();
+    }
 }
