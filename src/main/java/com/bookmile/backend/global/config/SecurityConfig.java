@@ -1,5 +1,6 @@
 package com.bookmile.backend.global.config;
 
+import com.bookmile.backend.global.jwt.handler.AccessDeniedHandlerImpl;
 import com.bookmile.backend.global.jwt.handler.JwtAuthenticationEntryPoint;
 import com.bookmile.backend.global.jwt.JwtAuthenticationFilter;
 import com.bookmile.backend.global.jwt.JwtTokenProvider;
@@ -26,9 +27,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final AccessDeniedHandler accessDeniedHandler;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
+    
     // AuthenticationManager Bean 등록
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -52,10 +51,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/users/sign-up", "/api/v1/users/sign-in").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtExceptionHandlerFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionHandlerFilter(), JwtAuthenticationFilter.class)
                 .exceptionHandling(error-> error
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                        .accessDeniedHandler(new AccessDeniedHandlerImpl())
                 )
         ;
 
