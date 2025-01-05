@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotNull;
 public class GroupCreateRequestDto {
 
     @NotBlank(message = "그룹명은 필수입니다.")
-    @Schema(description = "그룹명", example = "구루비다")
+    @Schema(description = "그룹명", example = "채식주의자 읽을 사람 모여")
     private String groupName;
 
     @NotBlank(message = "그룹 타입은 필수입니다.")
@@ -26,16 +26,16 @@ public class GroupCreateRequestDto {
     private String password; // 선택 사항
 
     @NotBlank(message = "책 ISBN은 필수입니다.")
-    @Schema(description = "도서 ISBN13", example = "12345678987654")
+    @Schema(description = "도서 ISBN13", example = "9788936434595")
     private String isbn13;
 
     @NotBlank(message = "독서 목표 방식은 필수입니다.")
     @Schema(description = "도서 목표 방식", example = "CHAPTER")
-    private String type;
+    private String goalType;
 
     @NotBlank(message = "그룹 설명을 적어주세요.")
     @Schema(description = "그룹 소개글", example = "방학 안에 다 읽어봐요!")
-    private String description;
+    private String groupDescription;
 
     //private String customGoal; // 사용자 정의 목표 (Optional)
 }

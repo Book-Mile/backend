@@ -32,6 +32,7 @@ public class BookServiceImpl implements BookService {
                             .publisher(bookDto.getPublisher())
                             .totalPage(bookDto.getSubInfo() != null ? bookDto.getSubInfo().getItemPage() : 0)
                             .cover(bookDto.getCover())
+                            .description(bookDto.getDescription())
                             .build()
             );
         });

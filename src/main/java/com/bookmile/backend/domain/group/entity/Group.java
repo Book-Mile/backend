@@ -44,7 +44,7 @@ public class Group extends BaseEntity {
     private CheckPoint checkPoint;
 
     @Column(nullable = false)
-    private String type; // 그룹 구분 (개인/단체)
+    private String groupType; // 그룹 구분 (개인/단체)
 
     @Column(nullable = false)
     private int maxMembers; // 최대 인원수
@@ -53,10 +53,13 @@ public class Group extends BaseEntity {
     private String groupName;
 
     @Column
-    private String description;
+    private String groupDescription;
 
     @Column(nullable = false)
     private String password;  // 비밀번호 (선택 사항)
+
+    @Column(nullable = false)
+    private String goalType;
 
     @Column(nullable = false)
     private Boolean isOpen;
@@ -65,19 +68,19 @@ public class Group extends BaseEntity {
     private Boolean isEnd;
 
     @Column(nullable = false)
-
     private Boolean isDeleted = false;
 
     @Builder
-    public Group(Book book, List<UserGroup> userGroup, CheckPoint checkPoint,String type, int maxMembers, String groupName, String description,
+    public Group(Book book, List<UserGroup> userGroup, CheckPoint checkPoint,String groupType,String goalType, int maxMembers, String groupName, String groupDescription,
                  String password, Boolean isOpen, Boolean isEnd) {
         this.book = book;
         this.userGroup = userGroup;
         this.checkPoint = checkPoint;
-        this.type = type;
+        this.groupType = groupType;
+        this.goalType = goalType;
         this.maxMembers = maxMembers;
         this.groupName = groupName;
-        this.description = description;
+        this.groupDescription = groupDescription;
         this.password = password;
         this.isOpen = isOpen;
         this.isEnd = isEnd;
