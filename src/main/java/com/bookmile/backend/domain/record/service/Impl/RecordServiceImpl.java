@@ -52,7 +52,7 @@ public class RecordServiceImpl implements RecordService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        Long userGroupId = userGroupRepository.findUserGroupIdByGroupIdAndUserId(groupId, userId)
+        Long userGroupId = userGroupRepository.findUserGroupIdByGroupIdAndUserId(group.getId(), user.getId())
                 .orElseThrow(() -> new CustomException(NO_USER_OR_NO_GROUP));
 
         UserGroup userGroup = userGroupRepository.findUserGroupById(userGroupId);

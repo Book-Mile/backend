@@ -19,7 +19,6 @@ public enum StatusCode {
     /* User */
     SIGN_UP(CREATED, "회원가입이 완료되었습니다."),
     SIGN_IN(OK, "로그인에 성공하였습니다."),
-    GET_INFO(OK, "사용자 정보조회에 성공"),
 
     /* Review */
     VIEW_REVIEW(OK, "리뷰가 조회 되었습니다."),
@@ -36,13 +35,6 @@ public enum StatusCode {
     VIEW_IMAGE(OK, "이미지 조회가 되었습니다."),
     SAVE_IMAGE(CREATED, "이미지 저장이 되었습니다."),
     DELETE_IMAGE(RESET_CONTENT, "이미지 삭제가 되었습니다."),
-
-    /* Book */
-    BOOKLIST_SEARCH(OK, "책 리스트 조회에 성공했습니다."),
-    BOOKDETAIL_SEARCH(OK, "책 상세 조회에 성공했습니다."),
-
-    /* Group */
-    GROUP_CREATE(CREATED, "그룹 생성에 성공했습니다."),
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
     PASSWORD_NOT_MATCH(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
@@ -67,5 +59,4 @@ public enum StatusCode {
 
     private final HttpStatus status;
     private final String message;
-
 }

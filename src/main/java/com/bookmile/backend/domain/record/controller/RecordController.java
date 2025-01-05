@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/records")
 @RequiredArgsConstructor
 public class RecordController {
-    private RecordServiceImpl recordServiceImpl;
+    private final RecordServiceImpl recordServiceImpl;
 
     @GetMapping
     public ResponseEntity<CommonResponse<List<RecordListResDto>>> viewRecordList(@RequestParam Long groupId,
@@ -39,7 +39,7 @@ public class RecordController {
     @PostMapping
     public ResponseEntity<CommonResponse<Long>> createRecord(@RequestParam Long groupId,
                                                              @RequestParam Long userId,
-                                                             @Valid @RequestBody RecordReqDto recordReqDto) {
+                                                             @RequestBody @Valid RecordReqDto recordReqDto) {
         Long recordId = recordServiceImpl.createRecord(groupId, userId, recordReqDto);
         return ResponseEntity.status(CREATE_RECORD.getStatus())
                 .body(CommonResponse.from(CREATE_RECORD.getMessage(), recordId));
