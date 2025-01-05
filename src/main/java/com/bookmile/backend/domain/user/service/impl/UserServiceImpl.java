@@ -3,6 +3,7 @@ package com.bookmile.backend.domain.user.service.impl;
 import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignUpReqDto;
 import com.bookmile.backend.domain.user.dto.res.SignInResDto;
+import com.bookmile.backend.domain.user.dto.res.UserDetailResDto;
 import com.bookmile.backend.domain.user.dto.res.UserResDto;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
@@ -13,6 +14,7 @@ import com.bookmile.backend.global.redis.RefreshToken;
 import com.bookmile.backend.global.redis.RefreshTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ import static com.bookmile.backend.global.common.StatusCode.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -65,8 +68,10 @@ public class UserServiceImpl implements UserService {
         }
 
         Long userId = jwtTokenProvider.getUserId(token);
+        log.info("refreshToken : {}, userId: {}", token, userId);
 
         RefreshToken refreshToken = refreshTokenRepository.findById("refreshToken" + userId).orElseThrow(() -> new CustomException(TOKEN_NOT_FOUND));
+        log.info("Redis RefreshToken : {}", refreshToken.getRefreshToken());
 
         if(!refreshToken.getRefreshToken().equals(token)) {
             throw new CustomException(INVALID_TOKEN);
@@ -85,6 +90,12 @@ public class UserServiceImpl implements UserService {
         return signInResDto;
     }
 
+    @Override
+    public UserDetailResDto getUser(String email) {
+        log.info("UserServiceImpl.getUser: {}", email);
+        User user = findByEmail(email);
+        return UserDetailResDto.toDto(user);
+    }
 
     private void existsByEmail(String email) {
         if(userRepository.existsByEmail(email)){

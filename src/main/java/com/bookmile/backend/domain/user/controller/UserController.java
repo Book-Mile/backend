@@ -3,15 +3,20 @@ package com.bookmile.backend.domain.user.controller;
 import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignUpReqDto;
 import com.bookmile.backend.domain.user.dto.res.SignInResDto;
+import com.bookmile.backend.domain.user.dto.res.UserDetailResDto;
 import com.bookmile.backend.domain.user.dto.res.UserResDto;
 import com.bookmile.backend.domain.user.service.UserService;
 import com.bookmile.backend.global.common.CommonResponse;
 import com.bookmile.backend.global.redis.RefreshToken;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import static com.bookmile.backend.global.common.StatusCode.*;
@@ -39,5 +44,9 @@ public class UserController {
         return ResponseEntity.ok(CommonResponse.from(ISSUED_TOKEN.getMessage(), userService.reIssue(request)));
     }
 
+    @GetMapping
+    public ResponseEntity<CommonResponse<UserDetailResDto>> getUser(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(CommonResponse.from(USER_FOUND.getMessage(), userService.getUser(userDetails.getUsername())));
+    }
 }
 
