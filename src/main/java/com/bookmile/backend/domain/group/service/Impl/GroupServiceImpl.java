@@ -35,23 +35,23 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public GroupCreateResponseDto createGroup(GroupCreateRequestDto requestDto, User user) {
-        // 1. ISBN으로 책 정보 가져오기
+        //책 정보 가져오기
         Book book = bookService.saveBook(requestDto.getIsbn13());
 
-        // 2. 그룹 생성
         Group group = groupRepository.save(
                 Group.builder()
                         .book(book)
                         .groupName(requestDto.getGroupName())
+                        .groupType(requestDto.getGroupType())
+                        .goalType(requestDto.getGoalType())
                         .maxMembers(requestDto.getMaxMembers())
-                        .description(requestDto.getDescription())
+                        .groupDescription(requestDto.getGroupDescription())
                         .password(requestDto.getPassword())
                         .isOpen(true)
                         .isEnd(false)
                         .build()
         );
 
-        // 3. 그룹 생성자 추가
         UserGroup userGroup = UserGroup.builder()
                 .user(user)
                 .group(group)
@@ -60,10 +60,12 @@ public class GroupServiceImpl implements GroupService {
 
         userGroupRepository.save(userGroup);
 
-        // 4. 응답 DTO 반환
         return GroupCreateResponseDto.builder()
                 .groupId(group.getId())
                 .groupName(group.getGroupName())
+                .groupDescription(group.getGroupDescription())
+                .maxMembers(group.getMaxMembers())
+                .goalType(requestDto.getGoalType())
                 .build();
     }
 }

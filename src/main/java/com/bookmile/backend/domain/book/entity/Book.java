@@ -43,7 +43,7 @@ public class Book extends BaseEntity {
     private String cover;
 
     @Column(nullable = false)
-    private String description;
+    private String description = "제공되는 상세 내용이 없습니다.";
 
     @Column
     private int totalPage;
