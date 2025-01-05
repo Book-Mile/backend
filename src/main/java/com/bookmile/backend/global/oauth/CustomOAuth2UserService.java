@@ -37,11 +37,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String userNameAttributeName = userRequest.getClientRegistration()
                 .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
+        log.info("CustomOAuth2UserService.loadUser: userNameAttributeName {} " , userNameAttributeName);
 
         // OAuth2UserService를 사용하여 가져온 OAuth2User 정보로 OAuth2UserInfo 객체를 만든다.
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfo.of(registrationId, userNameAttributeName, oauth2User.getAttributes());
         log.info("CustomOAuth2UserService.loadUser: OAuth2UserInfo - {}", oAuth2UserInfo);
-
         // User 정보 반환
         User user = getOrSave(oAuth2UserInfo);
 

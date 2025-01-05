@@ -65,10 +65,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                     .toUriString();
         }
 
-
-        log.info("OAuth2SuccessHandler.onAuthenticationSuccess: 토큰 발급 {}", accessToken);
         log.info("OAuth2SuccessHandler.onAuthenticationSuccess: 로그인 성공 리다이렉트url - {}", redirectUrl);
-
         response.sendRedirect(redirectUrl);
     }
 

@@ -32,6 +32,7 @@ public class OAuth2UserInfo {
         return switch (provider) {
             case "google" -> ofGoogle(providerId, attributes);
             case "kakao" -> ofKakao(providerId, attributes);
+            case "naver" -> ofNaver(providerId, attributes);
             default -> throw new CustomException(PROVIDER_NOT_FOUND);
         };
     }
@@ -46,17 +47,38 @@ public class OAuth2UserInfo {
                 .build();
     }
 
-    private static OAuth2UserInfo ofKakao(String providerId,Map<String, Object> attributes) {
+    private static OAuth2UserInfo ofKakao(String providerId, Map<String, Object> attributes) {
         Map<String, Object> account = (Map<String, Object>) attributes.get("kakao_account");
         Map<String, Object> profile = (Map<String, Object>) account.get("profile");
+
+        String name = emailToName(String.valueOf(account.get("email")), String.valueOf(account.get("name")));
 
         return OAuth2UserInfo.builder()
                 .provider("kakao")
                 .providerId(providerId)
-                .name(String.valueOf(account.get("name")))
+                .name(name)
                 .email(String.valueOf(account.get("email")))
-                .profile(String.valueOf(account.get("profile_image_url")))
+                .profile(String.valueOf(profile.get("profile_image_url")))
                 .build();
+    }
+
+    private static OAuth2UserInfo ofNaver(String providerId, Map<String, Object> attributes) {
+        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+
+        return OAuth2UserInfo.builder()
+                .provider("naver")
+                .providerId(providerId)
+                .name(String.valueOf(response.get("name")))
+                .email(String.valueOf(response.get("email")))
+                .profile(String.valueOf(response.get("profile_image")))
+                .build();
+    }
+    // kakao의 경우, name이 들어오지 않으므로-> 이메일을 따옴.
+    private static String emailToName(String email, String name) {
+        if(name == null || name.isEmpty()) {
+            name = email.split("@")[0];
+        }
+        return name;
     }
 
     // OAuth2.0을 통해 유저 정보 저장
