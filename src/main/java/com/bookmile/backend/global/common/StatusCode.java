@@ -44,6 +44,9 @@ public enum StatusCode {
     /* Group */
     GROUP_CREATE(CREATED, "그룹 생성에 성공했습니다."),
 
+    /* Group */
+    CHECKPOINT_TEMPLETE(OK, "템플릿 조회에 성공했습니다."),
+
     /* 400 BAD_REQUEST : 잘못된 요청 */
     PASSWORD_NOT_MATCH(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 
