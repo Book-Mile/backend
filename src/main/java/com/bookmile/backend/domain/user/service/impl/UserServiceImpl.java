@@ -13,11 +13,13 @@ import com.bookmile.backend.global.exception.CustomException;
 import com.bookmile.backend.global.jwt.JwtTokenProvider;
 import com.bookmile.backend.global.redis.RefreshToken;
 import com.bookmile.backend.global.redis.RefreshTokenRepository;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,10 @@ public class UserServiceImpl implements UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final StringRedisTemplate redisTemplate;
     private final JavaMailSender mailSender;
+
+    @Value("${spring.mail.username")
+    private String maileSenderEmail;
+
 
     @Override
     public UserResDto signUp(SignUpReqDto signUpReqDto) {
@@ -136,18 +142,23 @@ public class UserServiceImpl implements UserService {
 
         Random random = new Random();
         int code = random.nextInt(888888) + 111111;  // 111111 ~ 999999 (6자리 난수)
-        String subject = "회원가입 인증 메일입니다.";
-        String text = "인증 코드는 " + code + " 입니다.";
+        String subject = "[Bookmile] 이메일 인증 번호 ";
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            message.setFrom(maileSenderEmail);
+            message.setRecipients(MimeMessage.RecipientType.TO, email);
+            message.setSubject(subject, "UTF-8");
+            message.setText(mailText(String.valueOf(code)), "UTF-8","html");
+            mailSender.send(message);
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject(subject);
-        message.setText(text);
-        mailSender.send(message);
-        // redis 저장
-        saveVerificationCode(email, String.valueOf(code));
+            // redis 저장
+            saveVerificationCode(email, String.valueOf(code));
+            // 요청 카운트 증가
+            increaseEmailRequestCount(email);
 
-        increaseEmailRequestCount(email);
+        }catch (MessagingException e){
+            throw new CustomException(MAIL_SERVER_ERROR);
+        }
     }
 
     // 이메일 인증
@@ -197,6 +208,25 @@ public class UserServiceImpl implements UserService {
         return redisTemplate.opsForValue().get(email);
     }
 
+    // 요청 본문
+    private String mailText(String code) {
+        return """
+        <html>
+            <body>
+                <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                    <h3>안녕하세요, Bookmile 입니다.</h3>
+                    <p>이메일 인증을 위해 요청하신 인증 코드입니다.</p>
+                    <div style="border: 1px solid #ddd; padding: 10px; text-align: center;">
+                        <h2>이메일 인증 코드</h2>
+                        <h1 style="color: #1d72b8;">%s</h1>
+                    </div>
+                    <p>상단의 인증 코드를 입력하여 이메일 인증을 완료해주세요.</p>
+                    <p>감사합니다.</p>
+                </div>
+            </body>
+        </html>
+        """.formatted(code);
+    }
 }
 
 
