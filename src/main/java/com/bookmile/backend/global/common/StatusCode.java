@@ -13,7 +13,7 @@ public enum StatusCode {
     /* User */
     SIGN_UP(CREATED, "회원가입이 완료되었습니다."),
     SIGN_IN(OK, "로그인에 성공하였습니다."),
-    REISSUED_TOKEN(OK, "RefreshToken이 발급되었습니다."),
+    UPDATE_USER(OK, "회원 정보를 변경 완료"),
     USER_FOUND(OK, "회원 조회 완료"),
     GET_INFO(OK, "사용자 정보조회에 성공"),
     SEND_EMAIL_CODE(OK, "이메일 인증을 요청하였습니다."),
@@ -52,6 +52,7 @@ public enum StatusCode {
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
     PASSWORD_NOT_MATCH(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    PASSWORD_DUPLICATE(BAD_REQUEST, "이전 비밀번호와 동일합니다."),
     EMAIL_CODE_NOT_MATCH(BAD_REQUEST, "코드가 일지하지 않습니다."),
 
     /* 401 UNAUTHORIZED : 비인증 사용자 */

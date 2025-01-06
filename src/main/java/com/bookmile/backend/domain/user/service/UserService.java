@@ -1,5 +1,6 @@
 package com.bookmile.backend.domain.user.service;
 
+import com.bookmile.backend.domain.user.dto.req.PasswordReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignUpReqDto;
 import com.bookmile.backend.domain.user.dto.res.SignInResDto;
@@ -18,4 +19,6 @@ public interface UserService {
 
     void sendEmailCode(String email);
     Boolean verificationCode(String email, String requestCode);
+
+    void changePassword(String email, PasswordReqDto passwordReqDto);
 }

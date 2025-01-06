@@ -51,4 +51,8 @@ public class User extends BaseEntity {
         this.provider = provider;
         this.providerId = providerId;
     }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }

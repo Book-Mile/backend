@@ -1,9 +1,6 @@
 package com.bookmile.backend.domain.user.controller;
 
-import com.bookmile.backend.domain.user.dto.req.EmailCodeReqDto;
-import com.bookmile.backend.domain.user.dto.req.EmailReqDto;
-import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
-import com.bookmile.backend.domain.user.dto.req.SignUpReqDto;
+import com.bookmile.backend.domain.user.dto.req.*;
 import com.bookmile.backend.domain.user.dto.res.SignInResDto;
 import com.bookmile.backend.domain.user.dto.res.UserDetailResDto;
 import com.bookmile.backend.domain.user.dto.res.UserResDto;
@@ -68,6 +65,14 @@ public class UserController {
     public ResponseEntity<Boolean> verifyEmailCode(@RequestBody @Valid EmailCodeReqDto emailCodeReqDto ) {
         Boolean result = userService.verificationCode(emailCodeReqDto.getEmail(), emailCodeReqDto.getCode());
         return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<CommonResponse<Object>> updatePassword(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody @Valid PasswordReqDto passwordReqDto) {
+        userService.changePassword(userDetails.getUsername(), passwordReqDto);
+        return ResponseEntity.ok(CommonResponse.from(UPDATE_USER.getMessage()));
     }
 }
 

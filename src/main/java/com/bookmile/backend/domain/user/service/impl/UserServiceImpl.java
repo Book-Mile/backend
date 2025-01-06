@@ -1,5 +1,6 @@
 package com.bookmile.backend.domain.user.service.impl;
 
+import com.bookmile.backend.domain.user.dto.req.PasswordReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignUpReqDto;
 import com.bookmile.backend.domain.user.dto.res.UserInfoDto;
@@ -11,6 +12,7 @@ import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.user.service.UserService;
 import com.bookmile.backend.global.exception.CustomException;
 import com.bookmile.backend.global.jwt.JwtTokenProvider;
+import com.bookmile.backend.global.oauth.nickname.RandomNickname;
 import com.bookmile.backend.global.redis.RefreshToken;
 import com.bookmile.backend.global.redis.RefreshTokenRepository;
 import jakarta.mail.MessagingException;
@@ -25,6 +27,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -44,7 +48,6 @@ public class UserServiceImpl implements UserService {
     @Value("${spring.mail.username")
     private String maileSenderEmail;
 
-
     @Override
     public UserResDto signUp(SignUpReqDto signUpReqDto) {
         existsByEmail(signUpReqDto.getEmail());
@@ -55,8 +58,7 @@ public class UserServiceImpl implements UserService {
         }
 
         String enCodePassword = passwordEncoder.encode(signUpReqDto.getPassword());
-
-        User user = userRepository.save(signUpReqDto.toEntity(signUpReqDto.getEmail(), enCodePassword));
+        
         return UserResDto.toDto(user);
     }
 
@@ -79,14 +81,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public SignInResDto reIssue(HttpServletRequest request) {
 
-        String token = jwtTokenProvider.resolveToken(request);
+        Map<String, Object> userInfo = getUserIdByToken(request);
+        String token = (String) userInfo.get("token");
+        Long userId = (Long) userInfo.get("userId");
 
-        if(token == null) {
-            throw new CustomException(INVALID_TOKEN);
-        }
-
-        Long userId = jwtTokenProvider.getUserId(token);
-        log.info("refreshToken : {}, userId: {}", token, userId);
+        log.info("userId: {}",  userId);
 
         RefreshToken refreshToken = refreshTokenRepository.findById("refreshToken" + userId).orElseThrow(() -> new CustomException(TOKEN_NOT_FOUND));
         log.info("Redis RefreshToken : {}", refreshToken.getRefreshToken());
@@ -124,8 +123,9 @@ public class UserServiceImpl implements UserService {
         return UserDetailResDto.toDto(user);
     }
 
-    // 이메일 확인
+    // 닉네임 중복 확인
     @Override
+    @Transactional
     public Boolean checkNickname(String nickname) {
         Boolean isUseNickname = userRepository.existsByNickname(nickname);
         return isUseNickname;
@@ -171,10 +171,57 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    // 비밀번호 변경
+    @Override
+    @Transactional
+    public void changePassword(String email, PasswordReqDto passwordReqDto) {
+
+        User user = findByEmail(email);
+
+        // 기존 비밀번호 확인
+        if (!passwordEncoder.matches(passwordReqDto.getOriginPassword(), user.getPassword())) {
+            throw new CustomException(AUTHENTICATION_FAILED);
+        }
+
+        // 기존, 새로운 비밀번호 동일 여부 확인
+        if(passwordEncoder.matches(passwordReqDto.getNewPassword(), user.getPassword())){
+            throw new CustomException(PASSWORD_DUPLICATE);
+        }
+
+        // 새로운 비밀번호 확인
+        // 비밀번호 일치 여부 확인
+        if (!(passwordReqDto.getNewPassword().equals(passwordReqDto.getCheckPassword()))) {
+            throw new CustomException(PASSWORD_NOT_MATCH);
+        }
+
+        String enCodePassword = passwordEncoder.encode(passwordReqDto.getNewPassword());
+        user.updatePassword(enCodePassword);
+
+    }
+
+    private Map<String, Object> getUserIdByToken(HttpServletRequest request) {
+        Map<String, Object > map = new HashMap<>();
+
+        String token = jwtTokenProvider.resolveToken(request);
+        if(token == null) {
+            throw new CustomException(INVALID_TOKEN);
+        }
+        Long userId = jwtTokenProvider.getUserId(token);
+
+        map.put("token", token);
+        map.put("userId", userId);
+
+        return map;
+    }
+
     private void existsByEmail(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new CustomException(USER_ALREADY_EXISTS);
         };
+    }
+
+    private User findById(Long userId){
+        return userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 
     private User findByEmail(String email) {
