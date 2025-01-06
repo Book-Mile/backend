@@ -33,6 +33,9 @@ public class GroupCreateRequestDto {
     @Schema(description = "도서 목표 방식", example = "CHAPTER")
     private String goalType;
 
+    @Schema(description = "템플릿 ID (선택사항)", example = "1")
+    private Long templateId;
+
     @NotBlank(message = "그룹 설명을 적어주세요.")
     @Schema(description = "그룹 소개글", example = "방학 안에 다 읽어봐요!")
     private String groupDescription;
