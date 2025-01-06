@@ -52,6 +52,10 @@ public class User extends BaseEntity {
         this.providerId = providerId;
     }
 
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
     public void updatePassword(String password) {
         this.password = password;
     }

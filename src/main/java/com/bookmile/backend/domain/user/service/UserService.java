@@ -19,7 +19,7 @@ public interface UserService {
     Boolean checkNickname(String nickname);
 
     void sendEmailCode(String email);
-    Boolean verificationCode(String email, String requestCode);
+    void verificationCode(String originEmail, String email, String requestCode);
 
     void changePassword(String email, PasswordReqDto passwordReqDto);
     void updateProfile(String email, MultipartFile file);

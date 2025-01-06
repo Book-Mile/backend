@@ -68,11 +68,15 @@ public class UserController {
         return ResponseEntity.ok(CommonResponse.from(SEND_EMAIL_CODE.getMessage()));
     }
 
-    @Operation(summary = "이메일 코드 인증", description = "작성한 이메일과 6자리 코드가 서버에서 제공한 이메일과 일치하는지 확인합니다.")
+    @Operation(summary = "이메일 코드 인증", description = "작성한 이메일과 6자리 코드가 서버에서 제공한 이메일과 일치하는지 확인합니다.<br>" +
+            "인증 코드가 확인되면, 작성한 이메일로 회원정보가 수정됩니다. <br>" +
+            "단, 인증 코드는 5분간 유효합니다.")
     @PostMapping("/email/verify")
-    public ResponseEntity<Boolean> verifyEmailCode(@RequestBody @Valid EmailCodeReqDto emailCodeReqDto ) {
-        Boolean result = userService.verificationCode(emailCodeReqDto.getEmail(), emailCodeReqDto.getCode());
-        return ResponseEntity.ok(result);
+    public ResponseEntity<CommonResponse<Object>> verifyEmailCode(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody @Valid EmailCodeReqDto emailCodeReqDto ) {
+        userService.verificationCode(userDetails.getUsername(), emailCodeReqDto.getEmail(), emailCodeReqDto.getCode());
+        return ResponseEntity.status(UPDATE_USER.getStatus()).body(CommonResponse.from(UPDATE_USER.getMessage()));
     }
 
     @Operation(summary = "비밀번호 변경", description = "3가지의 비밀번호 형식을 맞춰주셔야 합니다. 아래는 3가지의 검증을 거칩니다. <br>" +

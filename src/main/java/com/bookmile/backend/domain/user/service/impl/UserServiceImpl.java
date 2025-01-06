@@ -150,6 +150,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void sendEmailCode(String email) {
 
+        // 변경하려는 이메일이 이미 존재하는지 확인
+        existsByEmail(email);
+
+        // 일최대 5개 제한
         long count = getEmailRequestCount(email);
         if(count == 5){
             throw new CustomException(EMAIL_TOO_MANY_REQUESTS);
@@ -178,12 +182,17 @@ public class UserServiceImpl implements UserService {
 
     // 이메일 인증
     @Override
-    public Boolean verificationCode(String email, String requestCode) {
+    @Transactional
+    public void verificationCode(String originEmail, String email, String requestCode) {
+        User user = findByEmail(originEmail);
+
         String verificationCode = getVerificationCode(email);
         if(!requestCode.equals(verificationCode)) {
             throw new CustomException(EMAIL_CODE_NOT_MATCH);
         }
-        return true;
+
+        // 이메일 변경
+        user.updateEmail(email);
     }
 
     // 비밀번호 변경
@@ -227,7 +236,7 @@ public class UserServiceImpl implements UserService {
         if(user.getImage() != null) {
             imageService.deleteFileFromS3Bucket(bucketName, user.getImage());
         }
-        
+
         String url = imageService.uploadFileToS3Bucket(bucketName, file);
         user.updateImage(url);
     }
@@ -265,6 +274,7 @@ public class UserServiceImpl implements UserService {
         return map;
     }
 
+    // 이메일 중복 확인
     private void existsByEmail(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new CustomException(USER_ALREADY_EXISTS);
@@ -294,7 +304,7 @@ public class UserServiceImpl implements UserService {
 
     // redis에 인증코드 저장
     private void saveVerificationCode(String email, String code) {
-        redisTemplate.opsForValue().set(email, code, 1, TimeUnit.MINUTES); //1분 타임아웃
+        redisTemplate.opsForValue().set(email, code, 5, TimeUnit.MINUTES); //3분 타임아웃
     }
 
     //redis에서 인증코드 가져오기
