@@ -60,8 +60,9 @@ public class UserController {
     }
 
     @Operation(summary = "닉네임 수정 및 회원 정보 변경", description = "닉네임 중복확인을 거친후, 최종 업데이트를 할 때 사용가능합니다. <br>" +
-            "이메일 또한, 인증 완료후 사용해주세요. <br>" +
-            "본 APi는 최종 정보를 반영합니다. 따라서, 토큰이 재발급됩니다.")
+            "이메일 또한, 인증 완료후 사용해주세요. 본 APi는 최종 정보를 반영합니다. <br>" +
+            "!! 이메일 변경으로 인해 기존 토큰정보와 달라지므로, 토큰이 재발급됩니다. <br> " +
+            "따라서, '재로그인'을 유도해야 합니다.")
 
     @PutMapping
     public ResponseEntity<CommonResponse<TokenResDto>> updateUser(
