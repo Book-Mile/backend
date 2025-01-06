@@ -11,11 +11,7 @@ import lombok.NoArgsConstructor;
 public class CheckPointRequestDto {
 
     @NotBlank(message = "목표 타입을 선택해주세요.")
-    @Schema(description = "PAGE, CHAPTER, NUMBER 중 택 1", example = "CHAPTER")
+    @Schema(description = "PAGE, CHAPTER, NUMBER, CUSTOM", example = "CHAPTER")
     private GoalType goalType;
-
-    @NotBlank(message = "자유 스타일 선택도 가능합니다.")
-    @Schema(description = "FREE", example = "내맘대로 읽을래용")
-    private String freeType;
 
 }

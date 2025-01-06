@@ -16,14 +16,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Group extends BaseEntity {
@@ -61,6 +59,9 @@ public class Group extends BaseEntity {
     @Column(nullable = false)
     private String goalType;
 
+    @Column
+    private String customGoal;
+
     @Column(nullable = false)
     private Boolean isOpen;
 
@@ -72,12 +73,13 @@ public class Group extends BaseEntity {
 
     @Builder
     public Group(Book book, List<UserGroup> userGroup, CheckPoint checkPoint,String groupType,String goalType, int maxMembers, String groupName, String groupDescription,
-                 String password, Boolean isOpen, Boolean isEnd) {
+                 String password, String customGoal, Boolean isOpen, Boolean isEnd) {
         this.book = book;
         this.userGroup = userGroup;
         this.checkPoint = checkPoint;
         this.groupType = groupType;
         this.goalType = goalType;
+        this.customGoal = customGoal;
         this.maxMembers = maxMembers;
         this.groupName = groupName;
         this.groupDescription = groupDescription;

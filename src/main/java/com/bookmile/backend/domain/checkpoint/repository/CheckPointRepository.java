@@ -1,12 +1,14 @@
 package com.bookmile.backend.domain.checkpoint.repository;
 
 import com.bookmile.backend.domain.checkpoint.entity.CheckPoint;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CheckPointRepository extends JpaRepository<CheckPoint, Long> {

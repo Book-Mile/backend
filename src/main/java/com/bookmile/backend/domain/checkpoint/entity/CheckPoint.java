@@ -12,10 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
@@ -28,6 +25,7 @@ public class CheckPoint {
     @Column(name = "checkpoint_id")
     private Long id;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
@@ -35,23 +33,28 @@ public class CheckPoint {
     @Enumerated(EnumType.STRING)
     private GoalType goalType;
 
-    private String freeType;
+    @Column
+    private String customGoal; // 사용자 정의 목표 (CUSTOM인 경우)
 
     @Column(nullable = false)
     private boolean isTemplate; // 템플릿 여부
 
     @Column(nullable = false)
-    private int usageCount; // 템플릿 사용 횟수
+    private int usageCount = 0; // 템플릿 사용 횟수
 
-    public CheckPoint(Group group, GoalType goalType, String freeType, boolean isTemplate) {
+    // 생성자
+    public CheckPoint(Group group, GoalType goalType, String customGoal, boolean isTemplate) {
         this.group = group;
         this.goalType = goalType;
-        this.freeType = freeType;
+        this.customGoal = customGoal; // 사용자 정의 목표
         this.isTemplate = isTemplate;
-        this.usageCount = 0; // 초기값
+        this.usageCount = isTemplate ? 1 : 0; // 템플릿이면 사용 횟수 1로 초기화
     }
 
-    public void incrementUsage() {
-        this.usageCount++;
+    // 템플릿 사용 횟수 증가 메서드
+    public void incrementUsageCount() {
+        if (this.isTemplate) {
+            this.usageCount++;
+        }
     }
 }
