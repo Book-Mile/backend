@@ -23,4 +23,5 @@ public interface UserService {
 
     void changePassword(String email, PasswordReqDto passwordReqDto);
     void updateProfile(String email, MultipartFile file);
+    void deleteUser(String email);
 }

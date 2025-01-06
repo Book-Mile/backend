@@ -54,7 +54,7 @@ public class UserController {
     }
 
     @Operation(summary = "닉네임 중복확인", description = "true : 닉네임 중복 , false : 사용 가능")
-    @GetMapping("/exists")
+    @PostMapping("/exists")
     public ResponseEntity<Boolean> checkNickname(@RequestParam String nickname) {
         return ResponseEntity.ok(userService.checkNickname(nickname));
     }
@@ -96,5 +96,14 @@ public class UserController {
         userService.updateProfile(userDetails.getUsername(), file);
         return ResponseEntity.ok(CommonResponse.from(UPDATE_USER.getMessage()));
     }
+
+    @Operation(summary = "회원 탈퇴")
+    @DeleteMapping
+    public ResponseEntity<CommonResponse<Object>> deleteUser(
+            @AuthenticationPrincipal UserDetails userDetails){
+        userService.deleteUser(userDetails.getUsername());
+        return ResponseEntity.status(USER_DELETE.getStatus()).body(CommonResponse.from(USER_DELETE.getMessage()));
+    }
+
 }
 

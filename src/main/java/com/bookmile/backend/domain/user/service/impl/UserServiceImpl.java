@@ -224,10 +224,19 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(INVALID_FILE_TYPE);
         }
 
-        imageService.deleteFileFromS3Bucket(bucketName, user.getImage());
-
+        if(user.getImage() != null) {
+            imageService.deleteFileFromS3Bucket(bucketName, user.getImage());
+        }
+        
         String url = imageService.uploadFileToS3Bucket(bucketName, file);
         user.updateImage(url);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUser(String email) {
+        User user = findByEmail(email);
+        user.updateIsDeleted();
     }
 
     private boolean validateImageFile(MultipartFile file) {

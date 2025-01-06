@@ -16,6 +16,7 @@ public enum StatusCode {
     UPDATE_USER(OK, "회원 정보를 변경 완료"),
     USER_FOUND(OK, "회원 조회 완료"),
     SEND_EMAIL_CODE(OK, "이메일 인증을 요청하였습니다."),
+    USER_DELETE(NO_CONTENT, "회원 정보 삭제 완료"),
 
     /* Review */
     VIEW_REVIEW(OK, "리뷰가 조회 되었습니다."),
