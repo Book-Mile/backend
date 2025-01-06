@@ -103,9 +103,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetailResDto getUser(String email) {
-        log.info("UserServiceImpl.getUser: {}", email);
         User user = findByEmail(email);
         return UserDetailResDto.toDto(user);
+    }
+
+    @Override
+    public Boolean checkNickname(String nickname) {
+        Boolean isUseNickname = userRepository.existsByNickname(nickname);
+        return isUseNickname;
     }
 
     private void existsByEmail(String email) {

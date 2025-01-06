@@ -10,6 +10,7 @@ import com.bookmile.backend.global.common.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,12 +25,14 @@ import static com.bookmile.backend.global.common.StatusCode.*;
 public class UserController {
     private final UserService userService;
 
+    @Operation(summary = "회원가입", description = "소셜로그인이 아닌 '일반 로그인'으로 가입하는 API 입니다.")
     @PostMapping("/sign-up")
     public ResponseEntity<CommonResponse<UserResDto>> signUp(@RequestBody @Valid SignUpReqDto signUpReqDto) {
         return ResponseEntity.status(SIGN_UP.getStatus())
                 .body(CommonResponse.from(SIGN_UP.getMessage(),userService.signUp(signUpReqDto)));
     }
 
+    @Operation(summary = "로그인", description = "'일반 로그인'으로 로그인합니다.")
     @PostMapping("/sign-in")
     public ResponseEntity<CommonResponse<SignInResDto>> signIn(@RequestBody @Valid SignInReqDto signInReqDto) {
         return ResponseEntity.status(SIGN_IN.getStatus())
@@ -47,5 +50,12 @@ public class UserController {
     public ResponseEntity<CommonResponse<UserDetailResDto>> getUser(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(CommonResponse.from(USER_FOUND.getMessage(), userService.getUser(userDetails.getUsername())));
     }
+
+    @Operation(summary = "닉네임 중복확인", description = "true : 닉네임 중복 , false : 사용 가능")
+    @GetMapping("/exists")
+    public ResponseEntity<Boolean> checkNickname(@RequestParam String nickname) {
+        return ResponseEntity.ok(userService.checkNickname(nickname));
+    }
+
 }
 

@@ -14,4 +14,5 @@ public interface UserService {
     SignInResDto reIssue(HttpServletRequest request);
     UserInfoDto getUserInfo(Long userId);
     UserDetailResDto getUser(String email);
+    Boolean checkNickname(String nickname);
 }
