@@ -15,4 +15,7 @@ public interface UserService {
     UserInfoDto getUserInfo(Long userId);
     UserDetailResDto getUser(String email);
     Boolean checkNickname(String nickname);
+
+    void sendEmailCode(String email);
+    Boolean verificationCode(String email, String requestCode);
 }

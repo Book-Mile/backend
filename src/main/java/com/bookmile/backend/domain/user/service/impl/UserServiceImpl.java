@@ -16,9 +16,15 @@ import com.bookmile.backend.global.redis.RefreshTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import static com.bookmile.backend.global.common.StatusCode.*;
 
@@ -30,6 +36,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final StringRedisTemplate redisTemplate;
+    private final JavaMailSender mailSender;
 
     @Override
     public UserResDto signUp(SignUpReqDto signUpReqDto) {
@@ -61,6 +69,7 @@ public class UserServiceImpl implements UserService {
         return SignInResDto.toDto(accessToken, refreshToken);
     }
 
+    // 토큰 재발급 (refreshToken으로)
     @Override
     public SignInResDto reIssue(HttpServletRequest request) {
 
@@ -93,6 +102,7 @@ public class UserServiceImpl implements UserService {
         return signInResDto;
     }
 
+    // 회원 정보 조회
     @Override
     public UserInfoDto getUserInfo(Long userId) {
         User user = userRepository.findById(userId)
@@ -101,16 +111,53 @@ public class UserServiceImpl implements UserService {
         return UserInfoDto.toDto(user);
     }
 
+    // 회원 정보 조회 (토큰)
     @Override
     public UserDetailResDto getUser(String email) {
         User user = findByEmail(email);
         return UserDetailResDto.toDto(user);
     }
 
+    // 이메일 확인
     @Override
     public Boolean checkNickname(String nickname) {
         Boolean isUseNickname = userRepository.existsByNickname(nickname);
         return isUseNickname;
+    }
+
+    // 이메일 전송
+    @Override
+    public void sendEmailCode(String email) {
+
+        long count = getEmailRequestCount(email);
+        if(count == 5){
+            throw new CustomException(EMAIL_TOO_MANY_REQUESTS);
+        }
+
+        Random random = new Random();
+        int code = random.nextInt(888888) + 111111;  // 111111 ~ 999999 (6자리 난수)
+        String subject = "회원가입 인증 메일입니다.";
+        String text = "인증 코드는 " + code + " 입니다.";
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject(subject);
+        message.setText(text);
+        mailSender.send(message);
+        // redis 저장
+        saveVerificationCode(email, String.valueOf(code));
+
+        increaseEmailRequestCount(email);
+    }
+
+    // 이메일 인증
+    @Override
+    public Boolean verificationCode(String email, String requestCode) {
+        String verificationCode = getVerificationCode(email);
+        if(!requestCode.equals(verificationCode)) {
+            throw new CustomException(EMAIL_CODE_NOT_MATCH);
+        }
+        return true;
     }
 
     private void existsByEmail(String email) {
@@ -121,6 +168,33 @@ public class UserServiceImpl implements UserService {
 
     private User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(AUTHENTICATION_FAILED));
+    }
+
+    // 이메일 요청 카운트 증가
+    private void increaseEmailRequestCount(String email) {
+        String key = "email_request_count:" + email;
+        long count = redisTemplate.opsForValue().increment(key);
+
+        if (count == 5) {
+            redisTemplate.expire(key, 24, TimeUnit.HOURS);
+        }
+    }
+
+    // 이메일 인증요청 카운트
+    private long getEmailRequestCount(String email) {
+        String key = "email_request_count:" + email;
+        String value = redisTemplate.opsForValue().get(key);
+        return value == null ? 0 : Long.parseLong(value);
+    }
+
+    // redis에 인증코드 저장
+    private void saveVerificationCode(String email, String code) {
+        redisTemplate.opsForValue().set(email, code, 1, TimeUnit.MINUTES); //1분 타임아웃
+    }
+
+    //redis에서 인증코드 가져오기
+    private String getVerificationCode(String email) {
+        return redisTemplate.opsForValue().get(email);
     }
 
 }

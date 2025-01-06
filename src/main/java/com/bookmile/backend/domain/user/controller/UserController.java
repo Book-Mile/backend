@@ -1,5 +1,7 @@
 package com.bookmile.backend.domain.user.controller;
 
+import com.bookmile.backend.domain.user.dto.req.EmailCodeReqDto;
+import com.bookmile.backend.domain.user.dto.req.EmailReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignUpReqDto;
 import com.bookmile.backend.domain.user.dto.res.SignInResDto;
@@ -10,7 +12,6 @@ import com.bookmile.backend.global.common.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -57,5 +58,16 @@ public class UserController {
         return ResponseEntity.ok(userService.checkNickname(nickname));
     }
 
+    @PostMapping("/email")
+    public ResponseEntity<CommonResponse<Object>> sendEmailCode(@RequestBody @Valid EmailReqDto emailReqDto) {
+        userService.sendEmailCode(emailReqDto.getEmail());
+        return ResponseEntity.ok(CommonResponse.from(SEND_EMAIL_CODE.getMessage()));
+    }
+
+    @PostMapping("/email/verify")
+    public ResponseEntity<Boolean> verifyEmailCode(@RequestBody @Valid EmailCodeReqDto emailCodeReqDto ) {
+        Boolean result = userService.verificationCode(emailCodeReqDto.getEmail(), emailCodeReqDto.getCode());
+        return ResponseEntity.ok(result);
+    }
 }
 

@@ -16,6 +16,7 @@ public enum StatusCode {
     REISSUED_TOKEN(OK, "RefreshToken이 발급되었습니다."),
     USER_FOUND(OK, "회원 조회 완료"),
     GET_INFO(OK, "사용자 정보조회에 성공"),
+    SEND_EMAIL_CODE(OK, "이메일 인증을 요청하였습니다."),
 
     /* Review */
     VIEW_REVIEW(OK, "리뷰가 조회 되었습니다."),
@@ -51,6 +52,7 @@ public enum StatusCode {
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
     PASSWORD_NOT_MATCH(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    EMAIL_CODE_NOT_MATCH(BAD_REQUEST, "코드가 일지하지 않습니다."),
 
     /* 401 UNAUTHORIZED : 비인증 사용자 */
     AUTHENTICATION_FAILED(UNAUTHORIZED, "회원의 정보가 일치하지 않습니다."),
@@ -72,9 +74,11 @@ public enum StatusCode {
     /* 409 CONFLICT : 리소스 충돌 */
     USER_ALREADY_EXISTS(CONFLICT, "이미 존재하는 회원입니다."),
 
+    /* 429 TOO_MANY_REQUESTS : 요청 과다 */
+    EMAIL_TOO_MANY_REQUESTS(TOO_MANY_REQUESTS,"이메일 인증 요청 5번 초과로 더이상 인증 요청을 할 수 없습니다."),
+
     /* 500 INTERNAL_SERVER_ERROR  Error */
     REDIS_ERROR(INTERNAL_SERVER_ERROR, "Redis 서버에 연결할 수 없습니다. ");
-
     private final HttpStatus status;
     private final String message;
 }
