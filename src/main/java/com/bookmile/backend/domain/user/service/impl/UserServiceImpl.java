@@ -58,6 +58,9 @@ public class UserServiceImpl implements UserService {
     @Value("${aws.bucket.name.profile}")
     private String bucketName;
 
+    @Value("${aws.main.profile}")
+    private String mainProfile;
+
     private static final String[] ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"};
 
     @Override
@@ -70,8 +73,22 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(PASSWORD_NOT_MATCH);
         }
 
-        String enCodePassword = passwordEncoder.encode(signUpReqDto.getPassword());
+        User existingUser = userRepository.findByEmail(signUpReqDto.getEmail()).orElse(null);
+        // 기등록자
+        if (existingUser != null) {
+            // 탈퇴 회원
+            if(existingUser.getIsDeleted()){
+                existingUser.updateIsDeleted();
+                existingUser.updatePassword(passwordEncoder.encode(signUpReqDto.getPassword()));
+                existingUser.updateNickname(randomNickname.generateNickname());
+                existingUser.updateImage(mainProfile);
+                return UserResDto.toDto(existingUser);
+            }
+            throw new CustomException(USER_ALREADY_EXISTS);
+        }
 
+        // 신규 회원 가입 로직
+        String enCodePassword = passwordEncoder.encode(signUpReqDto.getPassword());
         // 닉네임 자동 생성
         String nickname = randomNickname.generateNickname();
 
@@ -287,7 +304,7 @@ public class UserServiceImpl implements UserService {
 
     // 이메일 중복 확인
     private void existsByEmail(String email) {
-        if (userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmailAndIsDeletedFalse(email)) {
             throw new CustomException(USER_ALREADY_EXISTS);
         };
     }

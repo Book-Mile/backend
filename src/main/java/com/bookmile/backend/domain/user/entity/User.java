@@ -52,8 +52,8 @@ public class User extends BaseEntity {
         this.providerId = providerId;
     }
 
-    public void updateEmail(String email) {
-        this.email = email;
+    public void updateNickname(String newNickname) {
+        this.nickname = newNickname;
     }
 
     public void updatePassword(String password) {
@@ -65,7 +65,7 @@ public class User extends BaseEntity {
     }
 
     public void updateIsDeleted() {
-        this.isDeleted = true;
+        this.isDeleted = !this.isDeleted;
     }
 
     public void updateUser(String nickname, String email) {
