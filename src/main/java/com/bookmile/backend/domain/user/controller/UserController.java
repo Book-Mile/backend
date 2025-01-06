@@ -1,7 +1,7 @@
 package com.bookmile.backend.domain.user.controller;
 
 import com.bookmile.backend.domain.user.dto.req.*;
-import com.bookmile.backend.domain.user.dto.res.SignInResDto;
+import com.bookmile.backend.domain.user.dto.res.TokenResDto;
 import com.bookmile.backend.domain.user.dto.res.UserDetailResDto;
 import com.bookmile.backend.domain.user.dto.res.UserResDto;
 import com.bookmile.backend.domain.user.service.UserService;
@@ -36,14 +36,14 @@ public class UserController {
     @Operation(summary = "로그인", description = "'일반 로그인'으로 로그인합니다. <br>" +
             "accessToken과 refreshToken이 body를 통해서 전달됩니다.")
     @PostMapping("/sign-in")
-    public ResponseEntity<CommonResponse<SignInResDto>> signIn(@RequestBody @Valid SignInReqDto signInReqDto) {
+    public ResponseEntity<CommonResponse<TokenResDto>> signIn(@RequestBody @Valid SignInReqDto signInReqDto) {
         return ResponseEntity.status(SIGN_IN.getStatus())
                 .body(CommonResponse.from(SIGN_IN.getMessage(),userService.signIn(signInReqDto)));
     }
 
     @Operation(summary = "토큰 재발급", description = "Header 에 refreshToken을 담아 요청을 보내야 합니다.")
     @PostMapping("/reissue")
-    public ResponseEntity<CommonResponse<SignInResDto>> reissue(HttpServletRequest request) {
+    public ResponseEntity<CommonResponse<TokenResDto>> reissue(HttpServletRequest request) {
         return ResponseEntity.ok(CommonResponse.from(ISSUED_TOKEN.getMessage(), userService.reIssue(request)));
     }
 
@@ -57,6 +57,18 @@ public class UserController {
     @PostMapping("/exists")
     public ResponseEntity<Boolean> checkNickname(@RequestParam String nickname) {
         return ResponseEntity.ok(userService.checkNickname(nickname));
+    }
+
+    @Operation(summary = "닉네임 수정 및 회원 정보 변경", description = "닉네임 중복확인을 거친후, 최종 업데이트를 할 때 사용가능합니다. <br>" +
+            "이메일 또한, 인증 완료후 사용해주세요. <br>" +
+            "본 APi는 최종 정보를 반영합니다. 따라서, 토큰이 재발급됩니다.")
+
+    @PutMapping
+    public ResponseEntity<CommonResponse<TokenResDto>> updateUser(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody UserInfoReqDto userInfoReqDto) {
+        return ResponseEntity.ok(CommonResponse.from(UPDATE_USER.getMessage(),
+                userService.updateUser(userDetails.getUsername(), userInfoReqDto)));
     }
 
     @Operation(summary = "이메일 인증 코드 전송", description = "이메일 인증을 위한 6자리 난수를 보내는 코드입니다. <br>" +
@@ -73,9 +85,8 @@ public class UserController {
             "단, 인증 코드는 5분간 유효합니다.")
     @PostMapping("/email/verify")
     public ResponseEntity<CommonResponse<Object>> verifyEmailCode(
-            @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody @Valid EmailCodeReqDto emailCodeReqDto ) {
-        userService.verificationCode(userDetails.getUsername(), emailCodeReqDto.getEmail(), emailCodeReqDto.getCode());
+        userService.verificationCode(emailCodeReqDto.getEmail(), emailCodeReqDto.getCode());
         return ResponseEntity.status(UPDATE_USER.getStatus()).body(CommonResponse.from(UPDATE_USER.getMessage()));
     }
 

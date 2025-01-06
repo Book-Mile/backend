@@ -4,18 +4,18 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class SignInResDto {
+public class TokenResDto {
     private String accessToken;
     private String refreshToken;
 
     @Builder
-    private SignInResDto(String accessToken, String refreshToken) {
+    private TokenResDto(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
 
-    public static SignInResDto toDto(String accessToken, String refreshToken) {
-        return SignInResDto.builder()
+    public static TokenResDto toDto(String accessToken, String refreshToken) {
+        return TokenResDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

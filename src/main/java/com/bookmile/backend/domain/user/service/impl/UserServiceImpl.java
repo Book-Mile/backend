@@ -4,8 +4,9 @@ import com.bookmile.backend.domain.image.service.Impl.ImageService;
 import com.bookmile.backend.domain.user.dto.req.PasswordReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignUpReqDto;
+import com.bookmile.backend.domain.user.dto.req.UserInfoReqDto;
 import com.bookmile.backend.domain.user.dto.res.UserInfoDto;
-import com.bookmile.backend.domain.user.dto.res.SignInResDto;
+import com.bookmile.backend.domain.user.dto.res.TokenResDto;
 import com.bookmile.backend.domain.user.dto.res.UserDetailResDto;
 import com.bookmile.backend.domain.user.dto.res.UserResDto;
 import com.bookmile.backend.domain.user.entity.User;
@@ -80,7 +81,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public SignInResDto signIn(SignInReqDto signInReqDto) {
+    public TokenResDto signIn(SignInReqDto signInReqDto) {
         User user = findByEmail(signInReqDto.getEmail());
 
         if (!passwordEncoder.matches(signInReqDto.getPassword(), user.getPassword())) {
@@ -90,12 +91,12 @@ public class UserServiceImpl implements UserService {
         String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getId(), user.getRole().toString());
         String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getId());
 
-        return SignInResDto.toDto(accessToken, refreshToken);
+        return TokenResDto.toDto(accessToken, refreshToken);
     }
 
     // 토큰 재발급 (refreshToken으로)
     @Override
-    public SignInResDto reIssue(HttpServletRequest request) {
+    public TokenResDto reIssue(HttpServletRequest request) {
 
         Map<String, Object> userInfo = getUserIdByToken(request);
         String token = (String) userInfo.get("token");
@@ -115,12 +116,7 @@ public class UserServiceImpl implements UserService {
         String newAccessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getId(), user.getRole().toString());
         String newRefreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getId());
 
-        SignInResDto signInResDto = SignInResDto.builder()
-                .accessToken(newAccessToken)
-                .refreshToken(newRefreshToken)
-                .build();
-
-        return signInResDto;
+        return TokenResDto.toDto(newAccessToken, newRefreshToken);
     }
 
     // 회원 정보 조회
@@ -145,6 +141,22 @@ public class UserServiceImpl implements UserService {
     public Boolean checkNickname(String nickname) {
         Boolean isUseNickname = userRepository.existsByNickname(nickname);
         return isUseNickname;
+    }
+
+    // 회원 정보 수정 ( 닉네임, 이메일(확인용))
+    // 닉네임
+    @Override
+    @Transactional
+    public TokenResDto updateUser(String email, UserInfoReqDto userInfoReqDto) {
+        User user = findByEmail(email);
+        user.updateUser(userInfoReqDto.getNickname(), userInfoReqDto.getEmail());
+
+        // 토큰 재생성
+        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getId(), user.getRole().toString());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getId());
+
+
+        return TokenResDto.toDto(accessToken, refreshToken);
     }
 
     // 이메일 전송
@@ -185,16 +197,13 @@ public class UserServiceImpl implements UserService {
     // 이메일 인증
     @Override
     @Transactional
-    public void verificationCode(String originEmail, String email, String requestCode) {
-        User user = findByEmail(originEmail);
+    public void verificationCode( String email, String requestCode) {
 
         String verificationCode = getVerificationCode(email);
         if(!requestCode.equals(verificationCode)) {
             throw new CustomException(EMAIL_CODE_NOT_MATCH);
         }
 
-        // 이메일 변경
-        user.updateEmail(email);
     }
 
     // 비밀번호 변경
