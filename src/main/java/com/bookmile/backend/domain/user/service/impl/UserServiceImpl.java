@@ -214,6 +214,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    // 프로필 이미지 수정
     @Override
     @Transactional
     public void updateProfile(String email, MultipartFile file) {

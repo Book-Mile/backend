@@ -25,14 +25,16 @@ import static com.bookmile.backend.global.common.StatusCode.*;
 public class UserController {
     private final UserService userService;
 
-    @Operation(summary = "회원가입", description = "소셜로그인이 아닌 '일반 로그인'으로 가입하는 API 입니다.")
+    @Operation(summary = "회원가입", description = "소셜로그인이 아닌 '일반 회원가입'으로 가입하는 API 입니다. <br>" +
+            "닉네임은 입력하실 필요 없습니다. 초기 회원가입시, 닉네임은 랜덤생성되어 회원정보가 저장됩니다. ex)기운찬고양이23 ")
     @PostMapping("/sign-up")
     public ResponseEntity<CommonResponse<UserResDto>> signUp(@RequestBody @Valid SignUpReqDto signUpReqDto) {
         return ResponseEntity.status(SIGN_UP.getStatus())
                 .body(CommonResponse.from(SIGN_UP.getMessage(),userService.signUp(signUpReqDto)));
     }
 
-    @Operation(summary = "로그인", description = "'일반 로그인'으로 로그인합니다.")
+    @Operation(summary = "로그인", description = "'일반 로그인'으로 로그인합니다. <br>" +
+            "accessToken과 refreshToken이 body를 통해서 전달됩니다.")
     @PostMapping("/sign-in")
     public ResponseEntity<CommonResponse<SignInResDto>> signIn(@RequestBody @Valid SignInReqDto signInReqDto) {
         return ResponseEntity.status(SIGN_IN.getStatus())
@@ -57,18 +59,26 @@ public class UserController {
         return ResponseEntity.ok(userService.checkNickname(nickname));
     }
 
+    @Operation(summary = "이메일 인증 코드 전송", description = "이메일 인증을 위한 6자리 난수를 보내는 코드입니다. <br>" +
+            "이메일 1개당, 하루 최대 5번의 인증만 가능합니다. <br>" +
+            "해당 이메일의 메일을 통해 코드가 전달됩니다.")
     @PostMapping("/email")
     public ResponseEntity<CommonResponse<Object>> sendEmailCode(@RequestBody @Valid EmailReqDto emailReqDto) {
         userService.sendEmailCode(emailReqDto.getEmail());
         return ResponseEntity.ok(CommonResponse.from(SEND_EMAIL_CODE.getMessage()));
     }
 
+    @Operation(summary = "이메일 코드 인증", description = "작성한 이메일과 6자리 코드가 서버에서 제공한 이메일과 일치하는지 확인합니다.")
     @PostMapping("/email/verify")
     public ResponseEntity<Boolean> verifyEmailCode(@RequestBody @Valid EmailCodeReqDto emailCodeReqDto ) {
         Boolean result = userService.verificationCode(emailCodeReqDto.getEmail(), emailCodeReqDto.getCode());
         return ResponseEntity.ok(result);
     }
 
+    @Operation(summary = "비밀번호 변경", description = "3가지의 비밀번호 형식을 맞춰주셔야 합니다. 아래는 3가지의 검증을 거칩니다. <br>" +
+            "1. 기존 비밀번호(originPassword)를 확인합니다.<br>" +
+            "2. 기존비밀번호와 변경하려는 비밀번호(newPassword)가 다른지 확인합니다. <br>" +
+            "3. 변경 비밀번호와 확인용 비밀번호(checkPassword)가 일치한지 확인합니다. ")
     @PutMapping("/password")
     public ResponseEntity<CommonResponse<Object>> updatePassword(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -77,6 +87,8 @@ public class UserController {
         return ResponseEntity.ok(CommonResponse.from(UPDATE_USER.getMessage()));
     }
 
+    @Operation(summary = "프로필 이미지 수정", description = "프로필 이미지를 수정합니다. <br>" +
+            "파일의 형식은 '.png, .jpeg, .jpg'의 파일 확장자만 가능합니다.")
     @PutMapping(value = "/profile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CommonResponse<Object>> updateProfile(
             @AuthenticationPrincipal UserDetails userDetails,
