@@ -25,6 +25,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -148,6 +149,7 @@ public class UserServiceImpl implements UserService {
 
     // 이메일 전송
     @Override
+    @Async
     public void sendEmailCode(String email) {
 
         // 변경하려는 이메일이 이미 존재하는지 확인
