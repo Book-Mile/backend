@@ -44,9 +44,11 @@ public class UserServiceImpl implements UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final StringRedisTemplate redisTemplate;
     private final JavaMailSender mailSender;
+    private final RandomNickname randomNickname;
 
     @Value("${spring.mail.username")
     private String maileSenderEmail;
+
 
     @Override
     public UserResDto signUp(SignUpReqDto signUpReqDto) {
@@ -58,14 +60,18 @@ public class UserServiceImpl implements UserService {
         }
 
         String enCodePassword = passwordEncoder.encode(signUpReqDto.getPassword());
-        
+
+        // 닉네임 자동 생성
+        String nickname = randomNickname.generateNickname();
+
+        User user = userRepository.save(signUpReqDto.toEntity(signUpReqDto.getEmail(), nickname, enCodePassword));
         return UserResDto.toDto(user);
     }
 
     @Override
     @Transactional
     public SignInResDto signIn(SignInReqDto signInReqDto) {
-         User user = findByEmail(signInReqDto.getEmail());
+        User user = findByEmail(signInReqDto.getEmail());
 
         if (!passwordEncoder.matches(signInReqDto.getPassword(), user.getPassword())) {
             throw new CustomException(AUTHENTICATION_FAILED); // 유저는 아이디, 비밀번호 중 한개만 틀려도 '일치하는 정보가 없음' 메세지 표시
@@ -218,10 +224,6 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(email)) {
             throw new CustomException(USER_ALREADY_EXISTS);
         };
-    }
-
-    private User findById(Long userId){
-        return userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 
     private User findByEmail(String email) {

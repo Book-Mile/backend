@@ -77,7 +77,7 @@ public enum StatusCode {
 
     /* 429 TOO_MANY_REQUESTS : 요청 과다 */
     EMAIL_TOO_MANY_REQUESTS(TOO_MANY_REQUESTS,"이메일 인증 요청 5번 초과로 더이상 인증 요청을 할 수 없습니다."),
-
+    NICKNAME_TOO_MANY_REQUESTS(TOO_MANY_REQUESTS, "더이상 생성할 닉네임이 없습니다."),
     /* 500 INTERNAL_SERVER_ERROR  Error */
     REDIS_ERROR(INTERNAL_SERVER_ERROR, "Redis 서버에 연결할 수 없습니다. "),
     MAIL_SERVER_ERROR(INTERNAL_SERVER_ERROR, "메일 서버에 오류가 생겼습니다.");
