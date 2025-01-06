@@ -10,10 +10,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.bookmile.backend.global.common.StatusCode.*;
 
@@ -72,6 +74,14 @@ public class UserController {
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody @Valid PasswordReqDto passwordReqDto) {
         userService.changePassword(userDetails.getUsername(), passwordReqDto);
+        return ResponseEntity.ok(CommonResponse.from(UPDATE_USER.getMessage()));
+    }
+
+    @PutMapping(value = "/profile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CommonResponse<Object>> updateProfile(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestPart(value = "file") MultipartFile file){
+        userService.updateProfile(userDetails.getUsername(), file);
         return ResponseEntity.ok(CommonResponse.from(UPDATE_USER.getMessage()));
     }
 }

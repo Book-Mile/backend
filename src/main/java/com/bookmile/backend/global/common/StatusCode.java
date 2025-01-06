@@ -15,7 +15,6 @@ public enum StatusCode {
     SIGN_IN(OK, "로그인에 성공하였습니다."),
     UPDATE_USER(OK, "회원 정보를 변경 완료"),
     USER_FOUND(OK, "회원 조회 완료"),
-    GET_INFO(OK, "사용자 정보조회에 성공"),
     SEND_EMAIL_CODE(OK, "이메일 인증을 요청하였습니다."),
 
     /* Review */
@@ -54,6 +53,8 @@ public enum StatusCode {
     PASSWORD_NOT_MATCH(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     PASSWORD_DUPLICATE(BAD_REQUEST, "이전 비밀번호와 동일합니다."),
     EMAIL_CODE_NOT_MATCH(BAD_REQUEST, "코드가 일지하지 않습니다."),
+    FILE_SAVE_INVALID(BAD_REQUEST,"파일 저장 중 오류가 발생했습니다."),
+    FILE_DELETE_INVALID(BAD_REQUEST,"파일 삭제 중 오류가 발생했습니다."),
 
     /* 401 UNAUTHORIZED : 비인증 사용자 */
     AUTHENTICATION_FAILED(UNAUTHORIZED, "회원의 정보가 일치하지 않습니다."),
@@ -71,6 +72,7 @@ public enum StatusCode {
     IMAGE_NOT_FOUND(NOT_FOUND, "존재하는 이미지가 없습니다."),
     NO_USER_OR_NO_GROUP(NOT_FOUND, "사용자 또는 그룹이 존재하지 않습니다."),
     PROVIDER_NOT_FOUND(NOT_FOUND, "존재하는 제공자가 없습니다."),
+    INVALID_FILE_TYPE(NOT_FOUND, "유효하지 않은 파일 형식입니다."),
 
     /* 409 CONFLICT : 리소스 충돌 */
     USER_ALREADY_EXISTS(CONFLICT, "이미 존재하는 회원입니다."),
@@ -78,6 +80,7 @@ public enum StatusCode {
     /* 429 TOO_MANY_REQUESTS : 요청 과다 */
     EMAIL_TOO_MANY_REQUESTS(TOO_MANY_REQUESTS,"이메일 인증 요청 5번 초과로 더이상 인증 요청을 할 수 없습니다."),
     NICKNAME_TOO_MANY_REQUESTS(TOO_MANY_REQUESTS, "더이상 생성할 닉네임이 없습니다."),
+
     /* 500 INTERNAL_SERVER_ERROR  Error */
     REDIS_ERROR(INTERNAL_SERVER_ERROR, "Redis 서버에 연결할 수 없습니다. "),
     MAIL_SERVER_ERROR(INTERNAL_SERVER_ERROR, "메일 서버에 오류가 생겼습니다.");

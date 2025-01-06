@@ -8,6 +8,7 @@ import com.bookmile.backend.domain.user.dto.res.UserDetailResDto;
 import com.bookmile.backend.domain.user.dto.res.UserInfoDto;
 import com.bookmile.backend.domain.user.dto.res.UserResDto;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
     UserResDto signUp(SignUpReqDto signUpReqDto);
@@ -21,4 +22,5 @@ public interface UserService {
     Boolean verificationCode(String email, String requestCode);
 
     void changePassword(String email, PasswordReqDto passwordReqDto);
+    void updateProfile(String email, MultipartFile file);
 }

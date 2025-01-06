@@ -1,5 +1,7 @@
 package com.bookmile.backend.domain.user.service.impl;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.bookmile.backend.domain.image.service.Impl.ImageService;
 import com.bookmile.backend.domain.user.dto.req.PasswordReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignUpReqDto;
@@ -20,12 +22,14 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,12 +49,18 @@ public class UserServiceImpl implements UserService {
     private final StringRedisTemplate redisTemplate;
     private final JavaMailSender mailSender;
     private final RandomNickname randomNickname;
+    private final ImageService imageService;
 
-    @Value("${spring.mail.username")
+    @Value("${spring.mail.username}")
     private String maileSenderEmail;
 
+    @Value("${aws.bucket.name.profile}")
+    private String bucketName;
+
+    private static final String[] ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"};
 
     @Override
+    @Transactional
     public UserResDto signUp(SignUpReqDto signUpReqDto) {
         existsByEmail(signUpReqDto.getEmail());
 
@@ -203,6 +213,32 @@ public class UserServiceImpl implements UserService {
         String enCodePassword = passwordEncoder.encode(passwordReqDto.getNewPassword());
         user.updatePassword(enCodePassword);
 
+    }
+
+    @Override
+    @Transactional
+    public void updateProfile(String email, MultipartFile file) {
+        User user = findByEmail(email);
+
+        if(!validateImageFile(file)){
+            throw new CustomException(INVALID_FILE_TYPE);
+        }
+
+        imageService.deleteFileFromS3Bucket(bucketName, user.getImage());
+
+        String url = imageService.uploadFileToS3Bucket(bucketName, file);
+        user.updateImage(url);
+    }
+
+    private boolean validateImageFile(MultipartFile file) {
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase();
+
+        for(String allowedExtension : ALLOWED_EXTENSIONS) {
+            if(extension.equals(allowedExtension)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Map<String, Object> getUserIdByToken(HttpServletRequest request) {
