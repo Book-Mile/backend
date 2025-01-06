@@ -1,7 +1,6 @@
 package com.bookmile.backend.global.oauth.nickname;
 
 import com.bookmile.backend.domain.user.repository.UserRepository;
-import com.bookmile.backend.global.common.StatusCode;
 import com.bookmile.backend.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

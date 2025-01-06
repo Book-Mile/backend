@@ -1,6 +1,5 @@
 package com.bookmile.backend.domain.user.service.impl;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.bookmile.backend.domain.image.service.Impl.ImageService;
 import com.bookmile.backend.domain.user.dto.req.PasswordReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
