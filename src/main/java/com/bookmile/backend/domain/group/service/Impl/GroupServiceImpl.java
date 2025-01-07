@@ -55,6 +55,9 @@ public class GroupServiceImpl implements GroupService {
             if (goalType == GoalType.CUSTOM) {
                 customGoal = template.getCustomGoal();
             }
+            // 템플릿 사용 카운트 증가
+            template.increaseUsageCount();
+            templateRepository.save(template); // 변경된 값 저장
         } else {
             //템플릿이 없는 경우 GoalType 검증 및 처리
             try {
@@ -91,7 +94,7 @@ public class GroupServiceImpl implements GroupService {
                     group, // 그룹 연결
                     goalType,
                     customGoal, // customGoal 전달
-                    goalType == GoalType.CUSTOM
+                    true
             );
             templateRepository.save(template); // 템플릿 저장
         }

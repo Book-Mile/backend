@@ -40,7 +40,7 @@ public class Template {
     private boolean isTemplate; // 템플릿 공유 여부
 
     @Column(nullable = false)
-    private int usageCount = 0; // 템플릿 사용 횟수
+    private int usageCount = 1; // 템플릿 사용 횟수
 
     // 생성자
     public Template(Group group, GoalType goalType, String customGoal, boolean isTemplate) {
@@ -48,13 +48,10 @@ public class Template {
         this.goalType = goalType;
         this.customGoal = customGoal; // 사용자 정의 목표
         this.isTemplate = isTemplate;
-        this.usageCount = isTemplate ? 1 : 0; // 템플릿이면 사용 횟수 1로 초기화
     }
 
     // 템플릿 사용 횟수 증가 메서드
-    public void incrementUsageCount() {
-        if (this.isTemplate) {
+    public void increaseUsageCount() {
             this.usageCount++;
-        }
     }
 }
