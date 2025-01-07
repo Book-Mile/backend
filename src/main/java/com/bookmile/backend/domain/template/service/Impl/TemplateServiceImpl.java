@@ -12,10 +12,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TemplateServiceImpl implements TemplateService {
 
-    private final TemplateRepository checkPointRepository;
+    private final TemplateRepository templateRepository;
 
     @Override
-    public List<Template> getPopularTemplates(Long bookId) {
-        return checkPointRepository.findPopularTemplatesByBookId(bookId);
+    public List<Template> getTopTemplatesByBook(Long bookId) {
+        return templateRepository.findTop10PopularTemplatesByBookId(bookId);
     }
 }

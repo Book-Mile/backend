@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface TemplateRepository extends JpaRepository<Template, Long> {
+
     @Query("SELECT c FROM Template c WHERE c.group.book.id = :bookId AND c.isTemplate = true ORDER BY c.usageCount DESC")
-    List<Template> findPopularTemplatesByBookId(@Param("bookId") Long bookId);
+    List<Template> findTop10PopularTemplatesByBookId(@Param("bookId") Long bookId);
 }
