@@ -25,24 +25,24 @@ public class GroupJoinServiceImpl implements GroupJoinService {
     public void joinGroup(Long userId, GroupJoinRequestDto groupJoinRequestDto) {
         //그룹 가져오기
         Group group = groupRepository.findById(groupJoinRequestDto.getGroupId())
-                .orElseThrow(()-> new CustomException(StatusCode.INPUT_VALUE_INVALID));
+                .orElseThrow(()-> new CustomException(StatusCode.INVALID_GROUP_ID));
 
         //이미 참여한 그룹인가?
         boolean alreadyJoined = userGroupRepository.existsByUserIdAndGroupId(userId, group.getId());
         if (alreadyJoined) {
-            throw new CustomException(StatusCode.INPUT_VALUE_INVALID);
+            throw new CustomException(StatusCode.ALREADY_JOINED_GROUP);
         }
 
         //최대 인원 초과 설정
         int currentMemberCount = userGroupRepository.countByGroupId(group.getId());
         if (currentMemberCount >= group.getMaxMembers()) {
-            throw new CustomException(StatusCode.INPUT_VALUE_INVALID);
+            throw new CustomException(StatusCode.GROUP_MEMBER_LIMIT_REACHED);
         }
 
         //비공개 그룹일 경우 비밀번호
         if (!group.getIsOpen() && (groupJoinRequestDto.getPassword() == NULL
                 || !group.getPassword().equals(groupJoinRequestDto.getPassword()))) {
-            throw new CustomException(StatusCode.INPUT_VALUE_INVALID);
+            throw new CustomException(StatusCode.INVALID_GROUP_PASSWORD);
         }
 
         //그룹에 참여하기
