@@ -44,7 +44,7 @@ public class GroupServiceImpl implements GroupService {
 
         Template template;
         GoalType goalType = null;
-        String customGoal = null;
+        String customGoal = requestDto.getCustomGoal();
 
         // 2. 템플릿 ID가 있는 경우 템플릿 사용
         if (requestDto.getTemplateId() != null) {
@@ -67,15 +67,6 @@ public class GroupServiceImpl implements GroupService {
             if (goalType == GoalType.CUSTOM && (requestDto.getCustomGoal() == null || requestDto.getCustomGoal().isEmpty())) {
                 throw new CustomException(CUSTOM_GOAL_REQUIRED);
             }
-
-            // 새로운 템플릿 생성
-            template = new Template(
-                    null, // 그룹 연결은 이후 설정
-                    goalType,
-                    goalType == GoalType.CUSTOM ? requestDto.getCustomGoal() : null,
-                    goalType == GoalType.CUSTOM
-            );
-            templateRepository.save(template); // CheckPoint 저장
         }
 
         //그룹 생성
@@ -94,9 +85,16 @@ public class GroupServiceImpl implements GroupService {
                         .build()
         );
 
-        // 템플릿과 그룹 연결
-        template.setGroup(group);
-        templateRepository.save(template);
+        // 템플릿 생성 및 저장
+        if (requestDto.getTemplateId() == null) {
+            template = new Template(
+                    group, // 그룹 연결
+                    goalType,
+                    customGoal, // customGoal 전달
+                    goalType == GoalType.CUSTOM
+            );
+            templateRepository.save(template); // 템플릿 저장
+        }
 
         // 그룹 생성자 등록
         UserGroup userGroup = UserGroup.builder()
