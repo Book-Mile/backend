@@ -44,9 +44,12 @@ public enum StatusCode {
     /* Group */
     GROUP_CREATE(CREATED, "그룹 생성에 성공했습니다."),
 
+    /* Group */
+    CHECKPOINT_TEMPLETE(OK, "템플릿 조회에 성공했습니다."),
+
     /* 400 BAD_REQUEST : 잘못된 요청 */
     PASSWORD_NOT_MATCH(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
-
+    CUSTOM_GOAL_REQUIRED(BAD_REQUEST,"GoalType이 CUSTOM일 경우 사용자 정의 목표(customGoal)는 필수입니다."),
     /* 401 UNAUTHORIZED : 비인증 사용자 */
     AUTHENTICATION_FAILED(UNAUTHORIZED, "회원의 정보가 일치하지 않습니다."),
 
@@ -61,7 +64,9 @@ public enum StatusCode {
     RECORD_NOT_FOUND(NOT_FOUND, "존재하는 기록이 없습니다."),
     IMAGE_NOT_FOUND(NOT_FOUND, "존재하는 이미지가 없습니다."),
     NO_USER_OR_NO_GROUP(NOT_FOUND, "사용자 또는 그룹이 존재하지 않습니다."),
-
+    INVALID_GOAL_TYPE(NOT_FOUND, "유효하지 않은 GoalType 값입니다"),
+    INVALID_TEMPLATE_ID(NOT_FOUND,"존재하지 않는 템플릿입니다."),
+    BOOK_INFO_NOT_FOUND(NOT_FOUND,"책 정보를 가져올 수 없습니다."),
     /* 409 CONFLICT : 리소스 충돌 */
     USER_ALREADY_EXISTS(CONFLICT, "이미 존재하는 회원입니다.");
 

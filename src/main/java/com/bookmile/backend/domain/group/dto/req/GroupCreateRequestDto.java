@@ -29,13 +29,16 @@ public class GroupCreateRequestDto {
     @Schema(description = "도서 ISBN13", example = "9788936434595")
     private String isbn13;
 
-    @NotBlank(message = "독서 목표 방식은 필수입니다.")
-    @Schema(description = "도서 목표 방식", example = "CHAPTER")
-    private String goalType;
-
     @NotBlank(message = "그룹 설명을 적어주세요.")
     @Schema(description = "그룹 소개글", example = "방학 안에 다 읽어봐요!")
     private String groupDescription;
 
-    //private String customGoal; // 사용자 정의 목표 (Optional)
+    @Schema(description = "템플릿 ID (선택사항)", example = "1")
+    private Long templateId; // 템플릿 ID
+
+    @Schema(description = "도서 목표 방식 (선택사항)", example = "PAGE")
+    private String goalType; // GoalType (PAGE, CHAPTER, NUMBER, CUSTOM)
+
+    @Schema(description = "사용자 정의 목표 내용 (CUSTOM인 경우 필수)", example = "하루에 30페이지 읽기")
+    private String customGoal; // 사용자 정의 목표 내용 (선택 사항)
 }
