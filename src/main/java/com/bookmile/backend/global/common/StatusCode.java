@@ -66,6 +66,7 @@ public enum StatusCode {
     NO_USER_OR_NO_GROUP(NOT_FOUND, "사용자 또는 그룹이 존재하지 않습니다."),
     INVALID_GOAL_TYPE(NOT_FOUND, "유효하지 않은 GoalType 값입니다"),
     INVALID_TEMPLATE_ID(NOT_FOUND,"존재하지 않는 템플릿입니다."),
+    BOOK_INFO_NOT_FOUND(NOT_FOUND,"책 정보를 가져올 수 없습니다."),
     /* 409 CONFLICT : 리소스 충돌 */
     USER_ALREADY_EXISTS(CONFLICT, "이미 존재하는 회원입니다.");
 
