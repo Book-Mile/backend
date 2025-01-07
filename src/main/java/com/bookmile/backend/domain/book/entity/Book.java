@@ -12,13 +12,13 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Book extends BaseEntity {
 
@@ -27,44 +27,51 @@ public class Book extends BaseEntity {
     @Column(name = "book_id")
     private long id;
 
-    @OneToMany(mappedBy = "book")
-    private List<Group> group = new ArrayList<>();
-
-    @OneToMany(mappedBy = "book")
-    private List<Review> review = new ArrayList<>();
+    @Column(length = 13)
+    private String isbn13;
 
     @Column(nullable = false)
-    private String bookName;
+    private String title;
 
     @Column(nullable = false)
-    private Integer page;
-
-    @Column(nullable = false)
-    private String thumbNail;
+    private String author;
 
     @Column(nullable = false)
     private String publisher;
 
     @Column(nullable = false)
-    private String description;
+    private String cover;
 
     @Column(nullable = false)
-    private String link;
+    private String description = "제공되는 상세 내용이 없습니다.";
 
-    @Column(nullable = false)
-    private Double rating;
+    @Column
+    private int totalPage;
+
+    @OneToMany(mappedBy = "book")
+    private List<Group> group = new ArrayList<>();
+
+    //@OneToMany(mappedBy = "book")
+    //private List<Review> review = new ArrayList<>();
+
+    //@Column
+    //private Integer bestSellerRank = null; //상품 조회하면 업데이트
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
-    public Book(String bookName, Integer page, String thumbNail, String publisher, String description, String link,
-                Double rating) {
-        this.bookName = bookName;
-        this.page = page;
-        this.thumbNail = thumbNail;
+    @Builder
+    public Book(String isbn13, String title, String author, String publisher, String cover, String description, int totalPage) {
+        this.isbn13 = isbn13;
+        this.title = title;
+        this.author = author;
         this.publisher = publisher;
+        this.cover = cover;
         this.description = description;
-        this.link = link;
-        this.rating = rating;
+        this.totalPage = totalPage;
+    }
+
+    protected Book() {
+
     }
 }

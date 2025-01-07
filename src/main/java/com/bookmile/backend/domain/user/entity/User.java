@@ -51,4 +51,26 @@ public class User extends BaseEntity {
         this.provider = provider;
         this.providerId = providerId;
     }
+
+    public void updateNickname(String newNickname) {
+        this.nickname = newNickname;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateImage(String image) {
+        this.image = image;
+    }
+
+    public void updateIsDeleted() {
+        this.isDeleted = !this.isDeleted;
+    }
+
+    public void updateUser(String nickname, String email) {
+        this.nickname = nickname;
+        this.email = email;
+    }
 }
+

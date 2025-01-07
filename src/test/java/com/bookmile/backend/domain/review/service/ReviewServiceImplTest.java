@@ -27,7 +27,7 @@ class ReviewServiceImplTest {
     private ReviewRepository reviewRepository;
 
     @Autowired
-    private BookRepository bookRepository;
+    private ReviewBookRepository bookRepository;
 
     @Autowired
     private UserRepository userRepository;

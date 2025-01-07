@@ -11,7 +11,7 @@ import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
 import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.record.repository.RecordRepository;
 import com.bookmile.backend.domain.record.service.Impl.RecordServiceImpl;
-import com.bookmile.backend.domain.review.service.BookRepository;
+import com.bookmile.backend.domain.review.service.ReviewBookRepository;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
@@ -27,16 +27,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 class RecordServiceImplTest {
 
     @Autowired
-    private BookRepository bookRepository;
+    private ReviewBookRepository bookRepository;
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private GroupRepository groupRepository;
+    private RecordGroupRepository groupRepository;
 
     @Autowired
-    private UserGroupRepository userGroupRepository;
+    private RecordUserGroupRepository userGroupRepository;
 
     @Autowired
     private RecordRepository recordRepository;

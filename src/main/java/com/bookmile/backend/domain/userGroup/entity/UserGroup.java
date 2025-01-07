@@ -1,7 +1,6 @@
 package com.bookmile.backend.domain.userGroup.entity;
 
 import com.bookmile.backend.domain.group.entity.Group;
-import com.bookmile.backend.domain.group.entity.Role;
 import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.global.config.BaseEntity;
@@ -19,6 +18,7 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,6 +52,7 @@ public class UserGroup extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
+    @Builder
     public UserGroup(User user, Group group, Role role) {
         this.user = user;
         this.group = group;

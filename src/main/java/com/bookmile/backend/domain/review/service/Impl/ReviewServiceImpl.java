@@ -9,7 +9,7 @@ import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
 import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
 import com.bookmile.backend.domain.review.entity.Review;
 import com.bookmile.backend.domain.review.repository.ReviewRepository;
-import com.bookmile.backend.domain.review.service.BookRepository;
+import com.bookmile.backend.domain.review.service.ReviewBookRepository;
 import com.bookmile.backend.domain.review.service.ReviewService;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
-    private final BookRepository bookRepository;
+    private final ReviewBookRepository bookRepository;
     private final UserRepository userRepository;
 
     @Override

@@ -11,9 +11,9 @@ import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
 import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
 import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.record.repository.RecordRepository;
-import com.bookmile.backend.domain.record.service.GroupRepository;
+import com.bookmile.backend.domain.record.service.RecordGroupRepository;
 import com.bookmile.backend.domain.record.service.RecordService;
-import com.bookmile.backend.domain.record.service.UserGroupRepository;
+import com.bookmile.backend.domain.record.service.RecordUserGroupRepository;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
@@ -26,8 +26,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RecordServiceImpl implements RecordService {
     private final UserRepository userRepository;
-    private final GroupRepository groupRepository;
-    private final UserGroupRepository userGroupRepository;
+    private final RecordGroupRepository groupRepository;
+    private final RecordUserGroupRepository userGroupRepository;
     private final RecordRepository recordRepository;
 
     @Override

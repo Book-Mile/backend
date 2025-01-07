@@ -33,13 +33,13 @@ public class CheckPoint {
     private Group group;
 
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private GoalType goalType;
 
     private String freeType;
 
-    public CheckPoint(Group group, Type type, String freeType) {
+    public CheckPoint(Group group, GoalType goalType, String freeType) {
         this.group = group;
-        this.type = type;
+        this.goalType = goalType;
         this.freeType = freeType;
     }
 }
