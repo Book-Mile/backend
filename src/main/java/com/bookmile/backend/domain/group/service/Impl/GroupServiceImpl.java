@@ -84,8 +84,7 @@ public class GroupServiceImpl implements GroupService {
                         .groupDescription(requestDto.getGroupDescription())
                         .password(requestDto.getPassword())
                         .isOpen(true)
-                        .isEnd(false)
-                        .build()
+                        .isEnd(false)                     .build()
         );
 
         // 템플릿 생성 및 저장

@@ -37,4 +37,8 @@ public class User extends BaseEntity {
         this.password = password;
         this.image = image;
     }
+
+    public User(Long id) {
+        this.id = id;
+    }
 }
