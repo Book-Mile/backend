@@ -83,7 +83,7 @@ public class GroupServiceImpl implements GroupService {
                         .maxMembers(requestDto.getMaxMembers())
                         .groupDescription(requestDto.getGroupDescription())
                         .password(requestDto.getPassword())
-                        .isOpen(true)
+                        .isOpen(Boolean.valueOf(requestDto.getIsOpen()))
                         .isEnd(false)                     .build()
         );
 

@@ -53,7 +53,7 @@ public class Group extends BaseEntity {
     @Column
     private String groupDescription;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;  // 비밀번호 (선택 사항)
 
     @Column(nullable = false)
