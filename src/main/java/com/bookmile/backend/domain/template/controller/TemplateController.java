@@ -1,7 +1,7 @@
-package com.bookmile.backend.domain.checkpoint.controller;
+package com.bookmile.backend.domain.template.controller;
 
-import com.bookmile.backend.domain.checkpoint.entity.CheckPoint;
-import com.bookmile.backend.domain.checkpoint.service.CheckPointService;
+import com.bookmile.backend.domain.template.entity.Template;
+import com.bookmile.backend.domain.template.service.TemplateService;
 import com.bookmile.backend.global.common.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +14,13 @@ import static com.bookmile.backend.global.common.StatusCode.CHECKPOINT_TEMPLETE;
 @RestController
 @RequestMapping("/api/v1/templates")
 @RequiredArgsConstructor
-public class CheckPointController {
+public class TemplateController {
 
-    private final CheckPointService checkPointService;
+    private final TemplateService checkPointService;
 
     @GetMapping("/{bookId}")
-    public ResponseEntity<CommonResponse<List<CheckPoint>>> getPopularTemplates(@PathVariable Long bookId) {
-        List<CheckPoint> templates = checkPointService.getPopularTemplates(bookId);
+    public ResponseEntity<CommonResponse<List<Template>>> getPopularTemplates(@PathVariable Long bookId) {
+        List<Template> templates = checkPointService.getPopularTemplates(bookId);
         return ResponseEntity.ok(CommonResponse.from(CHECKPOINT_TEMPLETE.getMessage(), templates));
     }
 }

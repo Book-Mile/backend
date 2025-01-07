@@ -1,4 +1,4 @@
-package com.bookmile.backend.domain.checkpoint.entity;
+package com.bookmile.backend.domain.template.entity;
 
 
 import com.bookmile.backend.domain.group.entity.Group;
@@ -18,11 +18,11 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class CheckPoint {
+public class Template {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "checkpoint_id")
+    @Column(name = "template_id")
     private Long id;
 
     @Setter
@@ -37,13 +37,13 @@ public class CheckPoint {
     private String customGoal; // 사용자 정의 목표 (CUSTOM인 경우)
 
     @Column(nullable = false)
-    private boolean isTemplate; // 템플릿 여부
+    private boolean isTemplate; // 템플릿 공유 여부
 
     @Column(nullable = false)
     private int usageCount = 0; // 템플릿 사용 횟수
 
     // 생성자
-    public CheckPoint(Group group, GoalType goalType, String customGoal, boolean isTemplate) {
+    public Template(Group group, GoalType goalType, String customGoal, boolean isTemplate) {
         this.group = group;
         this.goalType = goalType;
         this.customGoal = customGoal; // 사용자 정의 목표

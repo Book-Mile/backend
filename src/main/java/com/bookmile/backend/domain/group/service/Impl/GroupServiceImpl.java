@@ -2,9 +2,9 @@ package com.bookmile.backend.domain.group.service.Impl;
 
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.book.service.BookService;
-import com.bookmile.backend.domain.checkpoint.entity.CheckPoint;
-import com.bookmile.backend.domain.checkpoint.entity.GoalType;
-import com.bookmile.backend.domain.checkpoint.repository.CheckPointRepository;
+import com.bookmile.backend.domain.template.entity.Template;
+import com.bookmile.backend.domain.template.entity.GoalType;
+import com.bookmile.backend.domain.template.repository.TemplateRepository;
 import com.bookmile.backend.domain.group.dto.req.GroupCreateRequestDto;
 import com.bookmile.backend.domain.group.dto.res.GroupCreateResponseDto;
 import com.bookmile.backend.domain.group.entity.Group;
@@ -29,7 +29,7 @@ public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
     private final BookService bookService;
     private final UserGroupRepository userGroupRepository;
-    private final CheckPointRepository checkPointRepository;
+    private final TemplateRepository templateRepository;
 
     @Override
     public User getUserById(Long userId) {
@@ -39,24 +39,24 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public GroupCreateResponseDto createGroup(GroupCreateRequestDto requestDto, User user) {
-        // 1. 책 정보 가져오기
+        //책 정보 가져오기
         Book book = bookService.saveBook(requestDto.getIsbn13());
 
-        CheckPoint checkPoint;
+        Template template;
         GoalType goalType = null;
         String customGoal = null;
 
         // 2. 템플릿 ID가 있는 경우 템플릿 사용
         if (requestDto.getTemplateId() != null) {
-            checkPoint = checkPointRepository.findById(requestDto.getTemplateId())
+            template = templateRepository.findById(requestDto.getTemplateId())
                     .orElseThrow(() -> new CustomException(INVALID_TEMPLATE_ID));
-            goalType = checkPoint.getGoalType();
+            goalType = template.getGoalType();
             // 템플릿이 CUSTOM 타입인 경우 customGoal 값을 가져옴
             if (goalType == GoalType.CUSTOM) {
-                customGoal = checkPoint.getCustomGoal();
+                customGoal = template.getCustomGoal();
             }
         } else {
-            // 3. 템플릿이 없는 경우 GoalType 검증 및 처리
+            //템플릿이 없는 경우 GoalType 검증 및 처리
             try {
                 goalType = GoalType.valueOf(requestDto.getGoalType());
             } catch (IllegalArgumentException e) {
@@ -68,17 +68,17 @@ public class GroupServiceImpl implements GroupService {
                 throw new CustomException(CUSTOM_GOAL_REQUIRED);
             }
 
-            // 새로운 CheckPoint 생성
-            checkPoint = new CheckPoint(
+            // 새로운 템플릿 생성
+            template = new Template(
                     null, // 그룹 연결은 이후 설정
                     goalType,
                     goalType == GoalType.CUSTOM ? requestDto.getCustomGoal() : null,
                     goalType == GoalType.CUSTOM
             );
-            checkPointRepository.save(checkPoint); // CheckPoint 저장
+            templateRepository.save(template); // CheckPoint 저장
         }
 
-        // 4. 그룹 생성
+        //그룹 생성
         Group group = groupRepository.save(
                 Group.builder()
                         .book(book)
@@ -94,11 +94,11 @@ public class GroupServiceImpl implements GroupService {
                         .build()
         );
 
-        // 5. CheckPoint와 그룹 연결
-        checkPoint.setGroup(group);
-        checkPointRepository.save(checkPoint);
+        // 템플릿과 그룹 연결
+        template.setGroup(group);
+        templateRepository.save(template);
 
-        // 6. 그룹 생성자 등록
+        // 그룹 생성자 등록
         UserGroup userGroup = UserGroup.builder()
                 .user(user)
                 .group(group)
@@ -106,7 +106,7 @@ public class GroupServiceImpl implements GroupService {
                 .build();
         userGroupRepository.save(userGroup);
 
-        // 7. 그룹 생성 응답 반환
+        // 그룹 생성 응답 반환
         return GroupCreateResponseDto.builder()
                 .groupId(group.getId())
                 .groupName(group.getGroupName())
