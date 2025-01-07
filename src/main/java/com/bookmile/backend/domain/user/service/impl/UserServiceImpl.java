@@ -12,6 +12,7 @@ import com.bookmile.backend.domain.user.dto.res.UserResDto;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.user.service.UserService;
+import com.bookmile.backend.global.common.UserRole;
 import com.bookmile.backend.global.exception.CustomException;
 import com.bookmile.backend.global.jwt.JwtTokenProvider;
 import com.bookmile.backend.global.oauth.nickname.RandomNickname;
@@ -27,11 +28,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -60,6 +66,9 @@ public class UserServiceImpl implements UserService {
 
     @Value("${aws.main.profile}")
     private String mainProfile;
+
+    @Value("${spring.oauth2.url.callback}")
+    private String callBackUrl;
 
     private static final String[] ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"};
 
@@ -269,12 +278,92 @@ public class UserServiceImpl implements UserService {
         user.updateImage(url);
     }
 
+    // 회원 탈퇴
     @Override
     @Transactional
     public void deleteUser(String email) {
         User user = findByEmail(email);
         user.updateIsDeleted();
     }
+
+    // 테스트용 - 로그인
+    @Override
+    @Transactional
+    public TokenResDto testSignIn(SignInReqDto signInReqDto) {
+        User user = findByEmail(signInReqDto.getEmail());
+
+        if (!passwordEncoder.matches(signInReqDto.getPassword(), user.getPassword())) {
+            throw new CustomException(AUTHENTICATION_FAILED); // 유저는 아이디, 비밀번호 중 한개만 틀려도 '일치하는 정보가 없음' 메세지 표시
+        }
+
+        String accessToken = jwtTokenProvider.createTestAccessToken(user.getEmail(), user.getId(), user.getRole().toString());
+        String refreshToken = jwtTokenProvider.createTestRefreshToken(user.getEmail(), user.getId());
+
+        return TokenResDto.toDto(accessToken, refreshToken);
+    }
+
+    // 테스트용 - OAuth 로그인
+    @Override
+    @Transactional
+    public Map<String, String> testSocialLogin(String email) {
+
+        // test용 유저 생성
+        User testUser = userRepository.findByEmail(email).orElseGet(()-> {
+                            User newUser = User.builder()
+                            .email(email)
+                            .nickname(randomNickname.generateNickname())
+                            .image(mainProfile)
+                            .provider("test")
+                            .providerId("test")
+                            .role(UserRole.USER)
+                            .isDeleted(false)
+                            .build();
+                    return userRepository.save(newUser);
+        });
+
+        // OAuth2User 생성
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("email", testUser.getEmail());
+        attributes.put("exist", true);
+        attributes.put("userId", testUser.getId());
+
+        OAuth2User oAuth2User = new DefaultOAuth2User(
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
+                attributes, "email");
+
+        String accessToken = jwtTokenProvider.createTestAccessToken(testUser.getEmail(), testUser.getId(), testUser.getRole().toString());
+        String refreshToken = jwtTokenProvider.createTestRefreshToken(testUser.getEmail(), testUser.getId());
+
+        String redirectUrl = UriComponentsBuilder.fromHttpUrl(callBackUrl)
+                .queryParam("testAccess", accessToken)
+                .queryParam("testRefresh", refreshToken)
+                .toUriString();
+
+        log.info("UserServiceImpl.testSocialLogin: redirectUrl - {},",redirectUrl);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("redirectUrl", redirectUrl);
+        response.put("accessToken", accessToken);
+        response.put("refreshToken", refreshToken);
+
+        return response;
+    }
+
+    @Override
+    public Map<String, String> testRedirect(String accessToken) {
+        log.info("UserServiceImpl.testRedirect: accessToken - {} ",accessToken);
+
+        Map<String, String> response = new HashMap<>();
+
+        Long userId = jwtTokenProvider.getUserId(accessToken);
+        String email = jwtTokenProvider.getUserEmail(accessToken);
+
+        response.put("userId", String.valueOf(userId));
+        response.put("email", email);
+
+        return response;
+    }
+
 
     private boolean validateImageFile(MultipartFile file) {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase();

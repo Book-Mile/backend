@@ -35,7 +35,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
             String email = oAuth2User.getAttribute("email");
-            String provider = oAuth2User.getAttribute("provider");
             String role = oAuth2User.getAuthorities().stream()
                     .findFirst()
                     .orElseThrow(IllegalAccessError::new)

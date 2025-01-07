@@ -11,11 +11,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.bookmile.backend.global.common.StatusCode.*;
 
@@ -30,7 +34,7 @@ public class UserController {
     @PostMapping("/sign-up")
     public ResponseEntity<CommonResponse<UserResDto>> signUp(@RequestBody @Valid SignUpReqDto signUpReqDto) {
         return ResponseEntity.status(SIGN_UP.getStatus())
-                .body(CommonResponse.from(SIGN_UP.getMessage(),userService.signUp(signUpReqDto)));
+                .body(CommonResponse.from(SIGN_UP.getMessage(), userService.signUp(signUpReqDto)));
     }
 
     @Operation(summary = "로그인", description = "'일반 로그인'으로 로그인합니다. <br>" +
@@ -38,7 +42,7 @@ public class UserController {
     @PostMapping("/sign-in")
     public ResponseEntity<CommonResponse<TokenResDto>> signIn(@RequestBody @Valid SignInReqDto signInReqDto) {
         return ResponseEntity.status(SIGN_IN.getStatus())
-                .body(CommonResponse.from(SIGN_IN.getMessage(),userService.signIn(signInReqDto)));
+                .body(CommonResponse.from(SIGN_IN.getMessage(), userService.signIn(signInReqDto)));
     }
 
     @Operation(summary = "토큰 재발급", description = "Header 에 refreshToken을 담아 요청을 보내야 합니다.")
@@ -86,9 +90,9 @@ public class UserController {
             "단, 인증 코드는 5분간 유효합니다.")
     @PostMapping("/email/verify")
     public ResponseEntity<CommonResponse<Object>> verifyEmailCode(
-            @RequestBody @Valid EmailCodeReqDto emailCodeReqDto ) {
+            @RequestBody @Valid EmailCodeReqDto emailCodeReqDto) {
         userService.verificationCode(emailCodeReqDto.getEmail(), emailCodeReqDto.getCode());
-        return ResponseEntity.status(UPDATE_USER.getStatus()).body(CommonResponse.from(UPDATE_USER.getMessage()));
+        return ResponseEntity.ok(CommonResponse.from(UPDATE_USER.getMessage()));
     }
 
     @Operation(summary = "비밀번호 변경", description = "3가지의 비밀번호 형식을 맞춰주셔야 합니다. 아래는 3가지의 검증을 거칩니다. <br>" +
@@ -105,10 +109,10 @@ public class UserController {
 
     @Operation(summary = "프로필 이미지 수정", description = "프로필 이미지를 수정합니다. <br>" +
             "파일의 형식은 '.png, .jpeg, .jpg'의 파일 확장자만 가능합니다.")
-    @PutMapping(value = "/profile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CommonResponse<Object>> updateProfile(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestPart(value = "file") MultipartFile file){
+            @RequestPart(value = "file") MultipartFile file) {
         userService.updateProfile(userDetails.getUsername(), file);
         return ResponseEntity.ok(CommonResponse.from(UPDATE_USER.getMessage()));
     }
@@ -116,9 +120,40 @@ public class UserController {
     @Operation(summary = "회원 탈퇴")
     @DeleteMapping
     public ResponseEntity<CommonResponse<Object>> deleteUser(
-            @AuthenticationPrincipal UserDetails userDetails){
+            @AuthenticationPrincipal UserDetails userDetails) {
         userService.deleteUser(userDetails.getUsername());
         return ResponseEntity.status(USER_DELETE.getStatus()).body(CommonResponse.from(USER_DELETE.getMessage()));
+    }
+
+    @Operation(summary ="[테스트] 로그인", description = "토큰 만료 시간을 짧게 하여, refreshToken을 통해 자동 로그인이 이루어지도록 개발한 테스트 확인용 API입니다. <br>" +
+            "accessToken : 30초, refreshToken : 1분입니다.")
+    @PostMapping("/test/sign-in")
+    public ResponseEntity<CommonResponse<TokenResDto>> testSignIn(
+            @RequestBody @Valid SignInReqDto signInReqDto
+    ){
+         return ResponseEntity.status(SIGN_IN.getStatus())
+                 .body(CommonResponse.from(SIGN_IN.getMessage(),userService.testSignIn(signInReqDto)));
+    }
+
+    @Operation(summary = "[테스트] OAuth2 로그인 (소셜로그인)", description = "테스트용입니다. <br>" +
+            "회원가입 따로 없이, test용 email을 입력하여 계정을 생성하고, rediectUrl이 올바르게 나오는지 확인합니다. <br>" +
+            "또한, 제공한 accessToken, refreshToken을 유효한지 확인합니다. ")
+    @PostMapping("/test/social-login")
+    public ResponseEntity<CommonResponse<Map<String, String>>> testSocialLogin(
+            @RequestParam String email
+    ) {
+        return ResponseEntity.status(SIGN_IN.getStatus())
+                .body(CommonResponse.from(SIGN_IN.getMessage(), userService.testSocialLogin(email)));
+    }
+
+    @Operation(summary = "[테스트] 리다이렉트",description = "리다이렉트 url에 토큰이 올바른지 검사합니다. <br>" +
+            "유저의 정보를 확인합니다.")
+    @PostMapping("/test/redirect")
+    public ResponseEntity<CommonResponse<Map<String, String>>> testRedirect(
+            @RequestBody TestAccessReqDto testAccessReqDto
+    ){
+        return ResponseEntity.status(SIGN_IN.getStatus())
+                .body(CommonResponse.from(SIGN_IN.getMessage(), userService.testRedirect(testAccessReqDto.getAccessToken())));
     }
 
 }

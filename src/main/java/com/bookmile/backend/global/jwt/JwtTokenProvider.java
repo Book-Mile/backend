@@ -40,11 +40,15 @@ public class JwtTokenProvider {
     @Value("${spring.jwt.refresh-token-valid-time}")
     private Long refreshTokenValidTime;
 
+    private final Long testAccessTokenValidTime = 30000L; //30초
+    private final Long testRefreshTokenValidTime = 60000L; //1분
+
     // SecretKey 초기화
     @PostConstruct
     protected void init() {
         this.secretKey = Keys.hmacShaKeyFor(secretKeyString.getBytes(StandardCharsets.UTF_8));
     }
+
     // AccessToken 생성
     public String createAccessToken(String email, Long userId, String role) {
         Claims claims = (Claims) Jwts.claims().setSubject(email);
@@ -68,13 +72,52 @@ public class JwtTokenProvider {
         claims.put("userId", userId);
         Date now = new Date();
 
-
         String refreshToken =  Jwts.builder()
                     .setClaims(claims)
                     .setIssuedAt(now)
                     .setExpiration(new Date(now.getTime() + refreshTokenValidTime))
                     .signWith(secretKey)
                     .compact();
+
+        // Redis 저장
+        RefreshToken token = RefreshToken.builder()
+                .userId(userId)
+                .refreshToken(refreshToken)
+                .build();
+        refreshTokenRepository.save(token);
+
+        return refreshToken;
+    }
+
+    // [Test용] AccessToken 생성
+    public String createTestAccessToken(String email, Long userId, String role) {
+        Claims claims = (Claims) Jwts.claims().setSubject(email);
+        claims.put("type", "testAccess");
+        claims.put("userId", userId);
+        claims.put("role", role);
+        Date now = new Date();
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + testAccessTokenValidTime))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    // [Test용] RefreshToken 생성
+    public String createTestRefreshToken(String email, Long userId) {
+        Claims claims = (Claims) Jwts.claims().setSubject(email);
+        claims.put("type", "testRefresh");
+        claims.put("userId", userId);
+        Date now = new Date();
+
+        String refreshToken =  Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + testRefreshTokenValidTime))
+                .signWith(secretKey)
+                .compact();
 
         // Redis 저장
         RefreshToken token = RefreshToken.builder()
@@ -122,8 +165,8 @@ public class JwtTokenProvider {
             Claims claims = parseClaims(token);
             Date expiration = claims.getExpiration();
             if(expiration.before(new Date())) {
-                String category = claims.get("type", String.class);
-                if("refreshToken".equals(category)) {
+                String type = claims.get("type", String.class);
+                if("refreshToken".equals(type) || "testRefresh".equals(type)) {
                     throw new CustomException(REFRESH_TOKEN_EXPIRED);
                 }
                 throw new CustomException(ACCESS_TOKEN_EXPIRED);
