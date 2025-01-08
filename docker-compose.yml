@@ -5,24 +5,61 @@ services:
     image: mysql:latest
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bookmile
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
 
   redis:
     image: redis:latest
-    container_name: bookmile-redis
+    container_name: book-mile-redis
     ports:
       - "6379:6379"
     command: redis-server --appendonly yes # 데이터 영구 저장 옵션
     volumes:
       - redis_data:/data
+    networks:
+      - app-network
+
+  application:
+    container_name: book-mile-app
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      WAIT_HOSTS: mysql:3306
+      SPRING_DATASOURCE_URL: "${SPRING_DATASOURCE_URL}"
+      SPRING_DATASOURCE_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      SPRING_DATASOURCE_USERNAME: root
+
+      JWT_SECRET_KEY: "${JWT_SECRET_KEY}"
+
+      REDIS_HOST: "${REDIS_HOST}"
+      REDIS_PORT: "${REDIS_PORT}"
+
+      AWS_ACCESS_KEY: "${AWS_ACCESS_KEY}"
+      AWS_SECRET_KEY: "${AWS_SECRET_KEY}"
+      AWS_BUCKET_FOLDER: "${AWS_BUCKET_FOLDER}"
+      AWS_BUCKET_PROFILE_FOLDER: "${AWS_BUCKET_PROFILE_FOLDER}"
+
+    command: [ "java", "-jar", "/app.jar" ]
+    networks:
+      - app-network
 
 volumes:
   mysql_data:
   redis_data:
+
+networks:
+  app-network:
+    name: app-network
+    driver: bridge
