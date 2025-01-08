@@ -9,6 +9,7 @@ import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
 import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
 import com.bookmile.backend.domain.review.service.Impl.ReviewServiceImpl;
 import com.bookmile.backend.global.common.CommonResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReviewController {
     private final ReviewServiceImpl reviewServiceImpl;
 
+    @Operation(summary = "리뷰 리스트 조회", description = "해당 책의 리뷰 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<CommonResponse<List<ReviewListResDto>>> viewReviewList(@RequestParam Long bookId) {
         List<ReviewListResDto> reviews = reviewServiceImpl.viewReviewList(bookId);
@@ -36,6 +38,7 @@ public class ReviewController {
                 .body(CommonResponse.from(VIEW_REVIEW.getMessage(), reviews));
     }
 
+    @Operation(summary = "리뷰 작성", description = "해당 책의 리뷰를 작성합니다.")
     @PostMapping
     public ResponseEntity<CommonResponse<Long>> createReview(@RequestParam Long bookId, @RequestParam Long userId,
                                                              @Valid @RequestBody ReviewReqDto reviewReqDto) {
@@ -44,6 +47,7 @@ public class ReviewController {
                 .body(CommonResponse.from(CREATE_REVIEW.getMessage(), createReview));
     }
 
+    @Operation(summary = "리뷰 수정", description = "리뷰를 수정합니다.")
     @PutMapping("/{reviewId}")
     public ResponseEntity<CommonResponse<Long>> updateReview(@PathVariable Long reviewId,
                                                              @Valid @RequestBody ReviewReqDto reviewReqDto) {
@@ -52,6 +56,7 @@ public class ReviewController {
                 .body(CommonResponse.from(UPDATE_REVIEW.getMessage(), updateReview));
     }
 
+    @Operation(summary = "리뷰 삭제", description = "해당 리뷰를 삭제합니다.")
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<CommonResponse<Long>> deleteReview(@PathVariable Long reviewId) {
         Long deleteReview = reviewServiceImpl.deleteReview(reviewId);
