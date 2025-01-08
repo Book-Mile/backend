@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/records")
@@ -39,11 +41,12 @@ public class RecordController {
     }
 
     @Operation(summary = "기록 작성", description = "해당 그룹의 기록을 작성합니다.")
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommonResponse<Long>> createRecord(@RequestParam Long groupId,
                                                              @RequestParam Long userId,
+                                                             @RequestParam("files") List<MultipartFile> files,
                                                              @RequestBody @Valid RecordReqDto recordReqDto) {
-        Long recordId = recordServiceImpl.createRecord(groupId, userId, recordReqDto);
+        Long recordId = recordServiceImpl.createRecord(groupId, userId, files, recordReqDto);
         return ResponseEntity.status(CREATE_RECORD.getStatus())
                 .body(CommonResponse.from(CREATE_RECORD.getMessage(), recordId));
     }
