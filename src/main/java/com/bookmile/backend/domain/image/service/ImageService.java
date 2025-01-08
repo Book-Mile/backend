@@ -1,4 +1,4 @@
-package com.bookmile.backend.domain.image.service.Impl;
+package com.bookmile.backend.domain.image.service;
 
 import java.io.IOException;
 import java.util.List;

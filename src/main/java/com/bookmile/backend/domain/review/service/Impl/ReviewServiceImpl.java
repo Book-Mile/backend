@@ -31,7 +31,7 @@ public class ReviewServiceImpl implements ReviewService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new CustomException(BOOK_NOT_FOUND));
 
-        return reviewRepository.findAllByBookId(bookId).stream()
+        return reviewRepository.findAllByBookId(book.getId()).stream()
                 .map(ReviewListResDto::createReview)
                 .collect(Collectors.toList());
     }
