@@ -1,6 +1,6 @@
 package com.bookmile.backend.domain.record.dto.req;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,6 +10,6 @@ import lombok.Getter;
 public class UpdateRecordReqDto {
     private String text;
 
-    @NotBlank(message = "페이지 기록은 필수입니다.")
+    @NotNull(message = "페이지 기록은 필수입니다.")
     private Integer currentPage;
 }
