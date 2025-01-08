@@ -1,7 +1,9 @@
 package com.bookmile.backend.domain.user.dto.req;
 
 import com.bookmile.backend.domain.user.entity.User;
+import com.bookmile.backend.global.common.UserRole;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -28,10 +30,13 @@ public class SignUpReqDto {
     private String checkPassword;
 
 
-    public User toEntity(String email, String password) {
+    public User toEntity(String email,String nickname, String password) {
         return User.builder()
                 .email(email)
+                .nickname(nickname)
                 .password(password)
+                .role(UserRole.USER)
+                .isDeleted(false)
                 .build();
     }
 }
