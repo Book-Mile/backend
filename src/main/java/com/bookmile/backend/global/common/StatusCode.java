@@ -40,6 +40,10 @@ public enum StatusCode {
 
     /* Group */
     GROUP_CREATE(CREATED, "그룹 생성에 성공했습니다."),
+    GROUP_JOIN(OK,"그룹에 참여하였습니다."),
+    ALREADY_JOINED_GROUP(BAD_REQUEST,"이미 해당 그룹에 참여 중입니다."),
+    GROUP_MEMBER_LIMIT_REACHED(BAD_REQUEST,"그룹의 최대 인원수를 초과했습니다."),
+    INVALID_GROUP_PASSWORD(BAD_REQUEST,"그룹 비밀번호가 유효하지 않습니다."),
     CHECKPOINT_TEMPLETE(OK, "템플릿 조회에 성공했습니다."),
 
     /* TOKEN */
@@ -67,6 +71,7 @@ public enum StatusCode {
 
     /* 404 NOT_FOUND : 존재하지 않는 리소스 */
     INPUT_VALUE_INVALID(NOT_FOUND, "유효하지 않은 입력입니다."),
+    INVALID_GROUP_ID(NOT_FOUND, "그룹 ID가 유효하지 않습니다."),
     USER_NOT_FOUND(NOT_FOUND, "존재하는 회원이 없습니다."),
     BOOK_NOT_FOUND(NOT_FOUND, "존재하는 책이 없습니다."),
     REVIEW_NOT_FOUND(NOT_FOUND, "존재하는 리뷰가 없습니다."),

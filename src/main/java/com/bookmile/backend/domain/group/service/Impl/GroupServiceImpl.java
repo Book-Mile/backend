@@ -83,9 +83,8 @@ public class GroupServiceImpl implements GroupService {
                         .maxMembers(requestDto.getMaxMembers())
                         .groupDescription(requestDto.getGroupDescription())
                         .password(requestDto.getPassword())
-                        .isOpen(true)
-                        .isEnd(false)
-                        .build()
+                        .isOpen(Boolean.valueOf(requestDto.getIsOpen()))
+                        .isEnd(false)                     .build()
         );
 
         // 템플릿 생성 및 저장

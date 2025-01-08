@@ -72,5 +72,9 @@ public class User extends BaseEntity {
         this.nickname = nickname;
         this.email = email;
     }
+
+    public User(Long id) {
+        this.id = id;
+    }
 }
 
