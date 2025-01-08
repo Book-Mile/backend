@@ -26,7 +26,8 @@ public class BookController {
     private final BookListService bookListService;
     private final BookDetailService bookDetailService;
 
-    @Operation(summary = "도서 리스트 검색")
+    @Operation(summary = "도서 리스트 검색", description = "도서 리스트를 검색합니다. 입력한 검색어와 가장 유사한 도서 10개의 정보를 반환합니다. <br>"
+    + "현재 책 제목을 통한 검색만 가능하며 정확한 제목을 입력 할 필요는 없습니다.")
     @PostMapping("/search")
     public ResponseEntity<CommonResponse<List<BookListResponseDto>>> searchBooks(
             @Validated @RequestBody BookListRequestDto requestDto) {
@@ -34,7 +35,7 @@ public class BookController {
         return ResponseEntity.ok(CommonResponse.from(BOOKLIST_SEARCH.getMessage(),booklist));
     }
 
-    @Operation(summary = "도서 상세 검색")
+    @Operation(summary = "도서 상세 검색", description = "선택한 책 하나의 상세 정보를 검색합니다. 도서의 ISBN13 번호를 기반으로 검색합니다.")
     @PostMapping("/detail")
     public ResponseEntity<CommonResponse<List<BookDetailResponseDto>>> detailBooks(
             @Validated @RequestBody BookDetailRequestDto requestDto) {
