@@ -1,5 +1,6 @@
 package com.bookmile.backend.domain.image.service.Impl;
 
+import static com.bookmile.backend.global.common.StatusCode.FILE_CHANGE_INVALID;
 import static com.bookmile.backend.global.common.StatusCode.FILE_DELETE_INVALID;
 import static com.bookmile.backend.global.common.StatusCode.FILE_SAVE_INVALID;
 import static com.bookmile.backend.global.common.StatusCode.IMAGE_NOT_FOUND;
@@ -78,7 +79,7 @@ public class ImageServiceImpl implements ImageService {
             file.delete(); // 임시 파일 삭제
 
             return s3Client.getResourceUrl(bucketName, fileName); // s3에 저장된 파일의 Url 받기
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new CustomException(FILE_SAVE_INVALID);
         }
     }
@@ -104,14 +105,18 @@ public class ImageServiceImpl implements ImageService {
     }
 
     // MultiPart 를 파일로 변환 (임시 파일 생성)
-    private File convertMultiPartToFile(MultipartFile multiPartFile) throws IOException {
-        File convFile = new File(multiPartFile.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
+    private File convertMultiPartToFile(MultipartFile multiPartFile) {
+        try {
+            File convFile = new File(multiPartFile.getOriginalFilename());
+            FileOutputStream fos = new FileOutputStream(convFile);
 
-        fos.write(multiPartFile.getBytes());
-        fos.close();
+            fos.write(multiPartFile.getBytes());
+            fos.close();
 
-        return convFile;
+            return convFile;
+        } catch (Exception e) {
+            throw new CustomException(FILE_CHANGE_INVALID);
+        }
     }
 
     // 이미지 URL에서 파일 이름 추출
