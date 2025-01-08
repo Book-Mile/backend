@@ -23,6 +23,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -64,8 +65,6 @@ public class ImageServiceImpl implements ImageService {
                 .toList();
 
         imageRepository.saveAll(images);
-
-
     }
 
     // S3에 업로드 하기
@@ -95,13 +94,13 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
+    @Transactional
     @Override
     public void deleteImage(Long imageId) {
         Image image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new CustomException(IMAGE_NOT_FOUND));
 
         image.delete(image);
-        imageRepository.save(image);
     }
 
     // MultiPart 를 파일로 변환 (임시 파일 생성)

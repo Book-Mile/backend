@@ -21,6 +21,7 @@ import com.bookmile.backend.global.exception.CustomException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +64,7 @@ public class RecordServiceImpl implements RecordService {
         return record.getId();
     }
 
+    @Transactional
     @Override
     public Long updateRecord(Long recordId, UpdateRecordReqDto updateRecordReqDto) {
         Record record = recordRepository.findById(recordId)
