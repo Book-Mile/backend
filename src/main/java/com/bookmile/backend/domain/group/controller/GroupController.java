@@ -5,9 +5,11 @@ import static com.bookmile.backend.global.common.StatusCode.GROUP_JOIN;
 
 import com.bookmile.backend.domain.group.dto.req.GroupCreateRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupJoinRequestDto;
+import com.bookmile.backend.domain.group.dto.req.GroupSearchRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
 import com.bookmile.backend.domain.group.dto.res.GroupCreateResponseDto;
 import com.bookmile.backend.domain.group.dto.res.GroupMemberResponseDto;
+import com.bookmile.backend.domain.group.dto.res.GroupSearchResponseDto;
 import com.bookmile.backend.domain.group.dto.res.GroupStatusUpdateResponseDto;
 import com.bookmile.backend.domain.group.service.GroupJoinService;
 import com.bookmile.backend.domain.group.service.GroupService;
@@ -74,5 +76,14 @@ public class GroupController {
     ) {
         GroupStatusUpdateResponseDto responseDto = groupService.updateGroupStatus(groupId, requestDto, userId);
         return ResponseEntity.ok(responseDto);
+    }
+
+    // 그룹 리스트 조회 API (ISBN13과 상태별로 검색)
+    @PostMapping("/list")
+    public ResponseEntity<List<GroupSearchResponseDto>> getGroupsByIsbn13(
+            @RequestBody @Valid GroupSearchRequestDto requestDto
+    ) {
+        List<GroupSearchResponseDto> groups = groupService.getGroupsByIsbn13(requestDto);
+        return ResponseEntity.ok(groups);
     }
 }
