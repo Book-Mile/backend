@@ -57,12 +57,16 @@ public class GroupController {
         return ResponseEntity.ok(CommonResponse.from(GROUP_JOIN.getMessage(), null));
     }
 
+    @Operation(summary = "그룹 멤버 조회"
+            , description = "전체 그룹원을 조회합니다. userId, 닉네임과 직책을 조회할 수 있습니다.")
     @GetMapping("/{groupId}")
     public ResponseEntity<List<GroupMemberResponseDto>> getMembers(@PathVariable Long groupId) {
         List<GroupMemberResponseDto> members = groupMemberServiceImpl.getGroupMembers(groupId);
         return ResponseEntity.ok(members);
     }
 
+    @Operation(summary = "그룹 상태 변경 (RECRUITING, IN_PROGRESS, COMPLETED)"
+            , description = "그룹 상태를 변경합니다. 그룹장만이 변경할 수 있습니다.")
     @PatchMapping("/{groupId}")
     public ResponseEntity<GroupStatusUpdateResponseDto> updateGroupStatus(
             @PathVariable Long groupId,@RequestBody @Valid GroupStatusUpdateRequestDto requestDto,
