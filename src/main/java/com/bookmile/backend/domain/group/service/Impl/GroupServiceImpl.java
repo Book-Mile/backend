@@ -3,6 +3,7 @@ package com.bookmile.backend.domain.group.service.Impl;
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.book.service.BookService;
 import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
+import com.bookmile.backend.domain.group.dto.res.GroupStatusUpdateResponseDto;
 import com.bookmile.backend.domain.group.entity.GroupStatus;
 import com.bookmile.backend.domain.template.entity.Template;
 import com.bookmile.backend.domain.template.entity.GoalType;
@@ -125,4 +126,27 @@ public class GroupServiceImpl implements GroupService {
                 .build();
     }
 
+    @Override
+    public GroupStatusUpdateResponseDto updateGroupStatus(Long groupId, GroupStatusUpdateRequestDto requestDto, Long userId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(GROUP_NOT_FOUND));
+
+        UserGroup userGroup = userGroupRepository.findByUserIdAndGroupId(userId, groupId)
+                .orElseThrow(() -> new CustomException(NOT_MEMBER));
+        if (userGroup.getRole() != Role.MASTER) {
+            throw new CustomException(NO_PERMISSION);
+        }
+
+        if (group.getStatus() == GroupStatus.RECRUITING && requestDto.getStatus() == GroupStatus.IN_PROGRESS) {
+            group.startGroup();
+        } else if (group.getStatus() == GroupStatus.IN_PROGRESS && requestDto.getStatus() == GroupStatus.COMPLETED) {
+            group.completeGroup();
+        } else {
+            throw new CustomException(INVALID_GROUP_STATUS_UPDATE);
+        }
+
+        groupRepository.save(group);
+
+        return new GroupStatusUpdateResponseDto(group.getId(), group.getStatus());
+    }
 }

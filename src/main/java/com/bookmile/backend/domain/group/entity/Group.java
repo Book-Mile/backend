@@ -80,4 +80,12 @@ public class Group extends BaseEntity {
         this.isOpen = isOpen;
         this.status = status;
     }
+
+    public void startGroup() {
+        this.status = GroupStatus.IN_PROGRESS;
+    }
+
+    public void completeGroup() {
+        this.status = GroupStatus.COMPLETED;
+    }
 }
