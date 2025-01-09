@@ -5,8 +5,10 @@ import static com.bookmile.backend.global.common.StatusCode.GROUP_JOIN;
 
 import com.bookmile.backend.domain.group.dto.req.GroupCreateRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupJoinRequestDto;
+import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
 import com.bookmile.backend.domain.group.dto.res.GroupCreateResponseDto;
 import com.bookmile.backend.domain.group.dto.res.GroupMemberResponseDto;
+import com.bookmile.backend.domain.group.dto.res.GroupStatusUpdateResponseDto;
 import com.bookmile.backend.domain.group.service.GroupJoinService;
 import com.bookmile.backend.domain.group.service.GroupService;
 import com.bookmile.backend.domain.group.service.Impl.GroupMemberServiceImpl;
@@ -55,9 +57,18 @@ public class GroupController {
         return ResponseEntity.ok(CommonResponse.from(GROUP_JOIN.getMessage(), null));
     }
 
-    @GetMapping("/{groupId}/members")
+    @GetMapping("/{groupId}")
     public ResponseEntity<List<GroupMemberResponseDto>> getMembers(@PathVariable Long groupId) {
         List<GroupMemberResponseDto> members = groupMemberServiceImpl.getGroupMembers(groupId);
         return ResponseEntity.ok(members);
+    }
+
+    @PatchMapping("/{groupId}")
+    public ResponseEntity<GroupStatusUpdateResponseDto> updateGroupStatus(
+            @PathVariable Long groupId,@RequestBody @Valid GroupStatusUpdateRequestDto requestDto,
+            @RequestHeader("user-id") Long userId
+    ) {
+        GroupStatusUpdateResponseDto responseDto = groupService.updateGroupStatus(groupId, requestDto, userId);
+        return ResponseEntity.ok(responseDto);
     }
 }
