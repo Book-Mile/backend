@@ -21,6 +21,7 @@ import com.bookmile.backend.global.exception.CustomException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +38,7 @@ public class RecordServiceImpl implements RecordService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        Long userGroupId = userGroupRepository.findUserGroupIdByGroupIdAndUserId(groupId, userId)
+        Long userGroupId = userGroupRepository.findUserGroupIdByGroupIdAndUserId(group.getId(), user.getId())
                 .orElseThrow(() -> new CustomException(NO_USER_OR_NO_GROUP));
 
         return recordRepository.findAllByUserGroupId(userGroupId).stream()
@@ -63,6 +64,7 @@ public class RecordServiceImpl implements RecordService {
         return record.getId();
     }
 
+    @Transactional
     @Override
     public Long updateRecord(Long recordId, UpdateRecordReqDto updateRecordReqDto) {
         Record record = recordRepository.findById(recordId)

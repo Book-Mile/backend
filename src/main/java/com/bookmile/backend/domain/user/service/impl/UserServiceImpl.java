@@ -1,13 +1,25 @@
 package com.bookmile.backend.domain.user.service.impl;
 
-import com.bookmile.backend.domain.image.service.Impl.ImageService;
+import static com.bookmile.backend.global.common.StatusCode.AUTHENTICATION_FAILED;
+import static com.bookmile.backend.global.common.StatusCode.EMAIL_CODE_NOT_MATCH;
+import static com.bookmile.backend.global.common.StatusCode.EMAIL_TOO_MANY_REQUESTS;
+import static com.bookmile.backend.global.common.StatusCode.INVALID_FILE_TYPE;
+import static com.bookmile.backend.global.common.StatusCode.INVALID_TOKEN;
+import static com.bookmile.backend.global.common.StatusCode.MAIL_SERVER_ERROR;
+import static com.bookmile.backend.global.common.StatusCode.PASSWORD_DUPLICATE;
+import static com.bookmile.backend.global.common.StatusCode.PASSWORD_NOT_MATCH;
+import static com.bookmile.backend.global.common.StatusCode.TOKEN_NOT_FOUND;
+import static com.bookmile.backend.global.common.StatusCode.USER_ALREADY_EXISTS;
+import static com.bookmile.backend.global.common.StatusCode.USER_NOT_FOUND;
+
+import com.bookmile.backend.domain.image.service.ImageService;
 import com.bookmile.backend.domain.user.dto.req.PasswordReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignUpReqDto;
 import com.bookmile.backend.domain.user.dto.req.UserInfoReqDto;
-import com.bookmile.backend.domain.user.dto.res.UserInfoDto;
 import com.bookmile.backend.domain.user.dto.res.TokenResDto;
 import com.bookmile.backend.domain.user.dto.res.UserDetailResDto;
+import com.bookmile.backend.domain.user.dto.res.UserInfoDto;
 import com.bookmile.backend.domain.user.dto.res.UserResDto;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
@@ -21,6 +33,11 @@ import com.bookmile.backend.global.redis.RefreshTokenRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -36,14 +53,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-
-import static com.bookmile.backend.global.common.StatusCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -86,7 +95,7 @@ public class UserServiceImpl implements UserService {
         // 기등록자
         if (existingUser != null) {
             // 탈퇴 회원
-            if(existingUser.getIsDeleted()){
+            if (existingUser.getIsDeleted()) {
                 existingUser.updateIsDeleted();
                 existingUser.updatePassword(passwordEncoder.encode(signUpReqDto.getPassword()));
                 existingUser.updateNickname(randomNickname.generateNickname());
@@ -114,7 +123,8 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(AUTHENTICATION_FAILED); // 유저는 아이디, 비밀번호 중 한개만 틀려도 '일치하는 정보가 없음' 메세지 표시
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getId(), user.getRole().toString());
+        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getId(),
+                user.getRole().toString());
         String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getId());
 
         return TokenResDto.toDto(accessToken, refreshToken);
@@ -128,18 +138,20 @@ public class UserServiceImpl implements UserService {
         String token = (String) userInfo.get("token");
         Long userId = (Long) userInfo.get("userId");
 
-        log.info("userId: {}",  userId);
+        log.info("userId: {}", userId);
 
-        RefreshToken refreshToken = refreshTokenRepository.findById("refreshToken" + userId).orElseThrow(() -> new CustomException(TOKEN_NOT_FOUND));
+        RefreshToken refreshToken = refreshTokenRepository.findById("refreshToken" + userId)
+                .orElseThrow(() -> new CustomException(TOKEN_NOT_FOUND));
         log.info("Redis RefreshToken : {}", refreshToken.getRefreshToken());
 
-        if(!refreshToken.getRefreshToken().equals(token)) {
+        if (!refreshToken.getRefreshToken().equals(token)) {
             throw new CustomException(INVALID_TOKEN);
         }
 
-        User user = userRepository.findById(userId).orElseThrow(()-> new CustomException(USER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        String newAccessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getId(), user.getRole().toString());
+        String newAccessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getId(),
+                user.getRole().toString());
         String newRefreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getId());
 
         return TokenResDto.toDto(newAccessToken, newRefreshToken);
@@ -178,9 +190,9 @@ public class UserServiceImpl implements UserService {
         user.updateUser(userInfoReqDto.getNickname(), userInfoReqDto.getEmail());
 
         // 토큰 재생성
-        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getId(), user.getRole().toString());
+        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getId(),
+                user.getRole().toString());
         String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getId());
-
 
         return TokenResDto.toDto(accessToken, refreshToken);
     }
@@ -195,7 +207,7 @@ public class UserServiceImpl implements UserService {
 
         // 일최대 5개 제한
         long count = getEmailRequestCount(email);
-        if(count == 5){
+        if (count == 5) {
             throw new CustomException(EMAIL_TOO_MANY_REQUESTS);
         }
 
@@ -207,7 +219,7 @@ public class UserServiceImpl implements UserService {
             message.setFrom(maileSenderEmail);
             message.setRecipients(MimeMessage.RecipientType.TO, email);
             message.setSubject(subject, "UTF-8");
-            message.setText(mailText(String.valueOf(code)), "UTF-8","html");
+            message.setText(mailText(String.valueOf(code)), "UTF-8", "html");
             mailSender.send(message);
 
             // redis 저장
@@ -215,7 +227,7 @@ public class UserServiceImpl implements UserService {
             // 요청 카운트 증가
             increaseEmailRequestCount(email);
 
-        }catch (MessagingException e){
+        } catch (MessagingException e) {
             throw new CustomException(MAIL_SERVER_ERROR);
         }
     }
@@ -223,10 +235,10 @@ public class UserServiceImpl implements UserService {
     // 이메일 인증
     @Override
     @Transactional
-    public void verificationCode( String email, String requestCode) {
+    public void verificationCode(String email, String requestCode) {
 
         String verificationCode = getVerificationCode(email);
-        if(!requestCode.equals(verificationCode)) {
+        if (!requestCode.equals(verificationCode)) {
             throw new CustomException(EMAIL_CODE_NOT_MATCH);
         }
 
@@ -245,7 +257,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 기존, 새로운 비밀번호 동일 여부 확인
-        if(passwordEncoder.matches(passwordReqDto.getNewPassword(), user.getPassword())){
+        if (passwordEncoder.matches(passwordReqDto.getNewPassword(), user.getPassword())) {
             throw new CustomException(PASSWORD_DUPLICATE);
         }
 
@@ -266,11 +278,11 @@ public class UserServiceImpl implements UserService {
     public void updateProfile(String email, MultipartFile file) {
         User user = findByEmail(email);
 
-        if(!validateImageFile(file)){
+        if (!validateImageFile(file)) {
             throw new CustomException(INVALID_FILE_TYPE);
         }
 
-        if(user.getImage() != null) {
+        if (user.getImage() != null) {
             imageService.deleteFileFromS3Bucket(bucketName, user.getImage());
         }
 
@@ -296,7 +308,8 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(AUTHENTICATION_FAILED); // 유저는 아이디, 비밀번호 중 한개만 틀려도 '일치하는 정보가 없음' 메세지 표시
         }
 
-        String accessToken = jwtTokenProvider.createTestAccessToken(user.getEmail(), user.getId(), user.getRole().toString());
+        String accessToken = jwtTokenProvider.createTestAccessToken(user.getEmail(), user.getId(),
+                user.getRole().toString());
         String refreshToken = jwtTokenProvider.createTestRefreshToken(user.getEmail(), user.getId());
 
         return TokenResDto.toDto(accessToken, refreshToken);
@@ -308,17 +321,17 @@ public class UserServiceImpl implements UserService {
     public Map<String, String> testSocialLogin(String email) {
 
         // test용 유저 생성
-        User testUser = userRepository.findByEmail(email).orElseGet(()-> {
-                            User newUser = User.builder()
-                            .email(email)
-                            .nickname(randomNickname.generateNickname())
-                            .image(mainProfile)
-                            .provider("test")
-                            .providerId("test")
-                            .role(UserRole.USER)
-                            .isDeleted(false)
-                            .build();
-                    return userRepository.save(newUser);
+        User testUser = userRepository.findByEmail(email).orElseGet(() -> {
+            User newUser = User.builder()
+                    .email(email)
+                    .nickname(randomNickname.generateNickname())
+                    .image(mainProfile)
+                    .provider("test")
+                    .providerId("test")
+                    .role(UserRole.USER)
+                    .isDeleted(false)
+                    .build();
+            return userRepository.save(newUser);
         });
 
         // OAuth2User 생성
@@ -331,7 +344,8 @@ public class UserServiceImpl implements UserService {
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
                 attributes, "email");
 
-        String accessToken = jwtTokenProvider.createTestAccessToken(testUser.getEmail(), testUser.getId(), testUser.getRole().toString());
+        String accessToken = jwtTokenProvider.createTestAccessToken(testUser.getEmail(), testUser.getId(),
+                testUser.getRole().toString());
         String refreshToken = jwtTokenProvider.createTestRefreshToken(testUser.getEmail(), testUser.getId());
 
         String redirectUrl = UriComponentsBuilder.fromHttpUrl(callBackUrl)
@@ -339,7 +353,7 @@ public class UserServiceImpl implements UserService {
                 .queryParam("testRefresh", refreshToken)
                 .toUriString();
 
-        log.info("UserServiceImpl.testSocialLogin: redirectUrl - {},",redirectUrl);
+        log.info("UserServiceImpl.testSocialLogin: redirectUrl - {},", redirectUrl);
 
         Map<String, String> response = new HashMap<>();
         response.put("redirectUrl", redirectUrl);
@@ -351,7 +365,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, String> testRedirect(String accessToken) {
-        log.info("UserServiceImpl.testRedirect: accessToken - {} ",accessToken);
+        log.info("UserServiceImpl.testRedirect: accessToken - {} ", accessToken);
 
         Map<String, String> response = new HashMap<>();
 
@@ -368,8 +382,8 @@ public class UserServiceImpl implements UserService {
     private boolean validateImageFile(MultipartFile file) {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase();
 
-        for(String allowedExtension : ALLOWED_EXTENSIONS) {
-            if(extension.equals(allowedExtension)) {
+        for (String allowedExtension : ALLOWED_EXTENSIONS) {
+            if (extension.equals(allowedExtension)) {
                 return true;
             }
         }
@@ -377,10 +391,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private Map<String, Object> getUserIdByToken(HttpServletRequest request) {
-        Map<String, Object > map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
         String token = jwtTokenProvider.resolveToken(request);
-        if(token == null) {
+        if (token == null) {
             throw new CustomException(INVALID_TOKEN);
         }
         Long userId = jwtTokenProvider.getUserId(token);
@@ -395,7 +409,8 @@ public class UserServiceImpl implements UserService {
     private void existsByEmail(String email) {
         if (userRepository.existsByEmailAndIsDeletedFalse(email)) {
             throw new CustomException(USER_ALREADY_EXISTS);
-        };
+        }
+        ;
     }
 
     private User findByEmail(String email) {
@@ -432,21 +447,21 @@ public class UserServiceImpl implements UserService {
     // 요청 본문
     private String mailText(String code) {
         return """
-        <html>
-            <body>
-                <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-                    <h3>안녕하세요, Bookmile 입니다.</h3>
-                    <p>이메일 인증을 위해 요청하신 인증 코드입니다.</p>
-                    <div style="border: 1px solid #ddd; padding: 10px; text-align: center;">
-                        <h2>이메일 인증 코드</h2>
-                        <h1 style="color: #1d72b8;">%s</h1>
-                    </div>
-                    <p>상단의 인증 코드를 입력하여 이메일 인증을 완료해주세요.</p>
-                    <p>감사합니다.</p>
-                </div>
-            </body>
-        </html>
-        """.formatted(code);
+                <html>
+                    <body>
+                        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                            <h3>안녕하세요, Bookmile 입니다.</h3>
+                            <p>이메일 인증을 위해 요청하신 인증 코드입니다.</p>
+                            <div style="border: 1px solid #ddd; padding: 10px; text-align: center;">
+                                <h2>이메일 인증 코드</h2>
+                                <h1 style="color: #1d72b8;">%s</h1>
+                            </div>
+                            <p>상단의 인증 코드를 입력하여 이메일 인증을 완료해주세요.</p>
+                            <p>감사합니다.</p>
+                        </div>
+                    </body>
+                </html>
+                """.formatted(code);
     }
 }
 
