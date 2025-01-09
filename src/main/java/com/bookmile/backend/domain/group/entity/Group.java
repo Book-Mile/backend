@@ -4,16 +4,8 @@ import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.template.entity.Template;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import com.bookmile.backend.global.config.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +31,7 @@ public class Group extends BaseEntity {
     private List<UserGroup> userGroup = new ArrayList<>();
 
     @OneToOne(mappedBy = "group")
-    private Template checkPoint;
+    private Template template;
 
     @Column(nullable = false)
     private String groupType; // 그룹 구분 (개인/단체)
@@ -65,18 +57,19 @@ public class Group extends BaseEntity {
     @Column(nullable = false)
     private Boolean isOpen;
 
+    @Enumerated(EnumType.STRING) // Enum 타입 매핑
     @Column(nullable = false)
-    private Boolean isEnd;
+    private GroupStatus status; // 그룹 상태 (모집 중, 진행 중, 종료)
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
     @Builder
-    public Group(Book book, List<UserGroup> userGroup, Template checkPoint, String groupType, String goalType, int maxMembers, String groupName, String groupDescription,
-                 String password, String customGoal, Boolean isOpen, Boolean isEnd) {
+    public Group(Book book, List<UserGroup> userGroup, Template template, String groupType, String goalType, int maxMembers, String groupName, String groupDescription,
+                 String password, String customGoal, Boolean isOpen, GroupStatus status) {
         this.book = book;
         this.userGroup = userGroup;
-        this.checkPoint = checkPoint;
+        this.template = template;
         this.groupType = groupType;
         this.goalType = goalType;
         this.customGoal = customGoal;
@@ -85,6 +78,6 @@ public class Group extends BaseEntity {
         this.groupDescription = groupDescription;
         this.password = password;
         this.isOpen = isOpen;
-        this.isEnd = isEnd;
+        this.status = status;
     }
 }
