@@ -2,6 +2,7 @@ package com.bookmile.backend.domain.group.service.Impl;
 
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.book.service.BookService;
+import com.bookmile.backend.domain.group.entity.GroupStatus;
 import com.bookmile.backend.domain.template.entity.Template;
 import com.bookmile.backend.domain.template.entity.GoalType;
 import com.bookmile.backend.domain.template.repository.TemplateRepository;
@@ -44,31 +45,35 @@ public class GroupServiceImpl implements GroupService {
 
         Template template;
         GoalType goalType = null;
-        String customGoal = requestDto.getCustomGoal();
+        String goalContent = requestDto.getGoalContent();
 
-        // 2. 템플릿 ID가 있는 경우 템플릿 사용
+        // 템플릿 ID가 있는 경우 템플릿 사용
         if (requestDto.getTemplateId() != null) {
             template = templateRepository.findById(requestDto.getTemplateId())
                     .orElseThrow(() -> new CustomException(INVALID_TEMPLATE_ID));
-            goalType = template.getGoalType();
-            // 템플릿이 CUSTOM 타입인 경우 customGoal 값을 가져옴
-            if (goalType == GoalType.CUSTOM) {
-                customGoal = template.getCustomGoal();
+
+            // 템플릿 검증
+            if (template.getGroup().getStatus() != GroupStatus.COMPLETED) {
+                throw new CustomException(INVALID_TEMPLATE_USAGE);
             }
+
+            goalType = template.getGoalType();
+            goalContent = template.getGoalContent();
+
             // 템플릿 사용 카운트 증가
             template.increaseUsageCount();
-            templateRepository.save(template); // 변경된 값 저장
+            templateRepository.save(template);
         } else {
-            //템플릿이 없는 경우 GoalType 검증 및 처리
+            // GoalType 검증 및 처리
             try {
                 goalType = GoalType.valueOf(requestDto.getGoalType());
             } catch (IllegalArgumentException e) {
                 throw new CustomException(INVALID_GOAL_TYPE);
             }
 
-            // GoalType이 CUSTOM일 경우 customGoal 검증
-            if (goalType == GoalType.CUSTOM && (requestDto.getCustomGoal() == null || requestDto.getCustomGoal().isEmpty())) {
-                throw new CustomException(CUSTOM_GOAL_REQUIRED);
+            // goalContent 검증
+            if (goalContent == null || goalContent.isEmpty()) {
+                throw new CustomException(GOAL_CONTENT_REQUIRED);
             }
         }
 
@@ -79,12 +84,13 @@ public class GroupServiceImpl implements GroupService {
                         .groupName(requestDto.getGroupName())
                         .groupType(requestDto.getGroupType())
                         .goalType(goalType != null ? goalType.name() : null) // 템플릿 사용 시 GoalType은 null 처리
-                        .customGoal(customGoal) // customGoal 동기화
+                        .goalContent(goalContent) // goalContent 저장
                         .maxMembers(requestDto.getMaxMembers())
                         .groupDescription(requestDto.getGroupDescription())
                         .password(requestDto.getPassword())
+                        .status(GroupStatus.RECRUITING)
                         .isOpen(Boolean.valueOf(requestDto.getIsOpen()))
-                        .isEnd(false)                     .build()
+                        .build()
         );
 
         // 템플릿 생성 및 저장
@@ -92,7 +98,7 @@ public class GroupServiceImpl implements GroupService {
             template = new Template(
                     group, // 그룹 연결
                     goalType,
-                    customGoal, // customGoal 전달
+                    goalContent,
                     true
             );
             templateRepository.save(template); // 템플릿 저장
@@ -112,8 +118,9 @@ public class GroupServiceImpl implements GroupService {
                 .groupName(group.getGroupName())
                 .groupDescription(group.getGroupDescription())
                 .maxMembers(group.getMaxMembers())
-                .goalType(goalType != null ? goalType.name() : null) // GoalType 반환
-                .customGoal(customGoal) // customGoal 포함
+                .goalType(goalType != null ? goalType.name() : null)
+                .goalContent(goalContent)
+                .status(GroupStatus.RECRUITING.name()) // 기본 상태 반환
                 .build();
     }
 }

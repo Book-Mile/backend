@@ -52,13 +52,13 @@ public class Group extends BaseEntity {
     private String goalType;
 
     @Column
-    private String customGoal;
+    private String goalContent;
 
     @Column(nullable = false)
     private Boolean isOpen;
 
-    @Enumerated(EnumType.STRING) // Enum 타입 매핑
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private GroupStatus status; // 그룹 상태 (모집 중, 진행 중, 종료)
 
     @Column(nullable = false)
@@ -66,13 +66,13 @@ public class Group extends BaseEntity {
 
     @Builder
     public Group(Book book, List<UserGroup> userGroup, Template template, String groupType, String goalType, int maxMembers, String groupName, String groupDescription,
-                 String password, String customGoal, Boolean isOpen, GroupStatus status) {
+                 String password, String goalContent, Boolean isOpen, GroupStatus status) {
         this.book = book;
         this.userGroup = userGroup;
         this.template = template;
         this.groupType = groupType;
         this.goalType = goalType;
-        this.customGoal = customGoal;
+        this.goalContent = goalContent;
         this.maxMembers = maxMembers;
         this.groupName = groupName;
         this.groupDescription = groupDescription;

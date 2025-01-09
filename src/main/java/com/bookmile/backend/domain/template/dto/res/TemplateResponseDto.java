@@ -2,11 +2,8 @@ package com.bookmile.backend.domain.template.dto.res;
 
 import com.bookmile.backend.domain.template.entity.GoalType;
 import com.bookmile.backend.domain.template.entity.Template;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.context.annotation.Bean;
 
 @Getter
 public class TemplateResponseDto {
@@ -15,15 +12,15 @@ public class TemplateResponseDto {
 
     private final String goalType;
 
-    private final String customGoal;
+    private final String goalContent;
 
     private final int usageCount;
 
     @Builder
-    public TemplateResponseDto(Long templateId, GoalType goalType, String customGoal, int usageCount) {
+    public TemplateResponseDto(Long templateId, GoalType goalType, String goalContent, int usageCount) {
         this.templateId = templateId;
         this.goalType = String.valueOf(goalType);
-        this.customGoal = customGoal;
+        this.goalContent = goalContent;
         this.usageCount = usageCount;
     }
 
@@ -31,7 +28,7 @@ public class TemplateResponseDto {
         return TemplateResponseDto.builder()
                 .templateId(template.getId())
                 .goalType(template.getGoalType())
-                .customGoal(template.getCustomGoal())
+                .goalContent(template.getGoalContent())
                 .usageCount(template.getUsageCount())
                 .build();
     }

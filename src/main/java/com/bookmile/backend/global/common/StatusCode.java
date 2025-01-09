@@ -105,7 +105,9 @@ public enum StatusCode {
 
     /* 500 INTERNAL_SERVER_ERROR  Error */
     REDIS_ERROR(INTERNAL_SERVER_ERROR, "Redis 서버에 연결할 수 없습니다. "),
-    MAIL_SERVER_ERROR(INTERNAL_SERVER_ERROR, "메일 서버에 오류가 생겼습니다.");
+    MAIL_SERVER_ERROR(INTERNAL_SERVER_ERROR, "메일 서버에 오류가 생겼습니다."),
+    INVALID_TEMPLATE_USAGE(NOT_FOUND,"완독한 그룹의 템플릿만 사용할 수 있습니다."),
+    GOAL_CONTENT_REQUIRED(NOT_FOUND,"목표 상세 내용은 필수입니다." );
 
 
     private final HttpStatus status;

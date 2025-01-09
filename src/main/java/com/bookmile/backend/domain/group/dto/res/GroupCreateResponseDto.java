@@ -11,7 +11,8 @@ public class GroupCreateResponseDto {
     private int maxMembers;
     private String goalType;
     private Long templateId;
-    private String customGoal;
+    private String goalContent;
+    private String status;
     private String groupDescription;
 
 }
