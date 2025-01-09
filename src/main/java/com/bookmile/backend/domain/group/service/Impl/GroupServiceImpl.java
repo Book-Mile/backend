@@ -2,6 +2,7 @@ package com.bookmile.backend.domain.group.service.Impl;
 
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.book.service.BookService;
+import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
 import com.bookmile.backend.domain.group.entity.GroupStatus;
 import com.bookmile.backend.domain.template.entity.Template;
 import com.bookmile.backend.domain.template.entity.GoalType;
@@ -123,4 +124,5 @@ public class GroupServiceImpl implements GroupService {
                 .status(GroupStatus.RECRUITING.name()) // 기본 상태 반환
                 .build();
     }
+
 }

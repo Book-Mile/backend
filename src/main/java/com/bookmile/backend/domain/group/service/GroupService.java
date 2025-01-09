@@ -1,6 +1,7 @@
 package com.bookmile.backend.domain.group.service;
 
 import com.bookmile.backend.domain.group.dto.req.GroupCreateRequestDto;
+import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
 import com.bookmile.backend.domain.group.dto.res.GroupCreateResponseDto;
 import com.bookmile.backend.domain.user.entity.User;
 

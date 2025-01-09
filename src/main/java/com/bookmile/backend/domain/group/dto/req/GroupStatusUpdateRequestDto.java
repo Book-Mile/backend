@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 public class GroupStatusUpdateRequestDto {
 
     @Schema(description = "그룹 상태 (RECRUITING, IN_PROGRESS, COMPLETED)", example = "IN_PROGRESS")
-    @NotNull(message = "그룹 상태는 필수입니다.")
+    @NotNull(message = "변경할 상태는 필수입니다.")
     private GroupStatus status;
 }
