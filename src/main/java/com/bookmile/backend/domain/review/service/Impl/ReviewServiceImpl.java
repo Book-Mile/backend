@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class ReviewServiceImpl implements ReviewService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new CustomException(BOOK_NOT_FOUND));
 
-        return reviewRepository.findAllByBookId(bookId).stream()
+        return reviewRepository.findAllByBookId(book.getId()).stream()
                 .map(ReviewListResDto::createReview)
                 .collect(Collectors.toList());
     }
@@ -51,25 +52,24 @@ public class ReviewServiceImpl implements ReviewService {
         return review.getId();
     }
 
+    @Transactional
     @Override
     public Long updateReview(Long reviewId, ReviewReqDto reviewReqDto) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(REVIEW_NOT_FOUND));
 
         review.update(reviewReqDto);
-        reviewRepository.save(review);
 
         return review.getId();
     }
 
+    @Transactional
     @Override
     public Long deleteReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(REVIEW_NOT_FOUND));
 
         review.delete(review);
-
-        reviewRepository.save(review);
 
         return review.getId();
     }

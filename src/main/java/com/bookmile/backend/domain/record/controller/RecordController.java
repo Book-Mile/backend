@@ -9,6 +9,7 @@ import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
 import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
 import com.bookmile.backend.domain.record.service.Impl.RecordServiceImpl;
 import com.bookmile.backend.global.common.CommonResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RecordController {
     private final RecordServiceImpl recordServiceImpl;
 
+    @Operation(summary = "기록 리스트 조회", description = "해당 그룹의 기록 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<CommonResponse<List<RecordListResDto>>> viewRecordList(@RequestParam Long groupId,
                                                                                  @RequestParam Long userId) {
@@ -36,6 +38,7 @@ public class RecordController {
                 .body(CommonResponse.from(VIEW_RECORD.getMessage(), records));
     }
 
+    @Operation(summary = "기록 작성", description = "해당 그룹의 기록을 작성합니다.")
     @PostMapping
     public ResponseEntity<CommonResponse<Long>> createRecord(@RequestParam Long groupId,
                                                              @RequestParam Long userId,
@@ -45,6 +48,7 @@ public class RecordController {
                 .body(CommonResponse.from(CREATE_RECORD.getMessage(), recordId));
     }
 
+    @Operation(summary = "기록 수정", description = "기록을 수정합니다.")
     @PutMapping("/{recordId}")
     public ResponseEntity<CommonResponse<Long>> updateRecord(@PathVariable Long recordId,
                                                              @Valid @RequestBody UpdateRecordReqDto updateRecordReqDto) {
