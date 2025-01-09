@@ -6,8 +6,10 @@ import static com.bookmile.backend.global.common.StatusCode.GROUP_JOIN;
 import com.bookmile.backend.domain.group.dto.req.GroupCreateRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupJoinRequestDto;
 import com.bookmile.backend.domain.group.dto.res.GroupCreateResponseDto;
+import com.bookmile.backend.domain.group.dto.res.GroupMemberResponseDto;
 import com.bookmile.backend.domain.group.service.GroupJoinService;
 import com.bookmile.backend.domain.group.service.GroupService;
+import com.bookmile.backend.domain.group.service.Impl.GroupMemberServiceImpl;
 import com.bookmile.backend.global.common.CommonResponse;
 import com.bookmile.backend.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/groups")
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ public class GroupController {
 
     private final GroupService groupService;
     private final GroupJoinService groupJoinService;
+    private final GroupMemberServiceImpl groupMemberServiceImpl;
 
     @Operation(summary = "그룹 생성하기", description = "그룹을 생성합니다. 생성을 한 유저는 자동으로 MASTER 역할을 부여받으며 설정한 템플릿 정보가 따로 저장됩니다.")
     @PostMapping
@@ -48,5 +53,11 @@ public class GroupController {
     ) {
         groupJoinService.joinGroup(userId, requestDto);
         return ResponseEntity.ok(CommonResponse.from(GROUP_JOIN.getMessage(), null));
+    }
+
+    @GetMapping("/{groupId}/members")
+    public ResponseEntity<List<GroupMemberResponseDto>> getMembers(@PathVariable Long groupId) {
+        List<GroupMemberResponseDto> members = groupMemberServiceImpl.getGroupMembers(groupId);
+        return ResponseEntity.ok(members);
     }
 }
