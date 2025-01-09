@@ -1,5 +1,6 @@
 package com.bookmile.backend.domain.book.dto.res;
 
+import com.bookmile.backend.domain.book.entity.Book;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -7,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 public class BookDetailResponseDto {
 
     @Schema(description = "도서 제목", example = "Title Result")
@@ -31,6 +31,16 @@ public class BookDetailResponseDto {
     @Schema(description = "상품 페이지", example = "100")
     @JsonProperty("subInfo")
     private SubInfo subInfo; // subInfo 매핑을 위한 필드
+
+    public BookDetailResponseDto(Book book) {
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.cover = cover;
+        this.isbn13 = isbn13;
+        this.description = description;
+        this.subInfo = subInfo;
+    }
 
     // SubInfo 내부 클래스
     @Getter

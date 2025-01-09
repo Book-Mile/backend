@@ -110,7 +110,8 @@ public enum StatusCode {
     GOAL_CONTENT_REQUIRED(NOT_FOUND,"목표 상세 내용은 필수입니다." ),
     NO_PERMISSION(UNAUTHORIZED,"그룹장만 그룹의 상태를 변경할 수 있습니다."),
     NOT_MEMBER(UNAUTHORIZED,"그룹 구성원이 아닙니다." ),
-    INVALID_GROUP_STATUS_UPDATE(BAD_REQUEST,"잘못된 요청입니다.");
+    INVALID_GROUP_STATUS_UPDATE(BAD_REQUEST,"잘못된 요청입니다."),
+    INVALID_GROUP(BAD_REQUEST,"유효아지 않은 그룹입니다." );
 
 
     private final HttpStatus status;

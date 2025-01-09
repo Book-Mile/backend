@@ -1,8 +1,11 @@
 package com.bookmile.backend.domain.group.service.Impl;
 
+import com.bookmile.backend.domain.book.dto.res.BookDetailResponseDto;
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.book.service.BookService;
+import com.bookmile.backend.domain.group.dto.req.GroupSearchRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
+import com.bookmile.backend.domain.group.dto.res.GroupSearchResponseDto;
 import com.bookmile.backend.domain.group.dto.res.GroupStatusUpdateResponseDto;
 import com.bookmile.backend.domain.group.entity.GroupStatus;
 import com.bookmile.backend.domain.template.entity.Template;
@@ -21,6 +24,9 @@ import com.bookmile.backend.domain.userGroup.repository.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.bookmile.backend.global.exception.CustomException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.bookmile.backend.global.common.StatusCode.*;
 
@@ -148,5 +154,29 @@ public class GroupServiceImpl implements GroupService {
         groupRepository.save(group);
 
         return new GroupStatusUpdateResponseDto(group.getId(), group.getStatus());
+    }
+
+    @Override
+    public List<GroupSearchResponseDto> getGroupsByIsbn13(GroupSearchRequestDto requestDto) {
+        List<Group> groups = groupRepository.findByIsbn13AndStatus(requestDto.getIsbn13(), requestDto.getStatus());
+
+        return groups.stream()
+                .map(group -> {
+                    String masterNickname = userGroupRepository.findMasterNicknameByGroupId(group.getId())
+                            .orElseThrow(() -> new CustomException(INVALID_GROUP));
+                    return new GroupSearchResponseDto(
+                            group.getId(),
+                            group.getGroupName(),
+                            group.getGroupDescription(),
+                            group.getMaxMembers(),
+                            userGroupRepository.countByGroupId(group.getId()),
+                            group.getStatus(),
+                            new BookDetailResponseDto(group.getBook()),
+                            group.getGoalType(),
+                            group.getGoalContent(),
+                            masterNickname
+                    );
+                })
+                .collect(Collectors.toList());
     }
 }
