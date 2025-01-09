@@ -19,6 +19,7 @@ import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import com.bookmile.backend.global.exception.CustomException;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,9 +45,15 @@ public class RecordServiceImpl implements RecordService {
         Long userGroupId = userGroupRepository.findUserGroupIdByGroupIdAndUserId(group.getId(), user.getId())
                 .orElseThrow(() -> new CustomException(NO_USER_OR_NO_GROUP));
 
-        return recordRepository.findAllByUserGroupId(userGroupId).stream()
-                .map(RecordListResDto::createRecord)
-                .toList();
+        List<Record> records = recordRepository.findAllByUserGroupId(userGroupId);
+        List<RecordListResDto> result = new ArrayList<>();
+
+        for (Record record : records) {
+            List<String> imageUrls = imageService.viewImages(record.getId());
+            result.add(RecordListResDto.createRecord(record, imageUrls));
+        }
+
+        return result;
     }
 
     @Override
