@@ -2,12 +2,10 @@ package com.bookmile.backend.domain.book.dto.res;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 public class BookDetailResponseDto {
 
     @Schema(description = "도서 제목", example = "Title Result")
