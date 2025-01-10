@@ -2,10 +2,7 @@ package com.bookmile.backend.domain.book.controller;
 
 import com.bookmile.backend.domain.book.dto.req.BookDetailRequestDto;
 import com.bookmile.backend.domain.book.dto.req.BookListRequestDto;
-import com.bookmile.backend.domain.book.dto.res.BestSellerApiResponse;
-import com.bookmile.backend.domain.book.dto.res.BestSellerResponseDto;
-import com.bookmile.backend.domain.book.dto.res.BookDetailResponseDto;
-import com.bookmile.backend.domain.book.dto.res.BookListResponseDto;
+import com.bookmile.backend.domain.book.dto.res.*;
 import com.bookmile.backend.domain.book.service.BookDetailService;
 import com.bookmile.backend.domain.book.service.BookListService;
 import com.bookmile.backend.global.common.CommonResponse;
@@ -51,4 +48,9 @@ public class BookController {
         return ResponseEntity.ok(CommonResponse.from("베스트셀러 조회 성공", bestSellerList));
     }
 
+    @GetMapping("/new-books")
+    public ResponseEntity<CommonResponse<List<NewBookResponseDto>>> getNewBooks() {
+        List<NewBookResponseDto> newBookList = bookListService.getNewBookList();
+        return ResponseEntity.ok(CommonResponse.from("신간 도서 조회 성공", newBookList));
+    }
 }
