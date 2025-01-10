@@ -1,6 +1,6 @@
 package com.bookmile.backend.domain.group.dto.res;
 
-import com.bookmile.backend.domain.book.dto.res.BookDetailResponseDto;
+import com.bookmile.backend.domain.book.dto.res.BookResponseDto;
 import com.bookmile.backend.domain.group.entity.GroupStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,13 +14,13 @@ public class GroupSearchResponseDto {
     private int maxMembers;
     private int currentMembers;
     private GroupStatus status;
-    private BookDetailResponseDto book;
+    private BookResponseDto book;
     private String goalType;
     private String goalContent;
     private String masterNickname;
 
     public GroupSearchResponseDto(Long groupId, String groupName, String groupDescription, int maxMembers, int currentMembers,
-                                  GroupStatus status, BookDetailResponseDto book, String goalType, String goalContent, String masterNickname) {
+                                  GroupStatus status, BookResponseDto book, String goalType, String goalContent, String masterNickname) {
         this.groupId = groupId;
         this.groupName = groupName;
         this.groupDescription = groupDescription;

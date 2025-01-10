@@ -1,7 +1,8 @@
 package com.bookmile.backend.domain.group.service.Impl;
 
-import com.bookmile.backend.domain.book.dto.res.BookDetailResponseDto;
+import com.bookmile.backend.domain.book.dto.res.BookResponseDto;
 import com.bookmile.backend.domain.book.entity.Book;
+import com.bookmile.backend.domain.book.repository.BookRepository;
 import com.bookmile.backend.domain.book.service.BookService;
 import com.bookmile.backend.domain.group.dto.req.GroupSearchRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
@@ -36,6 +37,7 @@ public class GroupServiceImpl implements GroupService {
 
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
+    private final BookRepository bookRepository;
     private final BookService bookService;
     private final UserGroupRepository userGroupRepository;
     private final TemplateRepository templateRepository;
@@ -171,7 +173,7 @@ public class GroupServiceImpl implements GroupService {
                             group.getMaxMembers(),
                             userGroupRepository.countByGroupId(group.getId()),
                             group.getStatus(),
-                            new BookDetailResponseDto(group.getBook()),
+                            new BookResponseDto(group.getBook()),
                             group.getGoalType(),
                             group.getGoalContent(),
                             masterNickname
@@ -196,7 +198,7 @@ public class GroupServiceImpl implements GroupService {
                 group.getMaxMembers(),
                 currentMembers,
                 group.getStatus(),
-                new BookDetailResponseDto(group.getBook()),
+                new BookResponseDto(group.getBook()),
                 group.getGoalType(),
                 group.getGoalContent(),
                 masterNickname
