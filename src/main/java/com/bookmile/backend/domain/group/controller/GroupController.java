@@ -88,6 +88,8 @@ public class GroupController {
         return ResponseEntity.ok(groups);
     }
 
+    @Operation(summary = "그룹 상세 정보 조회"
+            , description = "특정 그룹의 상세 정보를 조회합니다.")
     @GetMapping("/{groupId}")
     public ResponseEntity<GroupSearchResponseDto> getGroupDetail(@PathVariable Long groupId) {
         GroupSearchResponseDto groupDetail = groupService.getGroupDetail(groupId);
