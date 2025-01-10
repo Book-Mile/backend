@@ -61,7 +61,7 @@ public class GroupController {
 
     @Operation(summary = "그룹 멤버 조회"
             , description = "전체 그룹원을 조회합니다. userId, 닉네임과 직책을 조회할 수 있습니다.")
-    @GetMapping("/{groupId}")
+    @GetMapping("/{groupId}/members")
     public ResponseEntity<List<GroupMemberResponseDto>> getMembers(@PathVariable Long groupId) {
         List<GroupMemberResponseDto> members = groupMemberServiceImpl.getGroupMembers(groupId);
         return ResponseEntity.ok(members);
@@ -86,5 +86,11 @@ public class GroupController {
     ) {
         List<GroupSearchResponseDto> groups = groupService.getGroupsByIsbn13(requestDto);
         return ResponseEntity.ok(groups);
+    }
+
+    @GetMapping("/{groupId}")
+    public ResponseEntity<GroupSearchResponseDto> getGroupDetail(@PathVariable Long groupId) {
+        GroupSearchResponseDto groupDetail = groupService.getGroupDetail(groupId);
+        return ResponseEntity.ok(groupDetail);
     }
 }
