@@ -25,7 +25,7 @@ public class BookController {
     private final BookDetailService bookDetailService;
 
     @Operation(summary = "도서 리스트 검색", description = "도서 리스트를 검색합니다. 입력한 검색어와 가장 유사한 도서 10개의 정보를 반환합니다. <br>"
-    + "현재 책 제목을 통한 검색만 가능하며 정확한 제목을 입력 할 필요는 없습니다.")
+    + "현재 책 제목을 통한 검색만 가능하며 정확한 제목을 입력 할 필요는 없습니다. swagger 사용시 title 만 수정하여 검색합니다.")
     @PostMapping("/search")
     public ResponseEntity<CommonResponse<List<BookListResponseDto>>> searchBooks(
             @Validated @RequestBody BookListRequestDto requestDto) {
@@ -41,12 +41,14 @@ public class BookController {
         return ResponseEntity.ok(CommonResponse.from(BOOKDETAIL_SEARCH.getMessage(),bookdetail));
     }
 
+    @Operation(summary = "베스트셀러 검색", description = "베스트셀러 10권을 조회합니다.")
     @GetMapping("/best-sellers")
     public ResponseEntity<CommonResponse<List<BestSellerResponseDto>>> getBestSellers() {
         List<BestSellerResponseDto> bestSellerList = bookListService.getBestSellerList();
         return ResponseEntity.ok(CommonResponse.from(BESTSELLER_SEARCH.getMessage(), bestSellerList));
     }
 
+    @Operation(summary = "추천 신간 도서 검색", description = "알라딘 추천 신간도서 10권을 조회합니다.")
     @GetMapping("/new-books")
     public ResponseEntity<CommonResponse<List<NewBookResponseDto>>> getNewBooks() {
         List<NewBookResponseDto> newBookList = bookListService.getNewBookList();
