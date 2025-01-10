@@ -1,18 +1,19 @@
 version: '3.8'
-
 services:
   mysql:
     image: mysql:latest
     container_name: book-mile-mysql
+    env_file:
+      - .env
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: bookmile
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-    networks:
-      - app-network
 
   redis:
     image: redis:latest
@@ -22,6 +23,7 @@ services:
     command: redis-server --appendonly yes # 데이터 영구 저장 옵션
     volumes:
       - redis_data:/data
+
     networks:
       - app-network
 
@@ -37,20 +39,20 @@ services:
       - redis
     environment:
       WAIT_HOSTS: mysql:3306
-      SPRING_DATASOURCE_URL: "${SPRING_DATASOURCE_URL}"
-      SPRING_DATASOURCE_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       SPRING_DATASOURCE_USERNAME: root
 
-      JWT_SECRET_KEY: "${JWT_SECRET_KEY}"
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
 
-      REDIS_HOST: "${REDIS_HOST}"
-      REDIS_PORT: "${REDIS_PORT}"
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
 
-      AWS_ACCESS_KEY: "${AWS_ACCESS_KEY}"
-      AWS_SECRET_KEY: "${AWS_SECRET_KEY}"
-      AWS_BUCKET_FOLDER: "${AWS_BUCKET_FOLDER}"
-      AWS_BUCKET_PROFILE_FOLDER: "${AWS_BUCKET_PROFILE_FOLDER}"
-      AWS_BUCKET_MAIN_PROFILE: "${AWS_BUCKET_MAIN_PROFILE}"
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_BUCKET_FOLDER: ${AWS_BUCKET_FOLDER}
+      AWS_BUCKET_PROFILE_FOLDER: ${AWS_BUCKET_PROFILE_FOLDER}
+      AWS_BUCKET_MAIN_PROFILE: ${AWS_BUCKET_MAIN_PROFILE}
 
     command: [ "java", "-jar", "/app.jar" ]
     networks:
