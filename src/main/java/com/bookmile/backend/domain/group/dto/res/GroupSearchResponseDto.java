@@ -18,9 +18,11 @@ public class GroupSearchResponseDto {
     private String goalType;
     private String goalContent;
     private String masterNickname;
+    private String masterImage;
 
     public GroupSearchResponseDto(Long groupId, String groupName, String groupDescription, int maxMembers, int currentMembers,
-                                  GroupStatus status, BookResponseDto book, String goalType, String goalContent, String masterNickname) {
+                                  GroupStatus status, BookResponseDto book, String goalType,
+                                  String goalContent, String masterNickname, String masterImage) {
         this.groupId = groupId;
         this.groupName = groupName;
         this.groupDescription = groupDescription;
@@ -31,5 +33,6 @@ public class GroupSearchResponseDto {
         this.goalType = goalType;
         this.goalContent = goalContent;
         this.masterNickname = masterNickname;
+        this.masterImage = masterImage;
     }
 }

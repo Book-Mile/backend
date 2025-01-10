@@ -37,7 +37,6 @@ public class GroupServiceImpl implements GroupService {
 
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
-    private final BookRepository bookRepository;
     private final BookService bookService;
     private final UserGroupRepository userGroupRepository;
     private final TemplateRepository templateRepository;
@@ -164,8 +163,9 @@ public class GroupServiceImpl implements GroupService {
 
         return groups.stream()
                 .map(group -> {
-                    String masterNickname = userGroupRepository.findMasterNicknameByGroupId(group.getId())
+                    UserGroup masterUserGroup = userGroupRepository.findMasterByGroupId(group.getId())
                             .orElseThrow(() -> new CustomException(INVALID_GROUP));
+                    User masterUser = masterUserGroup.getUser();
                     return new GroupSearchResponseDto(
                             group.getId(),
                             group.getGroupName(),
@@ -176,7 +176,8 @@ public class GroupServiceImpl implements GroupService {
                             new BookResponseDto(group.getBook()),
                             group.getGoalType(),
                             group.getGoalContent(),
-                            masterNickname
+                            masterUser.getNickname(),
+                            masterUser.getImage()
                     );
                 })
                 .collect(Collectors.toList());
@@ -189,8 +190,10 @@ public class GroupServiceImpl implements GroupService {
 
         int currentMembers = userGroupRepository.countByGroupId(groupId);
 
-        String masterNickname = userGroupRepository.findMasterNicknameByGroupId(group.getId())
+        UserGroup masterUserGroup = userGroupRepository.findMasterByGroupId(group.getId())
                 .orElseThrow(() -> new CustomException(INVALID_GROUP));
+        User masterUser = masterUserGroup.getUser();
+
         return new GroupSearchResponseDto(
                 group.getId(),
                 group.getGroupName(),
@@ -201,7 +204,8 @@ public class GroupServiceImpl implements GroupService {
                 new BookResponseDto(group.getBook()),
                 group.getGoalType(),
                 group.getGoalContent(),
-                masterNickname
+                masterUser.getNickname(),
+                masterUser.getImage()
         );
     }
 }
