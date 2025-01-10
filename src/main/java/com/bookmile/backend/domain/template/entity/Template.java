@@ -34,7 +34,7 @@ public class Template {
     private GoalType goalType;
 
     @Column
-    private String customGoal; // 사용자 정의 목표 (CUSTOM인 경우)
+    private String goalContent;
 
     @Column(nullable = false)
     private boolean isTemplate; // 템플릿 공유 여부
@@ -43,10 +43,10 @@ public class Template {
     private int usageCount = 1; // 템플릿 사용 횟수
 
     // 생성자
-    public Template(Group group, GoalType goalType, String customGoal, boolean isTemplate) {
+    public Template(Group group, GoalType goalType, String goalContent, boolean isTemplate) {
         this.group = group;
         this.goalType = goalType;
-        this.customGoal = customGoal; // 사용자 정의 목표
+        this.goalContent = goalContent;
         this.isTemplate = isTemplate;
     }
 
