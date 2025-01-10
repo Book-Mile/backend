@@ -40,9 +40,8 @@ public class GroupCreateRequestDto {
     private String goalType; // GoalType (PAGE, CHAPTER, NUMBER, CUSTOM)
 
     @Schema(description = "사용자 정의 목표 내용 (CUSTOM인 경우 필수)", example = "하루에 30페이지 읽기")
-    private String customGoal; // 사용자 정의 목표 내용 (선택 사항)
+    private String goalContent;
 
     @Schema(description = "그룹 공개/비공개", example = "true(공개)/false(비공개)")
     private String isOpen;
-
 }
