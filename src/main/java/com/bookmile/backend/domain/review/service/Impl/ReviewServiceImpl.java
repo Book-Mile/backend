@@ -29,8 +29,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<ReviewListResDto> viewReviewList(Long bookId) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new CustomException(BOOK_NOT_FOUND));
+        Book book = findBookById(bookId);
 
         return reviewRepository.findAllByBookId(book.getId()).stream()
                 .map(ReviewListResDto::createReview)
@@ -39,24 +38,19 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Long createReview(Long bookId, Long userId, ReviewReqDto reviewReqDto) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new CustomException(BOOK_NOT_FOUND));
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        Book book = findBookById(bookId);
+        User user = findUserById(userId);
 
         Review review = Review.from(user, book, reviewReqDto);
 
         reviewRepository.save(review);
-
         return review.getId();
     }
 
     @Transactional
     @Override
     public Long updateReview(Long reviewId, ReviewReqDto reviewReqDto) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new CustomException(REVIEW_NOT_FOUND));
+        Review review = findReviewById(reviewId);
 
         review.update(reviewReqDto);
 
@@ -66,11 +60,25 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     @Override
     public Long deleteReview(Long reviewId) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new CustomException(REVIEW_NOT_FOUND));
+        Review review = findReviewById(reviewId);
 
         review.delete(review);
 
         return review.getId();
+    }
+
+    private Review findReviewById(Long reviewId) {
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(REVIEW_NOT_FOUND));
+    }
+
+    private Book findBookById(Long bookId) {
+        return bookRepository.findById(bookId)
+                .orElseThrow(() -> new CustomException(BOOK_NOT_FOUND));
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 }
