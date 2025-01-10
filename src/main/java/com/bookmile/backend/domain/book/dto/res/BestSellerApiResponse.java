@@ -22,6 +22,6 @@ public class BestSellerApiResponse {
         private String author;      // 저자
         private String publisher;   // 출판사
         private String cover;       // 커버 이미지
-        private double customerReviewRank; // 평점
+        private int customerReviewRank; // 평점
     }
 }

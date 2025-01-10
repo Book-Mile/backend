@@ -1,6 +1,8 @@
 package com.bookmile.backend.domain.book.service.Impl;
 
 import com.bookmile.backend.domain.book.dto.req.BookListRequestDto;
+import com.bookmile.backend.domain.book.dto.res.BestSellerApiResponse;
+import com.bookmile.backend.domain.book.dto.res.BestSellerResponseDto;
 import com.bookmile.backend.domain.book.dto.res.BookListApiResponse;
 import com.bookmile.backend.domain.book.dto.res.BookListResponseDto;
 import com.bookmile.backend.domain.book.service.BookListService;
@@ -11,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +23,9 @@ public class BookListServiceImpl implements BookListService {
 
     @Value("${aladin.api.url}")
     private String API_URL;
+
+    @Value("${aladin.api.url.bestseller}")
+    private String BESTSELLER_API_URL;
 
     @Value("${aladin.api.key}")
     private String TTB_KEY;
@@ -39,6 +45,28 @@ public class BookListServiceImpl implements BookListService {
         if (apiResponse != null) {
             List<BookListResponseDto> items = apiResponse.getItems();
             return items;
+        }      return List.of();
+    }
+
+    @Override
+    public List<BestSellerResponseDto> getBestSellerList() {
+        String url = String.format("%s?ttbkey=%s&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101",
+                BESTSELLER_API_URL, TTB_KEY);
+
+        ResponseEntity<BestSellerApiResponse> response = restTemplate.getForEntity(url, BestSellerApiResponse.class);
+
+        BestSellerApiResponse apiResponse = response.getBody();
+
+        if (apiResponse != null) {
+            return apiResponse.getItems().stream()
+                    .map(item -> BestSellerResponseDto.builder()
+                            .title(item.getTitle())
+                            .author(item.getAuthor())
+                            .publisher(item.getPublisher())
+                            .cover(item.getCover())
+                            .customerReviewRank(item.getCustomerReviewRank())
+                            .build())
+                    .collect(Collectors.toList());
         }
         return List.of();
     }
