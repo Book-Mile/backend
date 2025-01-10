@@ -6,7 +6,9 @@ import static com.bookmile.backend.global.common.StatusCode.RECORD_NOT_FOUND;
 import static com.bookmile.backend.global.common.StatusCode.USER_NOT_FOUND;
 
 import com.bookmile.backend.domain.group.entity.Group;
+import com.bookmile.backend.domain.image.repository.ImageRepository;
 import com.bookmile.backend.domain.image.service.Impl.ImageServiceImpl;
+import com.bookmile.backend.domain.record.dto.req.RecentRecordResDto;
 import com.bookmile.backend.domain.record.dto.req.RecordReqDto;
 import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
 import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
@@ -21,6 +23,7 @@ import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import com.bookmile.backend.global.exception.CustomException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +36,7 @@ public class RecordServiceImpl implements RecordService {
     private final RecordGroupRepository groupRepository;
     private final RecordUserGroupRepository userGroupRepository;
     private final RecordRepository recordRepository;
+    private final ImageRepository imageRepository;
     private final ImageServiceImpl imageService;
 
     @Override
@@ -85,5 +89,42 @@ public class RecordServiceImpl implements RecordService {
         record.update(updateRecordReqDto);
 
         return record.getId();
+    }
+
+    /* 고쳐야함!!!!!!!!!
+     * groupId를 사용해서 userId 리스트 가져오기
+     * userId 리스트 가져오면 갖고 있는 groupId와 리스트 안 userId와 조합 해서
+     * userGroupId 가져온다음
+     * userGroupId 사용해서 Record 리스트 가져와서
+     * Record에서 이미지 저장이 되어있는거 가져오가
+     * */
+    @Override
+    public List<RecentRecordResDto> viewRandomRecord(Long groupId) {
+        List<User> users = userRepository.findUserRandomSortByGroupId(groupId);
+        List<RecentRecordResDto> recentRecordResDtos = new ArrayList<>();
+        Random random = new Random();
+        for (User user : users) {
+            Long userGroupId = userGroupRepository.findUserGroupIdByGroupIdAndUserId(groupId, user.getId())
+                    .orElseThrow(() -> new CustomException(NO_USER_OR_NO_GROUP));
+
+            List<Record> records = recordRepository.findAllRandomSortByUserGroupId(userGroupId);
+
+            for (Record record : records) {
+                if (record.getImages().isEmpty()) { // 이미지 리스트 비어있으면 그냥 이미지 없는거로 추가
+                    recentRecordResDtos
+                            .add(RecentRecordResDto
+                                    .createRecentRecord(user, record, null));
+                } else {                              // 안 비어있으면 기록의 첫번째 이미지로 추가
+                    int randomImageIndex = random.nextInt(record.getImages().size());
+                    recentRecordResDtos
+                            .add(RecentRecordResDto
+                                    .createRecentRecord(user,
+                                            record,
+                                            record.getImages().get(randomImageIndex).getImageUrl()));
+                }
+                break;
+            }
+        }
+        return recentRecordResDtos;
     }
 }

@@ -1,5 +1,6 @@
 package com.bookmile.backend.domain.record.service;
 
+import com.bookmile.backend.domain.record.dto.req.RecentRecordResDto;
 import com.bookmile.backend.domain.record.dto.req.RecordReqDto;
 import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
 import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
@@ -12,4 +13,6 @@ public interface RecordService {
     Long createRecord(Long groupId, Long userId, List<MultipartFile> files, RecordReqDto recordReqDto);
 
     Long updateRecord(Long recordId, UpdateRecordReqDto updateRecordReqDto);
+
+    List<RecentRecordResDto> viewRandomRecord(Long groupId);
 }
