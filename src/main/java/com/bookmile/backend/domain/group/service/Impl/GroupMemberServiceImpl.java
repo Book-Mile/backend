@@ -25,8 +25,10 @@ public class GroupMemberServiceImpl implements GroupMemeberService {
                 .map(userGroup -> new GroupMemberResponseDto(
                         userGroup.getUser().getId(),
                         userGroup.getUser().getNickname(),
-                        userGroup.getRole()
-                ))
+                        userGroup.getRole(),
+                        userGroup.getUser().getImage()
+                )
+                )
                 .collect(Collectors.toList());
     }
 }

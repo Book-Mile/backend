@@ -11,11 +11,13 @@ public class GroupMemberResponseDto {
     private Long userId;
     private String nickname;
     private Role role;
+    private String image;
 
     @Builder
-    public GroupMemberResponseDto(Long userId, String nickname, Role role) {
+    public GroupMemberResponseDto(Long userId, String nickname, Role role, String image) {
         this.userId = userId;
         this.nickname = nickname;
         this.role = role;
+        this.image = image;
     }
 }
