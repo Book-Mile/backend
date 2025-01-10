@@ -1,5 +1,6 @@
 package com.bookmile.backend.domain.record.entity;
 
+import com.bookmile.backend.domain.image.entity.Image;
 import com.bookmile.backend.domain.record.dto.req.RecordReqDto;
 import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
@@ -12,6 +13,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,6 +42,9 @@ public class Record extends BaseEntity {
     @Column(nullable = false)
     private Integer currentPage;
 
+    @OneToMany(mappedBy = "record")
+    private List<Image> images = new ArrayList<>();
+
     public Record(UserGroup userGroup, String text, Integer currentPage) {
         this.userGroup = userGroup;
         this.text = text;
@@ -56,5 +63,10 @@ public class Record extends BaseEntity {
     public void update(UpdateRecordReqDto updateRecordReqDto) {
         this.text = updateRecordReqDto.getText();
         this.currentPage = updateRecordReqDto.getCurrentPage();
+    }
+
+    public void addImage(Image image) {
+        this.images.add(image);
+        image.addRecord(this);
     }
 }

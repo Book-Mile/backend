@@ -4,6 +4,7 @@ import static com.bookmile.backend.global.common.StatusCode.CREATE_RECORD;
 import static com.bookmile.backend.global.common.StatusCode.UPDATE_RECORD;
 import static com.bookmile.backend.global.common.StatusCode.VIEW_RECORD;
 
+import com.bookmile.backend.domain.record.dto.req.RecentRecordResDto;
 import com.bookmile.backend.domain.record.dto.req.RecordReqDto;
 import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
 import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
@@ -58,5 +59,13 @@ public class RecordController {
         Long updateRecord = recordServiceImpl.updateRecord(recordId, updateRecordReqDto);
         return ResponseEntity.status(UPDATE_RECORD.getStatus())
                 .body(CommonResponse.from(UPDATE_RECORD.getMessage(), updateRecord));
+    }
+
+    @Operation(summary = "글 2 사진 2", description = "해당 그룹의 랜덤한 사람의 랜덤한 기록의 사진과 글들 반환합니다")
+    @GetMapping("/random")
+    public ResponseEntity<CommonResponse<List<RecentRecordResDto>>> viewRandomRecord(@RequestParam Long groupId) {
+        List<RecentRecordResDto> recentRecordResDtos = recordServiceImpl.viewRandomRecord(groupId);
+        return ResponseEntity.status(VIEW_RECORD.getStatus())
+                .body(CommonResponse.from(VIEW_RECORD.getMessage(), recentRecordResDtos));
     }
 }

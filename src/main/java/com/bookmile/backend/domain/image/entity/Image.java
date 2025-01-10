@@ -36,6 +36,10 @@ public class Image extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted = Boolean.FALSE;
 
+    public void addRecord(Record record) {
+        this.record = record;
+    }
+
     public Image(Record record, String imageUrl) {
         this.record = record;
         this.imageUrl = imageUrl;

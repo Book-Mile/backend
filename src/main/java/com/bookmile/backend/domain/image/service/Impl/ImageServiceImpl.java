@@ -63,6 +63,8 @@ public class ImageServiceImpl implements ImageService {
                 .map(url -> new Image(record, url))
                 .toList();
 
+        images.forEach(record::addImage);
+
         imageRepository.saveAll(images);
     }
 
