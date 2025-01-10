@@ -40,7 +40,6 @@ public class BookListServiceImpl implements BookListService {
             List<BookListResponseDto> items = apiResponse.getItems();
             return items;
         }
-
         return List.of();
     }
 }
