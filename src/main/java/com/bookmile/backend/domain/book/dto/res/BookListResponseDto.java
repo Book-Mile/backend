@@ -22,4 +22,10 @@ public class BookListResponseDto {
 
     @Schema(description = "ISBN 번호", example = "12345678987654")
     private String isbn13;
+
+    @Schema(description = "상품 링크", example = "http://aladin.co.kr/item")
+    private String link;
+
+    @Schema(description = "평점", example = "4.5")
+    private int customerReviewRank;
 }

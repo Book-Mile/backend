@@ -111,8 +111,11 @@ public enum StatusCode {
     NO_PERMISSION(UNAUTHORIZED,"그룹장만 그룹의 상태를 변경할 수 있습니다."),
     NOT_MEMBER(UNAUTHORIZED,"그룹 구성원이 아닙니다." ),
     INVALID_GROUP_STATUS_UPDATE(BAD_REQUEST,"잘못된 요청입니다."),
-    INVALID_GROUP(BAD_REQUEST,"유효아지 않은 그룹입니다." ),
-    INVALID_BOOK_ID(BAD_REQUEST,"존재하지 않는 책입니다." );
+    INVALID_GROUP(BAD_REQUEST,"유효하지 않은 그룹입니다." ),
+    INVALID_BOOK_ID(BAD_REQUEST,"존재하지 않는 책입니다." ),
+
+    BESTSELLER_SEARCH(OK,"베스트 셀러 조회에 성공했습니다." ),
+    NEWBOOK_SEARCH(OK,"신간 도서 조회에 성공했습니다." );
 
 
     private final HttpStatus status;
