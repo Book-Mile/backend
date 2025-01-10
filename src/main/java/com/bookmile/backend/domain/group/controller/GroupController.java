@@ -78,7 +78,8 @@ public class GroupController {
         return ResponseEntity.ok(responseDto);
     }
 
-    // 그룹 리스트 조회 API (ISBN13과 상태별로 검색)
+    @Operation(summary = "그룹 리스트 조회"
+            , description = "그룹 리스트를 조회합니다. 도서 ISBN13을 통해 도서별 그룹을 조회하며 그룹 상태에 따라 조회합니다.")
     @PostMapping("/list")
     public ResponseEntity<List<GroupSearchResponseDto>> getGroupsByIsbn13(
             @RequestBody @Valid GroupSearchRequestDto requestDto
