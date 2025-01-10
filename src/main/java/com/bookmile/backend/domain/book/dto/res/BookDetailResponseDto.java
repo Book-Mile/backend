@@ -30,6 +30,12 @@ public class BookDetailResponseDto {
     @JsonProperty("subInfo")
     private SubInfo subInfo; // subInfo 매핑을 위한 필드
 
+    @Schema(description = "상품 링크", example = "http://aladin.co.kr/item")
+    private String link;
+
+    @Schema(description = "평점", example = "4.5")
+    private int customerReviewRank;
+
     // SubInfo 내부 클래스
     @Getter
     @NoArgsConstructor
