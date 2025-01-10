@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
         // 닉네임 자동 생성
         String nickname = randomNickname.generateNickname();
 
-        User user = userRepository.save(signUpReqDto.toEntity(signUpReqDto.getEmail(), nickname, enCodePassword));
+        User user = userRepository.save(signUpReqDto.toEntity(signUpReqDto.getEmail(), nickname, enCodePassword, mainProfile));
         return UserResDto.toDto(user);
     }
 
