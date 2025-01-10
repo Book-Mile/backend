@@ -1,25 +1,15 @@
 package com.bookmile.backend.domain.book.entity;
 
 import com.bookmile.backend.domain.group.entity.Group;
-import com.bookmile.backend.domain.review.entity.Review;
 import com.bookmile.backend.global.config.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Book extends BaseEntity {
 
     @Id
@@ -51,11 +41,6 @@ public class Book extends BaseEntity {
     @OneToMany(mappedBy = "book")
     private List<Group> group = new ArrayList<>();
 
-    //@OneToMany(mappedBy = "book")
-    //private List<Review> review = new ArrayList<>();
-
-    //@Column
-    //private Integer bestSellerRank = null; //상품 조회하면 업데이트
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
@@ -69,9 +54,5 @@ public class Book extends BaseEntity {
         this.cover = cover;
         this.description = description;
         this.totalPage = totalPage;
-    }
-
-    protected Book() {
-
     }
 }
