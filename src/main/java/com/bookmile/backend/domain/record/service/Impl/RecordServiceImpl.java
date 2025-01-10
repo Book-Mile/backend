@@ -41,13 +41,10 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public List<RecordListResDto> viewRecordList(Long groupId, Long userId) {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new CustomException(GROUP_NOT_FOUND));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        Group group = findGroupById(groupId);
+        User user = findUserById(userId);
 
-        Long userGroupId = userGroupRepository.findUserGroupIdByGroupIdAndUserId(group.getId(), user.getId())
-                .orElseThrow(() -> new CustomException(NO_USER_OR_NO_GROUP));
+        Long userGroupId = getUserGroupId(group.getId(), user.getId());
 
         List<Record> records = recordRepository.findAllByUserGroupId(userGroupId);
         List<RecordListResDto> result = new ArrayList<>();
@@ -62,13 +59,10 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public Long createRecord(Long groupId, Long userId, List<MultipartFile> files, RecordReqDto recordReqDto) {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new CustomException(GROUP_NOT_FOUND));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        Group group = findGroupById(groupId);
+        User user = findUserById(userId);
 
-        Long userGroupId = userGroupRepository.findUserGroupIdByGroupIdAndUserId(group.getId(), user.getId())
-                .orElseThrow(() -> new CustomException(NO_USER_OR_NO_GROUP));
+        Long userGroupId = getUserGroupId(group.getId(), user.getId());
 
         UserGroup userGroup = userGroupRepository.findUserGroupById(userGroupId);
 
@@ -104,8 +98,7 @@ public class RecordServiceImpl implements RecordService {
         List<RecentRecordResDto> recentRecordResDtos = new ArrayList<>();
         Random random = new Random();
         for (User user : users) {
-            Long userGroupId = userGroupRepository.findUserGroupIdByGroupIdAndUserId(groupId, user.getId())
-                    .orElseThrow(() -> new CustomException(NO_USER_OR_NO_GROUP));
+            Long userGroupId = getUserGroupId(groupId, user.getId());
 
             List<Record> records = recordRepository.findAllRandomSortByUserGroupId(userGroupId);
 
@@ -126,5 +119,20 @@ public class RecordServiceImpl implements RecordService {
             }
         }
         return recentRecordResDtos;
+    }
+
+    private Group findGroupById(Long groupId) {
+        return groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(GROUP_NOT_FOUND));
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    }
+
+    private Long getUserGroupId(Long groupId, Long userId){
+        return userGroupRepository.findUserGroupIdByGroupIdAndUserId(groupId, userId)
+                .orElseThrow(() -> new CustomException(NO_USER_OR_NO_GROUP));
     }
 }

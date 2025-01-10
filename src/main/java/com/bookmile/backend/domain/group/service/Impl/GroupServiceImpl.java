@@ -2,7 +2,6 @@ package com.bookmile.backend.domain.group.service.Impl;
 
 import com.bookmile.backend.domain.book.dto.res.BookResponseDto;
 import com.bookmile.backend.domain.book.entity.Book;
-import com.bookmile.backend.domain.book.repository.BookRepository;
 import com.bookmile.backend.domain.book.service.BookService;
 import com.bookmile.backend.domain.group.dto.req.GroupSearchRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
@@ -52,7 +51,7 @@ public class GroupServiceImpl implements GroupService {
         //책 정보 가져오기
         Book book = bookService.saveBook(requestDto.getIsbn13());
 
-        Template template;
+        Template template = null;
         GoalType goalType = null;
         String goalContent = requestDto.getGoalContent();
 
@@ -87,20 +86,7 @@ public class GroupServiceImpl implements GroupService {
         }
 
         //그룹 생성
-        Group group = groupRepository.save(
-                Group.builder()
-                        .book(book)
-                        .groupName(requestDto.getGroupName())
-                        .groupType(requestDto.getGroupType())
-                        .goalType(goalType != null ? goalType.name() : null) // 템플릿 사용 시 GoalType은 null 처리
-                        .goalContent(goalContent) // goalContent 저장
-                        .maxMembers(requestDto.getMaxMembers())
-                        .groupDescription(requestDto.getGroupDescription())
-                        .password(requestDto.getPassword())
-                        .status(GroupStatus.RECRUITING)
-                        .isOpen(Boolean.valueOf(requestDto.getIsOpen()))
-                        .build()
-        );
+        Group group = groupRepository.save( requestDto.toEntity(book, goalType, goalContent));
 
         // 템플릿 생성 및 저장
         if (requestDto.getTemplateId() == null) {
@@ -122,24 +108,17 @@ public class GroupServiceImpl implements GroupService {
         userGroupRepository.save(userGroup);
 
         // 그룹 생성 응답 반환
-        return GroupCreateResponseDto.builder()
-                .groupId(group.getId())
-                .groupName(group.getGroupName())
-                .groupDescription(group.getGroupDescription())
-                .maxMembers(group.getMaxMembers())
-                .goalType(goalType != null ? goalType.name() : null)
-                .goalContent(goalContent)
-                .status(GroupStatus.RECRUITING.name()) // 기본 상태 반환
-                .build();
+        assert template != null;
+        return GroupCreateResponseDto.toDto(group, template);
     }
 
+    // 그룹 상태 변경
     @Override
     public GroupStatusUpdateResponseDto updateGroupStatus(Long groupId, GroupStatusUpdateRequestDto requestDto, Long userId) {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new CustomException(GROUP_NOT_FOUND));
+        Group group = findGroupById(groupId);
 
-        UserGroup userGroup = userGroupRepository.findByUserIdAndGroupId(userId, groupId)
-                .orElseThrow(() -> new CustomException(NOT_MEMBER));
+        UserGroup userGroup = findUserGroupById(userId, groupId);
+
         if (userGroup.getRole() != Role.MASTER) {
             throw new CustomException(NO_PERMISSION);
         }
@@ -207,5 +186,15 @@ public class GroupServiceImpl implements GroupService {
                 masterUser.getNickname(),
                 masterUser.getImage()
         );
+    }
+
+    private Group findGroupById(Long groupId) {
+        return groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(GROUP_NOT_FOUND));
+    }
+
+    private UserGroup findUserGroupById(Long userId, Long groupId) {
+        return  userGroupRepository.findByUserIdAndGroupId(userId, groupId)
+                .orElseThrow(() -> new CustomException(NOT_MEMBER));
     }
 }

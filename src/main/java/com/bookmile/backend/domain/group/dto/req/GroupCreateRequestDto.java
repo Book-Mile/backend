@@ -1,5 +1,9 @@
 package com.bookmile.backend.domain.group.dto.req;
 
+import com.bookmile.backend.domain.book.entity.Book;
+import com.bookmile.backend.domain.group.entity.Group;
+import com.bookmile.backend.domain.group.entity.GroupStatus;
+import com.bookmile.backend.domain.template.entity.GoalType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,6 +46,19 @@ public class GroupCreateRequestDto {
     @Schema(description = "사용자 정의 목표 내용 (CUSTOM인 경우 필수)", example = "하루에 30페이지 읽기")
     private String goalContent;
 
-    @Schema(description = "그룹 공개/비공개", example = "true(공개)/false(비공개)")
-    private String isOpen;
+
+    public Group toEntity(Book book, GoalType goalType, String goalContent) {
+        return Group.builder()
+                .book(book)
+                .groupName(groupName)
+                .groupType(groupType)
+                .goalType(goalType.name())
+                .goalContent(goalContent)
+                .maxMembers(maxMembers)
+                .groupDescription(groupDescription)
+                .password(password)
+                .status(GroupStatus.RECRUITING)
+                .isOpen(true)
+                .build();
+    }
 }
