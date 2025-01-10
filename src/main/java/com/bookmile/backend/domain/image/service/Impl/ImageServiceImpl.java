@@ -17,7 +17,6 @@ import com.bookmile.backend.domain.record.repository.RecordRepository;
 import com.bookmile.backend.global.exception.CustomException;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +50,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void saveImages(Long recordId, List<MultipartFile> multipartFiles) throws IOException {
+    public void saveImages(Long recordId, List<MultipartFile> multipartFiles) {
         Record record = recordRepository.findById(recordId)
                 .orElseThrow(() -> new CustomException(RECORD_NOT_FOUND));
 
