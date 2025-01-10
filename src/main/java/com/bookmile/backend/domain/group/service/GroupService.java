@@ -14,5 +14,6 @@ public interface GroupService {
     User getUserById(Long userId); // User 정보 조회
     GroupCreateResponseDto createGroup(GroupCreateRequestDto requestDto, User user);
     GroupStatusUpdateResponseDto updateGroupStatus(Long groupId, GroupStatusUpdateRequestDto requestDto, Long userId);
+    GroupSearchResponseDto getGroupDetail(Long groupId);
     List<GroupSearchResponseDto> getGroupsByIsbn13(GroupSearchRequestDto requestDto);
 }

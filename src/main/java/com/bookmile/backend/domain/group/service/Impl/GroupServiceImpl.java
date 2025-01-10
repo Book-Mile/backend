@@ -179,4 +179,27 @@ public class GroupServiceImpl implements GroupService {
                 })
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public GroupSearchResponseDto getGroupDetail(Long groupId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(INVALID_GROUP_ID));
+
+        int currentMembers = userGroupRepository.countByGroupId(groupId);
+
+        String masterNickname = userGroupRepository.findMasterNicknameByGroupId(group.getId())
+                .orElseThrow(() -> new CustomException(INVALID_GROUP));
+        return new GroupSearchResponseDto(
+                group.getId(),
+                group.getGroupName(),
+                group.getGroupDescription(),
+                group.getMaxMembers(),
+                currentMembers,
+                group.getStatus(),
+                new BookDetailResponseDto(group.getBook()),
+                group.getGoalType(),
+                group.getGoalContent(),
+                masterNickname
+        );
+    }
 }
