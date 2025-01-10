@@ -8,6 +8,7 @@ services:
       - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_HOST: "%"
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -15,6 +16,8 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
 
   redis:
     image: redis:latest
@@ -24,7 +27,6 @@ services:
     command: redis-server --appendonly yes # 데이터 영구 저장 옵션
     volumes:
       - redis_data:/data
-
     networks:
       - app-network
 
@@ -39,7 +41,6 @@ services:
       - mysql
       - redis
     environment:
-      WAIT_HOSTS: mysql:3306
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       SPRING_DATASOURCE_USERNAME: root
