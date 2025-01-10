@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.bookmile.backend.global.common.StatusCode.BOOKDETAIL_SEARCH;
-import static com.bookmile.backend.global.common.StatusCode.BOOKLIST_SEARCH;
+import static com.bookmile.backend.global.common.StatusCode.*;
 
 @RestController
 @RequestMapping("/api/v1/books")
@@ -45,12 +44,12 @@ public class BookController {
     @GetMapping("/best-sellers")
     public ResponseEntity<CommonResponse<List<BestSellerResponseDto>>> getBestSellers() {
         List<BestSellerResponseDto> bestSellerList = bookListService.getBestSellerList();
-        return ResponseEntity.ok(CommonResponse.from("베스트셀러 조회 성공", bestSellerList));
+        return ResponseEntity.ok(CommonResponse.from(BESTSELLER_SEARCH.getMessage(), bestSellerList));
     }
 
     @GetMapping("/new-books")
     public ResponseEntity<CommonResponse<List<NewBookResponseDto>>> getNewBooks() {
         List<NewBookResponseDto> newBookList = bookListService.getNewBookList();
-        return ResponseEntity.ok(CommonResponse.from("신간 도서 조회 성공", newBookList));
+        return ResponseEntity.ok(CommonResponse.from(NEWBOOK_SEARCH.getMessage(), newBookList));
     }
 }
