@@ -55,15 +55,8 @@ public class BookListServiceImpl implements BookListService {
         BestSellerApiResponse apiResponse = response.getBody();
 
         if (apiResponse != null) {
-            return apiResponse.getItems().stream()
-                    .map(item -> BestSellerResponseDto.builder()
-                            .title(item.getTitle())
-                            .author(item.getAuthor())
-                            .publisher(item.getPublisher())
-                            .cover(item.getCover())
-                            .customerReviewRank(item.getCustomerReviewRank())
-                            .build())
-                    .collect(Collectors.toList());
+            List<BestSellerResponseDto> items = apiResponse.getItems();
+            return items;
         }
         return List.of();
     }
@@ -78,15 +71,8 @@ public class BookListServiceImpl implements BookListService {
         NewBookApiResponse apiResponse = response.getBody();
 
         if (apiResponse != null) {
-            return apiResponse.getItems().stream()
-                    .map(item -> NewBookResponseDto.builder()
-                            .title(item.getTitle())
-                            .author(item.getAuthor())
-                            .publisher(item.getPublisher())
-                            .cover(item.getCover())
-                            .customerReviewRank(item.getCustomerReviewRank())
-                            .build())
-                    .collect(Collectors.toList());
+            List<NewBookResponseDto> items = apiResponse.getItems();
+            return items;
         }
         return List.of();
     }
