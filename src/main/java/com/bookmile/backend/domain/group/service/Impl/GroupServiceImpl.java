@@ -1,6 +1,5 @@
 package com.bookmile.backend.domain.group.service.Impl;
 
-import com.bookmile.backend.domain.book.dto.res.BookResponseDto;
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.book.service.BookService;
 import com.bookmile.backend.domain.group.dto.req.GroupSearchRequestDto;
@@ -8,15 +7,14 @@ import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
 import com.bookmile.backend.domain.group.dto.res.GroupSearchResponseDto;
 import com.bookmile.backend.domain.group.dto.res.GroupStatusUpdateResponseDto;
 import com.bookmile.backend.domain.group.entity.GroupStatus;
-import com.bookmile.backend.domain.template.entity.Template;
-import com.bookmile.backend.domain.template.entity.GoalType;
-import com.bookmile.backend.domain.template.repository.TemplateRepository;
 import com.bookmile.backend.domain.group.dto.req.GroupCreateRequestDto;
 import com.bookmile.backend.domain.group.dto.res.GroupCreateResponseDto;
 import com.bookmile.backend.domain.group.entity.Group;
 import com.bookmile.backend.domain.group.repository.GroupRepository;
 import com.bookmile.backend.domain.group.service.GroupService;
-import com.bookmile.backend.domain.user.entity.User;
+import com.bookmile.backend.domain.template.entity.Template;
+import com.bookmile.backend.domain.template.entity.GoalType;
+import com.bookmile.backend.domain.template.repository.TemplateRepository;import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import com.bookmile.backend.domain.userGroup.entity.Role;
@@ -145,19 +143,8 @@ public class GroupServiceImpl implements GroupService {
                     UserGroup masterUserGroup = userGroupRepository.findMasterByGroupId(group.getId())
                             .orElseThrow(() -> new CustomException(INVALID_GROUP));
                     User masterUser = masterUserGroup.getUser();
-                    return new GroupSearchResponseDto(
-                            group.getId(),
-                            group.getGroupName(),
-                            group.getGroupDescription(),
-                            group.getMaxMembers(),
-                            userGroupRepository.countByGroupId(group.getId()),
-                            group.getStatus(),
-                            new BookResponseDto(group.getBook()),
-                            group.getGoalType(),
-                            group.getGoalContent(),
-                            masterUser.getNickname(),
-                            masterUser.getImage()
-                    );
+                    int currentMembers = userGroupRepository.countByGroupId(group.getId());
+                    return GroupSearchResponseDto.toDto(group, currentMembers, masterUser);
                 })
                 .collect(Collectors.toList());
     }
@@ -173,19 +160,7 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new CustomException(INVALID_GROUP));
         User masterUser = masterUserGroup.getUser();
 
-        return new GroupSearchResponseDto(
-                group.getId(),
-                group.getGroupName(),
-                group.getGroupDescription(),
-                group.getMaxMembers(),
-                currentMembers,
-                group.getStatus(),
-                new BookResponseDto(group.getBook()),
-                group.getGoalType(),
-                group.getGoalContent(),
-                masterUser.getNickname(),
-                masterUser.getImage()
-        );
+        return GroupSearchResponseDto.toDto(group, currentMembers, masterUser);
     }
 
     private Group findGroupById(Long groupId) {
