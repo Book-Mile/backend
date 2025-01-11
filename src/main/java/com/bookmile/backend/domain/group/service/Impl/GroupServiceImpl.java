@@ -81,15 +81,19 @@ public class GroupServiceImpl implements GroupService {
         return new GroupStatusUpdateResponseDto(group.getId(), group.getStatus());
     }
 
-    //그룹 상태별로 그룹 조회
-    private List<GroupListResponseDto> findGroupsByStatus(String isbn13, GroupStatus status) {
-        List<Group> groups = groupRepository.findByIsbn13AndStatusAndIsOpenTrue(isbn13, status);
+    private List<GroupListResponseDto> findGroupsByStatus(String isbn13, GroupStatus status, boolean isRecent) {
+        List<Group> groups;
+        if (isRecent) {
+            groups = groupRepository.findTop4RecentGroupsByIsbn13AndStatus(isbn13, status);
+        } else {
+            groups = groupRepository.findRandom4GroupsByIsbn13AndStatus(isbn13, status);
+        }
 
         return groups.stream()
                 .map(group -> {
                     UserGroup masterUserGroup = findMasterUserGroup(group.getId());
                     User masterUser = masterUserGroup.getUser();
-                    int currentMembers = countGroupMembers(group.getId());
+                    int currentMembers = userGroupRepository.countByGroupId(group.getId());
                     return GroupListResponseDto.toDto(group, currentMembers, masterUser);
                 })
                 .collect(Collectors.toList());
@@ -97,17 +101,17 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<GroupListResponseDto> getRecruitingGroups(String isbn13) {
-        return findGroupsByStatus(isbn13, GroupStatus.RECRUITING);
+        return findGroupsByStatus(isbn13, GroupStatus.RECRUITING, true);
     }
 
     @Override
     public List<GroupListResponseDto> getInProgressGroups(String isbn13) {
-        return findGroupsByStatus(isbn13, GroupStatus.IN_PROGRESS);
+        return findGroupsByStatus(isbn13, GroupStatus.IN_PROGRESS, false);
     }
 
     @Override
     public List<GroupListResponseDto> getCompletedGroups(String isbn13) {
-        return findGroupsByStatus(isbn13, GroupStatus.COMPLETED);
+        return findGroupsByStatus(isbn13, GroupStatus.COMPLETED, false);
     }
 
     @Override

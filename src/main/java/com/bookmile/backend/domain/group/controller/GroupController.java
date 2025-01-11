@@ -92,8 +92,9 @@ public class GroupController {
         List<GroupListResponseDto> groups = groupService.getInProgressGroups(isbn13);
         return ResponseEntity.status(GROUP_LIST_FOUND.getStatus())
                 .body(CommonResponse.from(GROUP_LIST_FOUND.getMessage(), groups));
-    }    @Operation(summary = "그룹 리스트 조회 (완료)", description = "도서 ISBN13으로 완료된 그룹을 조회합니다.")
+    }
 
+    @Operation(summary = "그룹 리스트 조회 (완료)", description = "도서 ISBN13으로 완료된 그룹을 조회합니다.")
     @GetMapping("/list/completed")
     public ResponseEntity<CommonResponse<List<GroupListResponseDto>>> getCompletedGroups(
             @RequestParam String isbn13
