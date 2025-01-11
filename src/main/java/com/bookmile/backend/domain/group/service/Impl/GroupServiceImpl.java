@@ -124,6 +124,17 @@ public class GroupServiceImpl implements GroupService {
         return GroupDetailResponseDto.toDto(group, currentMembers, masterUser);
     }
 
+    @Override
+    public void updateGroupPrivate(Long groupId, Boolean isOpen, Long userId) {
+        Group group = findGroupById(groupId);
+
+        UserGroup userGroup = findUserGroupById(userId, groupId);
+        validateGroupMaster(userGroup);
+
+        group.setIsOpen(isOpen);
+        groupRepository.save(group);
+    }
+
     private Group findGroupById(Long groupId) {
         return groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(GROUP_NOT_FOUND));

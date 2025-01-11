@@ -86,4 +86,8 @@ public class Group extends BaseEntity {
     public void completeGroup() {
         this.status = GroupStatus.COMPLETED;
     }
+
+    public void setIsOpen(Boolean isOpen) {
+
+    }
 }

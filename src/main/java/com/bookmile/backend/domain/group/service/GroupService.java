@@ -21,4 +21,6 @@ public interface GroupService {
     List<GroupListResponseDto> getCompletedGroups(String isbn13);
 
     GroupDetailResponseDto getGroupDetail(Long groupId);
+
+    void updateGroupPrivate(Long groupId, Boolean isOpen, Long userId);
 }
