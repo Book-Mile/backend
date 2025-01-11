@@ -14,7 +14,8 @@ import com.bookmile.backend.domain.group.repository.GroupRepository;
 import com.bookmile.backend.domain.group.service.GroupService;
 import com.bookmile.backend.domain.template.entity.Template;
 import com.bookmile.backend.domain.template.entity.GoalType;
-import com.bookmile.backend.domain.template.repository.TemplateRepository;import com.bookmile.backend.domain.user.entity.User;
+import com.bookmile.backend.domain.template.repository.TemplateRepository;
+import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import com.bookmile.backend.domain.userGroup.entity.Role;
@@ -46,91 +47,37 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public GroupCreateResponseDto createGroup(GroupCreateRequestDto requestDto, User user) {
-        //책 정보 가져오기
         Book book = bookService.saveBook(requestDto.getIsbn13());
 
-        Template template = null;
-        GoalType goalType = null;
-        String goalContent = requestDto.getGoalContent();
+        Template template = checkTemplate(requestDto);
+        GoalType goalType = checkGoalType(requestDto, template);
+        String goalContent = checkGoalContent(requestDto, template);
 
-        // 템플릿 ID가 있는 경우 템플릿 사용
-        if (requestDto.getTemplateId() != null) {
-            template = templateRepository.findById(requestDto.getTemplateId())
-                    .orElseThrow(() -> new CustomException(INVALID_TEMPLATE_ID));
+        Group group = groupRepository.save(requestDto.toEntity(book, goalType, goalContent));
 
-            // 템플릿 검증
-            if (template.getGroup().getStatus() != GroupStatus.COMPLETED) {
-                throw new CustomException(INVALID_TEMPLATE_USAGE);
-            }
-
-            goalType = template.getGoalType();
-            goalContent = template.getGoalContent();
-
-            // 템플릿 사용 카운트 증가
-            template.increaseUsageCount();
-            templateRepository.save(template);
-        } else {
-            // GoalType 검증 및 처리
-            try {
-                goalType = GoalType.valueOf(requestDto.getGoalType());
-            } catch (IllegalArgumentException e) {
-                throw new CustomException(INVALID_GOAL_TYPE);
-            }
-
-            // goalContent 검증
-            if (goalContent == null || goalContent.isEmpty()) {
-                throw new CustomException(GOAL_CONTENT_REQUIRED);
-            }
-        }
-
-        //그룹 생성
-        Group group = groupRepository.save( requestDto.toEntity(book, goalType, goalContent));
-
-        // 템플릿 생성 및 저장
         if (requestDto.getTemplateId() == null) {
-            template = new Template(
-                    group, // 그룹 연결
-                    goalType,
-                    goalContent,
-                    true
-            );
-            templateRepository.save(template); // 템플릿 저장
+            template = Template.builder()
+                    .group(group)
+                    .goalType(goalType)
+                    .goalContent(goalContent)
+                    .isTemplate(true)
+                    .build();
+            templateRepository.save(template);
         }
+        registerGroupCreator(user, group);
 
-        // 그룹 생성자 등록
-        UserGroup userGroup = UserGroup.builder()
-                .user(user)
-                .group(group)
-                .role(Role.MASTER)
-                .build();
-        userGroupRepository.save(userGroup);
-
-        // 그룹 생성 응답 반환
-        assert template != null;
         return GroupCreateResponseDto.toDto(group, template);
     }
 
-    // 그룹 상태 변경
     @Override
     public GroupStatusUpdateResponseDto updateGroupStatus(Long groupId, GroupStatusUpdateRequestDto requestDto, Long userId) {
         Group group = findGroupById(groupId);
-
         UserGroup userGroup = findUserGroupById(userId, groupId);
 
-        if (userGroup.getRole() != Role.MASTER) {
-            throw new CustomException(NO_PERMISSION);
-        }
-
-        if (group.getStatus() == GroupStatus.RECRUITING && requestDto.getStatus() == GroupStatus.IN_PROGRESS) {
-            group.startGroup();
-        } else if (group.getStatus() == GroupStatus.IN_PROGRESS && requestDto.getStatus() == GroupStatus.COMPLETED) {
-            group.completeGroup();
-        } else {
-            throw new CustomException(INVALID_GROUP_STATUS_UPDATE);
-        }
+        validateGroupMaster(userGroup);
+        updateGroupStatus(group, requestDto.getStatus());
 
         groupRepository.save(group);
-
         return new GroupStatusUpdateResponseDto(group.getId(), group.getStatus());
     }
 
@@ -140,10 +87,9 @@ public class GroupServiceImpl implements GroupService {
 
         return groups.stream()
                 .map(group -> {
-                    UserGroup masterUserGroup = userGroupRepository.findMasterByGroupId(group.getId())
-                            .orElseThrow(() -> new CustomException(INVALID_GROUP));
+                    UserGroup masterUserGroup = findMasterUserGroup(group.getId());
                     User masterUser = masterUserGroup.getUser();
-                    int currentMembers = userGroupRepository.countByGroupId(group.getId());
+                    int currentMembers = countGroupMembers(group.getId());
                     return GroupSearchResponseDto.toDto(group, currentMembers, masterUser);
                 })
                 .collect(Collectors.toList());
@@ -151,13 +97,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public GroupSearchResponseDto getGroupDetail(Long groupId) {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new CustomException(INVALID_GROUP_ID));
-
-        int currentMembers = userGroupRepository.countByGroupId(groupId);
-
-        UserGroup masterUserGroup = userGroupRepository.findMasterByGroupId(group.getId())
-                .orElseThrow(() -> new CustomException(INVALID_GROUP));
+        Group group = findGroupById(groupId);
+        int currentMembers = countGroupMembers(groupId);
+        UserGroup masterUserGroup = findMasterUserGroup(group.getId());
         User masterUser = masterUserGroup.getUser();
 
         return GroupSearchResponseDto.toDto(group, currentMembers, masterUser);
@@ -169,7 +111,76 @@ public class GroupServiceImpl implements GroupService {
     }
 
     private UserGroup findUserGroupById(Long userId, Long groupId) {
-        return  userGroupRepository.findByUserIdAndGroupId(userId, groupId)
+        return userGroupRepository.findByUserIdAndGroupId(userId, groupId)
                 .orElseThrow(() -> new CustomException(NOT_MEMBER));
+    }
+
+    private UserGroup findMasterUserGroup(Long groupId) {
+        return userGroupRepository.findMasterByGroupId(groupId)
+                .orElseThrow(() -> new CustomException(INVALID_GROUP));
+    }
+
+    private int countGroupMembers(Long groupId) {
+        return userGroupRepository.countByGroupId(groupId);
+    }
+
+    private void validateGroupMaster(UserGroup userGroup) {
+        if (userGroup.getRole() != Role.MASTER) {
+            throw new CustomException(NO_PERMISSION);
+        }
+    }
+
+    private void updateGroupStatus(Group group, GroupStatus status) {
+        if (group.getStatus() == GroupStatus.RECRUITING && status == GroupStatus.IN_PROGRESS) {
+            group.startGroup();
+        } else if (group.getStatus() == GroupStatus.IN_PROGRESS && status == GroupStatus.COMPLETED) {
+            group.completeGroup();
+        } else {
+            throw new CustomException(INVALID_GROUP_STATUS_UPDATE);
+        }
+    }
+
+    private Template checkTemplate(GroupCreateRequestDto requestDto) {
+        if (requestDto.getTemplateId() != null) {
+            Template template = templateRepository.findById(requestDto.getTemplateId())
+                    .orElseThrow(() -> new CustomException(INVALID_TEMPLATE_ID));
+            if (template.getGroup().getStatus() != GroupStatus.COMPLETED) {
+                throw new CustomException(INVALID_TEMPLATE_USAGE);
+            }
+            template.increaseUsageCount();
+            templateRepository.save(template);
+            return template;
+        }
+        return null;
+    }
+
+    private GoalType checkGoalType(GroupCreateRequestDto requestDto, Template template) {
+        if (template != null) {
+            return template.getGoalType();
+        }
+        try {
+            return GoalType.valueOf(requestDto.getGoalType());
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(INVALID_GOAL_TYPE);
+        }
+    }
+
+    private String checkGoalContent(GroupCreateRequestDto requestDto, Template template) {
+        if (template != null) {
+            return template.getGoalContent();
+        }
+        if (requestDto.getGoalContent() == null || requestDto.getGoalContent().isEmpty()) {
+            throw new CustomException(GOAL_CONTENT_REQUIRED);
+        }
+        return requestDto.getGoalContent();
+    }
+
+    private void registerGroupCreator(User user, Group group) {
+        UserGroup userGroup = UserGroup.builder()
+                .user(user)
+                .group(group)
+                .role(Role.MASTER)
+                .build();
+        userGroupRepository.save(userGroup);
     }
 }
