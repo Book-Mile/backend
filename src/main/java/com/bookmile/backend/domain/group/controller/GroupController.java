@@ -1,9 +1,6 @@
 package com.bookmile.backend.domain.group.controller;
 
-import com.bookmile.backend.domain.group.dto.req.GroupCreateRequestDto;
-import com.bookmile.backend.domain.group.dto.req.GroupJoinRequestDto;
-import com.bookmile.backend.domain.group.dto.req.GroupSearchRequestDto;
-import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
+import com.bookmile.backend.domain.group.dto.req.*;
 import com.bookmile.backend.domain.group.dto.res.*;
 import com.bookmile.backend.domain.group.service.GroupJoinService;
 import com.bookmile.backend.domain.group.service.GroupService;
@@ -110,5 +107,16 @@ public class GroupController {
     public ResponseEntity<GroupDetailResponseDto> getGroupDetail(@PathVariable Long groupId) {
         GroupDetailResponseDto groupDetail = groupService.getGroupDetail(groupId);
         return ResponseEntity.ok(groupDetail);
+    }
+
+    @PatchMapping("/{groupId}/private")
+    @Operation(summary = "그룹 공개/비공개 전환", description = "그룹장은 그룹 공개여부를 변경할 수 있습니다.")
+    public ResponseEntity<CommonResponse<Object>> updateGroupVisibility(
+            @PathVariable Long groupId,
+            @RequestBody @Valid GroupPrivateRequestDto requestDto,
+            @RequestHeader("user-id") Long userId
+    ) {
+        groupService.updateGroupPrivate(groupId, requestDto.getIsOpen(), userId);
+        return ResponseEntity.ok(CommonResponse.from(GROUP_PRIVATE_UPDATE.getMessage()));
     }
 }

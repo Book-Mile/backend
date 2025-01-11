@@ -116,7 +116,8 @@ public enum StatusCode {
 
     BESTSELLER_SEARCH(OK,"베스트 셀러 조회에 성공했습니다." ),
     NEWBOOK_SEARCH(OK,"신간 도서 조회에 성공했습니다." ),
-    GROUP_LIST_FOUND(OK, "그룹 리스트 조회에 성공했습니다.");
+    GROUP_LIST_FOUND(OK, "그룹 리스트 조회에 성공했습니다."),
+    GROUP_PRIVATE_UPDATE(OK, "그룹 공개 여부가 업데이트 되었습니다.");
 
     private final HttpStatus status;
     private final String message;
