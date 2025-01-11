@@ -74,14 +74,31 @@ public class GroupController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @Operation(summary = "그룹 리스트 조회", description = "그룹 리스트를 조회합니다. 도서 ISBN13과 그룹 상태를 기준으로 그룹을 검색합니다.")
-    @GetMapping("/list")
-    public ResponseEntity<CommonResponse<List<GroupListResponseDto>>> getGroupsByIsbn13(
-            @RequestParam String isbn13,
-            @RequestParam(required = false) String status
+    @Operation(summary = "그룹 리스트 조회 (모집 중)", description = "도서 ISBN13으로 모집 중인 그룹을 조회합니다.")
+    @GetMapping("/list/recruiting")
+    public ResponseEntity<CommonResponse<List<GroupListResponseDto>>> getRecruitingGroups(
+            @RequestParam String isbn13
     ) {
-        GroupSearchRequestDto requestDto = new GroupSearchRequestDto(isbn13, status);
-        List<GroupListResponseDto> groups = groupService.getGroupsByIsbn13(requestDto);
+        List<GroupListResponseDto> groups = groupService.getRecruitingGroups(isbn13);
+        return ResponseEntity.status(GROUP_LIST_FOUND.getStatus())
+                .body(CommonResponse.from(GROUP_LIST_FOUND.getMessage(), groups));
+    }
+
+    @Operation(summary = "그룹 리스트 조회 (진행 중)", description = "도서 ISBN13으로 진행 중인 그룹을 조회합니다.")
+    @GetMapping("/list/in-progress")
+    public ResponseEntity<CommonResponse<List<GroupListResponseDto>>> getInProgressGroups(
+            @RequestParam String isbn13
+    ) {
+        List<GroupListResponseDto> groups = groupService.getInProgressGroups(isbn13);
+        return ResponseEntity.status(GROUP_LIST_FOUND.getStatus())
+                .body(CommonResponse.from(GROUP_LIST_FOUND.getMessage(), groups));
+    }    @Operation(summary = "그룹 리스트 조회 (완료)", description = "도서 ISBN13으로 완료된 그룹을 조회합니다.")
+
+    @GetMapping("/list/completed")
+    public ResponseEntity<CommonResponse<List<GroupListResponseDto>>> getCompletedGroups(
+            @RequestParam String isbn13
+    ) {
+        List<GroupListResponseDto> groups = groupService.getCompletedGroups(isbn13);
         return ResponseEntity.status(GROUP_LIST_FOUND.getStatus())
                 .body(CommonResponse.from(GROUP_LIST_FOUND.getMessage(), groups));
     }
