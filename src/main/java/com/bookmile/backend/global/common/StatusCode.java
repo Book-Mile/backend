@@ -115,8 +115,8 @@ public enum StatusCode {
     INVALID_BOOK_ID(BAD_REQUEST,"존재하지 않는 책입니다." ),
 
     BESTSELLER_SEARCH(OK,"베스트 셀러 조회에 성공했습니다." ),
-    NEWBOOK_SEARCH(OK,"신간 도서 조회에 성공했습니다." );
-
+    NEWBOOK_SEARCH(OK,"신간 도서 조회에 성공했습니다." ),
+    GROUP_LIST_FOUND(OK, "그룹 리스트 조회에 성공했습니다.");
 
     private final HttpStatus status;
     private final String message;

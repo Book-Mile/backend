@@ -17,5 +17,4 @@ public interface GroupService {
     GroupStatusUpdateResponseDto updateGroupStatus(Long groupId, GroupStatusUpdateRequestDto requestDto, Long userId);
     GroupDetailResponseDto getGroupDetail(Long groupId);
     List<GroupListResponseDto> getGroupsByIsbn13(GroupSearchRequestDto requestDto);
-
 }

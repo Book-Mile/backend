@@ -87,7 +87,12 @@ public class GroupServiceImpl implements GroupService {
         List<Group> groups = groupRepository.findByIsbn13AndStatus(requestDto.getIsbn13(), requestDto.getStatus());
 
         return groups.stream()
-                .map(group -> GroupListResponseDto.toDto(group, userGroupRepository.countByGroupId(group.getId())))
+                .map(group -> {
+                    UserGroup masterUserGroup = findMasterUserGroup(group.getId());
+                    User masterUser = masterUserGroup.getUser();
+                    int currentMembers = userGroupRepository.countByGroupId(group.getId());
+                    return GroupListResponseDto.toDto(group, currentMembers, masterUser);
+                })
                 .collect(Collectors.toList());
     }
 

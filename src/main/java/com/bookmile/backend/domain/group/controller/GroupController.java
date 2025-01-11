@@ -1,16 +1,10 @@
 package com.bookmile.backend.domain.group.controller;
 
-import static com.bookmile.backend.global.common.StatusCode.GROUP_CREATE;
-import static com.bookmile.backend.global.common.StatusCode.GROUP_JOIN;
-
 import com.bookmile.backend.domain.group.dto.req.GroupCreateRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupJoinRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupSearchRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
-import com.bookmile.backend.domain.group.dto.res.GroupCreateResponseDto;
-import com.bookmile.backend.domain.group.dto.res.GroupMemberResponseDto;
-import com.bookmile.backend.domain.group.dto.res.GroupDetailResponseDto;
-import com.bookmile.backend.domain.group.dto.res.GroupStatusUpdateResponseDto;
+import com.bookmile.backend.domain.group.dto.res.*;
 import com.bookmile.backend.domain.group.service.GroupJoinService;
 import com.bookmile.backend.domain.group.service.GroupService;
 import com.bookmile.backend.domain.group.service.Impl.GroupMemberServiceImpl;
@@ -23,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.bookmile.backend.global.common.StatusCode.*;
 
 @RestController
 @RequestMapping("/api/v1/groups")
@@ -78,14 +74,16 @@ public class GroupController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @Operation(summary = "그룹 리스트 조회"
-            , description = "그룹 리스트를 조회합니다. 도서 ISBN13을 통해 도서별 그룹을 조회하며 그룹 상태에 따라 조회합니다.")
-    @PostMapping("/list")
-    public ResponseEntity<List<GroupDetailResponseDto>> getGroupsByIsbn13(
-            @RequestBody @Valid GroupSearchRequestDto requestDto
+    @Operation(summary = "그룹 리스트 조회", description = "그룹 리스트를 조회합니다. 도서 ISBN13과 그룹 상태를 기준으로 그룹을 검색합니다.")
+    @GetMapping("/list")
+    public ResponseEntity<CommonResponse<List<GroupListResponseDto>>> getGroupsByIsbn13(
+            @RequestParam String isbn13,
+            @RequestParam(required = false) String status
     ) {
-        List<GroupDetailResponseDto> groups = groupService.getGroupsByIsbn13(requestDto);
-        return ResponseEntity.ok(groups);
+        GroupSearchRequestDto requestDto = new GroupSearchRequestDto(isbn13, status);
+        List<GroupListResponseDto> groups = groupService.getGroupsByIsbn13(requestDto);
+        return ResponseEntity.status(GROUP_LIST_FOUND.getStatus())
+                .body(CommonResponse.from(GROUP_LIST_FOUND.getMessage(), groups));
     }
 
     @Operation(summary = "그룹 상세 정보 조회"
