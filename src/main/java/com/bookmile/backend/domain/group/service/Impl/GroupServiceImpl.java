@@ -2,7 +2,6 @@ package com.bookmile.backend.domain.group.service.Impl;
 
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.book.service.BookService;
-import com.bookmile.backend.domain.group.dto.req.GroupSearchRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
 import com.bookmile.backend.domain.group.dto.res.GroupDetailResponseDto;
 import com.bookmile.backend.domain.group.dto.res.GroupListResponseDto;
@@ -82,18 +81,33 @@ public class GroupServiceImpl implements GroupService {
         return new GroupStatusUpdateResponseDto(group.getId(), group.getStatus());
     }
 
-    @Override
-    public List<GroupListResponseDto> getGroupsByIsbn13(GroupSearchRequestDto requestDto) {
-        List<Group> groups = groupRepository.findByIsbn13AndStatusAndIsOpenTrue(requestDto.getIsbn13(), requestDto.getStatus());
+    //그룹 상태별로 그룹 조회
+    private List<GroupListResponseDto> findGroupsByStatus(String isbn13, GroupStatus status) {
+        List<Group> groups = groupRepository.findByIsbn13AndStatusAndIsOpenTrue(isbn13, status);
 
         return groups.stream()
                 .map(group -> {
                     UserGroup masterUserGroup = findMasterUserGroup(group.getId());
                     User masterUser = masterUserGroup.getUser();
-                    int currentMembers = userGroupRepository.countByGroupId(group.getId());
+                    int currentMembers = countGroupMembers(group.getId());
                     return GroupListResponseDto.toDto(group, currentMembers, masterUser);
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GroupListResponseDto> getRecruitingGroups(String isbn13) {
+        return findGroupsByStatus(isbn13, GroupStatus.RECRUITING);
+    }
+
+    @Override
+    public List<GroupListResponseDto> getInProgressGroups(String isbn13) {
+        return findGroupsByStatus(isbn13, GroupStatus.IN_PROGRESS);
+    }
+
+    @Override
+    public List<GroupListResponseDto> getCompletedGroups(String isbn13) {
+        return findGroupsByStatus(isbn13, GroupStatus.COMPLETED);
     }
 
     @Override
