@@ -5,6 +5,7 @@ import com.bookmile.backend.domain.book.service.BookService;
 import com.bookmile.backend.domain.group.dto.req.GroupSearchRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
 import com.bookmile.backend.domain.group.dto.res.GroupDetailResponseDto;
+import com.bookmile.backend.domain.group.dto.res.GroupListResponseDto;
 import com.bookmile.backend.domain.group.dto.res.GroupStatusUpdateResponseDto;
 import com.bookmile.backend.domain.group.entity.GroupStatus;
 import com.bookmile.backend.domain.group.dto.req.GroupCreateRequestDto;
@@ -82,16 +83,11 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<GroupDetailResponseDto> getGroupsByIsbn13(GroupSearchRequestDto requestDto) {
+    public List<GroupListResponseDto> getGroupsByIsbn13(GroupSearchRequestDto requestDto) {
         List<Group> groups = groupRepository.findByIsbn13AndStatus(requestDto.getIsbn13(), requestDto.getStatus());
 
         return groups.stream()
-                .map(group -> {
-                    UserGroup masterUserGroup = findMasterUserGroup(group.getId());
-                    User masterUser = masterUserGroup.getUser();
-                    int currentMembers = countGroupMembers(group.getId());
-                    return GroupDetailResponseDto.toDto(group, currentMembers, masterUser);
-                })
+                .map(group -> GroupListResponseDto.toDto(group, userGroupRepository.countByGroupId(group.getId())))
                 .collect(Collectors.toList());
     }
 
