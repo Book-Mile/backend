@@ -9,7 +9,7 @@ import com.bookmile.backend.domain.group.dto.req.GroupSearchRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
 import com.bookmile.backend.domain.group.dto.res.GroupCreateResponseDto;
 import com.bookmile.backend.domain.group.dto.res.GroupMemberResponseDto;
-import com.bookmile.backend.domain.group.dto.res.GroupSearchResponseDto;
+import com.bookmile.backend.domain.group.dto.res.GroupDetailResponseDto;
 import com.bookmile.backend.domain.group.dto.res.GroupStatusUpdateResponseDto;
 import com.bookmile.backend.domain.group.service.GroupJoinService;
 import com.bookmile.backend.domain.group.service.GroupService;
@@ -81,18 +81,18 @@ public class GroupController {
     @Operation(summary = "그룹 리스트 조회"
             , description = "그룹 리스트를 조회합니다. 도서 ISBN13을 통해 도서별 그룹을 조회하며 그룹 상태에 따라 조회합니다.")
     @PostMapping("/list")
-    public ResponseEntity<List<GroupSearchResponseDto>> getGroupsByIsbn13(
+    public ResponseEntity<List<GroupDetailResponseDto>> getGroupsByIsbn13(
             @RequestBody @Valid GroupSearchRequestDto requestDto
     ) {
-        List<GroupSearchResponseDto> groups = groupService.getGroupsByIsbn13(requestDto);
+        List<GroupDetailResponseDto> groups = groupService.getGroupsByIsbn13(requestDto);
         return ResponseEntity.ok(groups);
     }
 
     @Operation(summary = "그룹 상세 정보 조회"
             , description = "특정 그룹의 상세 정보를 조회합니다.")
     @GetMapping("/{groupId}")
-    public ResponseEntity<GroupSearchResponseDto> getGroupDetail(@PathVariable Long groupId) {
-        GroupSearchResponseDto groupDetail = groupService.getGroupDetail(groupId);
+    public ResponseEntity<GroupDetailResponseDto> getGroupDetail(@PathVariable Long groupId) {
+        GroupDetailResponseDto groupDetail = groupService.getGroupDetail(groupId);
         return ResponseEntity.ok(groupDetail);
     }
 }

@@ -1,6 +1,5 @@
 package com.bookmile.backend.domain.group.repository;
 
-import com.bookmile.backend.domain.group.dto.res.GroupSearchResponseDto;
 import com.bookmile.backend.domain.group.entity.Group;
 import com.bookmile.backend.domain.group.entity.GroupStatus;
 import org.springframework.data.jpa.repository.JpaRepository;

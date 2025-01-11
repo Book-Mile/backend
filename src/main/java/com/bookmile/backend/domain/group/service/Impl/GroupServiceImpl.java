@@ -4,7 +4,7 @@ import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.book.service.BookService;
 import com.bookmile.backend.domain.group.dto.req.GroupSearchRequestDto;
 import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
-import com.bookmile.backend.domain.group.dto.res.GroupSearchResponseDto;
+import com.bookmile.backend.domain.group.dto.res.GroupDetailResponseDto;
 import com.bookmile.backend.domain.group.dto.res.GroupStatusUpdateResponseDto;
 import com.bookmile.backend.domain.group.entity.GroupStatus;
 import com.bookmile.backend.domain.group.dto.req.GroupCreateRequestDto;
@@ -82,7 +82,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<GroupSearchResponseDto> getGroupsByIsbn13(GroupSearchRequestDto requestDto) {
+    public List<GroupDetailResponseDto> getGroupsByIsbn13(GroupSearchRequestDto requestDto) {
         List<Group> groups = groupRepository.findByIsbn13AndStatus(requestDto.getIsbn13(), requestDto.getStatus());
 
         return groups.stream()
@@ -90,19 +90,19 @@ public class GroupServiceImpl implements GroupService {
                     UserGroup masterUserGroup = findMasterUserGroup(group.getId());
                     User masterUser = masterUserGroup.getUser();
                     int currentMembers = countGroupMembers(group.getId());
-                    return GroupSearchResponseDto.toDto(group, currentMembers, masterUser);
+                    return GroupDetailResponseDto.toDto(group, currentMembers, masterUser);
                 })
                 .collect(Collectors.toList());
     }
 
     @Override
-    public GroupSearchResponseDto getGroupDetail(Long groupId) {
+    public GroupDetailResponseDto getGroupDetail(Long groupId) {
         Group group = findGroupById(groupId);
         int currentMembers = countGroupMembers(groupId);
         UserGroup masterUserGroup = findMasterUserGroup(group.getId());
         User masterUser = masterUserGroup.getUser();
 
-        return GroupSearchResponseDto.toDto(group, currentMembers, masterUser);
+        return GroupDetailResponseDto.toDto(group, currentMembers, masterUser);
     }
 
     private Group findGroupById(Long groupId) {

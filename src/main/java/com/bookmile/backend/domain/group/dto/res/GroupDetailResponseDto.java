@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class GroupSearchResponseDto {
+public class GroupDetailResponseDto {
     private Long groupId;
     private String groupName;
     private String groupDescription;
@@ -24,7 +24,7 @@ public class GroupSearchResponseDto {
     private String masterImage;
 
     @Builder
-    public GroupSearchResponseDto(Long groupId, String groupName, String groupDescription, int maxMembers, int currentMembers,
+    public GroupDetailResponseDto(Long groupId, String groupName, String groupDescription, int maxMembers, int currentMembers,
                                   GroupStatus status, BookResponseDto book, String goalType,
                                   String goalContent, String masterNickname, String masterImage) {
         this.groupId = groupId;
@@ -40,8 +40,8 @@ public class GroupSearchResponseDto {
         this.masterImage = masterImage;
     }
 
-    public static GroupSearchResponseDto toDto(Group group, int currentMembers, User masterUser) {
-        return GroupSearchResponseDto.builder()
+    public static GroupDetailResponseDto toDto(Group group, int currentMembers, User masterUser) {
+        return GroupDetailResponseDto.builder()
                 .groupId(group.getId())
                 .groupName(group.getGroupName())
                 .groupDescription(group.getGroupDescription())
