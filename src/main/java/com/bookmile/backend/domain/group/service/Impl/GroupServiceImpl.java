@@ -84,7 +84,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<GroupListResponseDto> getGroupsByIsbn13(GroupSearchRequestDto requestDto) {
-        List<Group> groups = groupRepository.findByIsbn13AndStatus(requestDto.getIsbn13(), requestDto.getStatus());
+        List<Group> groups = groupRepository.findByIsbn13AndStatusAndIsOpenTrue(requestDto.getIsbn13(), requestDto.getStatus());
 
         return groups.stream()
                 .map(group -> {
