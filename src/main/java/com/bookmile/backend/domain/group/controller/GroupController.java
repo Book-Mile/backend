@@ -116,10 +116,9 @@ public class GroupController {
     @Operation(summary = "그룹 공개/비공개 전환", description = "그룹장은 그룹 공개여부를 변경할 수 있습니다.")
     public ResponseEntity<CommonResponse<Object>> updateGroupVisibility(
             @PathVariable Long groupId,
-            @RequestBody @Valid GroupPrivateRequestDto requestDto,
-            @RequestHeader("user-id") Long userId
+            @RequestBody @Valid GroupPrivateRequestDto requestDto
     ) {
-        groupService.updateGroupPrivate(groupId, requestDto.getIsOpen(), userId);
+        groupService.updateGroupPrivate(groupId, requestDto.getIsOpen(), requestDto.getUserId());
         return ResponseEntity.ok(CommonResponse.from(GROUP_PRIVATE_UPDATE.getMessage()));
     }
 }

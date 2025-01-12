@@ -6,5 +6,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class GroupPrivateRequestDto {
+    private Long userId;
     private Boolean isOpen;
 }
