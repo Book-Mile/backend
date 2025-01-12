@@ -17,7 +17,8 @@ public class GroupCreateResponseDto {
     private final String status;
 
     @Builder
-    private GroupCreateResponseDto(Long groupId, String groupName, int maxMembers, String goalType,Long templateId, String goalContent, String status, String groupDescription) {
+    private GroupCreateResponseDto(Long groupId, String groupName, int maxMembers, String goalType, Long templateId,
+                                   String goalContent, String status, String groupDescription) {
         this.groupId = groupId;
         this.groupName = groupName;
         this.groupDescription = groupDescription;
@@ -28,17 +29,16 @@ public class GroupCreateResponseDto {
         this.status = status;
     }
 
-    public static GroupCreateResponseDto toDto(Group group, Template template) {
+    public static GroupCreateResponseDto toDto(Group group, Long templateId) {
         return GroupCreateResponseDto.builder()
                 .groupId(group.getId())
                 .groupName(group.getGroupName())
                 .groupDescription(group.getGroupDescription())
                 .maxMembers(group.getMaxMembers())
-                .templateId(template.getId())
+                .templateId(templateId)
                 .goalType(group.getGoalType())
                 .goalContent(group.getGoalContent())
                 .status(group.getStatus().toString())
                 .build();
     }
-
 }

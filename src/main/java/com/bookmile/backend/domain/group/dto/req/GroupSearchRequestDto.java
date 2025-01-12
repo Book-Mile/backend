@@ -10,4 +10,9 @@ public class GroupSearchRequestDto {
 
     private String isbn13;
     private GroupStatus status;
+
+    public GroupSearchRequestDto(String isbn13, String status) {
+        this.isbn13 = isbn13;
+        this.status = GroupStatus.valueOf(status);
+    }
 }

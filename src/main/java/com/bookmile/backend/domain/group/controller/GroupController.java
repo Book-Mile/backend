@@ -1,16 +1,7 @@
 package com.bookmile.backend.domain.group.controller;
 
-import static com.bookmile.backend.global.common.StatusCode.GROUP_CREATE;
-import static com.bookmile.backend.global.common.StatusCode.GROUP_JOIN;
-
-import com.bookmile.backend.domain.group.dto.req.GroupCreateRequestDto;
-import com.bookmile.backend.domain.group.dto.req.GroupJoinRequestDto;
-import com.bookmile.backend.domain.group.dto.req.GroupSearchRequestDto;
-import com.bookmile.backend.domain.group.dto.req.GroupStatusUpdateRequestDto;
-import com.bookmile.backend.domain.group.dto.res.GroupCreateResponseDto;
-import com.bookmile.backend.domain.group.dto.res.GroupMemberResponseDto;
-import com.bookmile.backend.domain.group.dto.res.GroupSearchResponseDto;
-import com.bookmile.backend.domain.group.dto.res.GroupStatusUpdateResponseDto;
+import com.bookmile.backend.domain.group.dto.req.*;
+import com.bookmile.backend.domain.group.dto.res.*;
 import com.bookmile.backend.domain.group.service.GroupJoinService;
 import com.bookmile.backend.domain.group.service.GroupService;
 import com.bookmile.backend.domain.group.service.Impl.GroupMemberServiceImpl;
@@ -24,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.bookmile.backend.global.common.StatusCode.*;
+
 @RestController
 @RequestMapping("/api/v1/groups")
 @RequiredArgsConstructor
@@ -33,7 +26,10 @@ public class GroupController {
     private final GroupJoinService groupJoinService;
     private final GroupMemberServiceImpl groupMemberServiceImpl;
 
-    @Operation(summary = "그룹 생성하기", description = "그룹을 생성합니다. 생성을 한 유저는 자동으로 MASTER 역할을 부여받으며 설정한 템플릿 정보가 따로 저장됩니다.")
+    @Operation(summary = "그룹 생성하기", description = "그룹을 생성합니다. 비밀번호를 설정하지 않는 그룹의 경우 비밀번호를 띄어쓰기 한 칸으로 입력해주세요.<br>" +
+            "템플릿 공유를 사용할 경우 템플릿 아이디는 숫자로 (ex : 1) 나머지는 null 값으로 입력해주세요. <br>" +
+            "템플릿 공유 없이 생성 할 경우 템플릿 아이디는 null 값으로 GoalType 과 GoalContent는 필수 입력입니다. <br>" +
+            "생성을 한 유저는 자동으로 MASTER 역할을 부여받으며 설정한 템플릿 정보가 따로 저장됩니다.")
     @PostMapping
     public ResponseEntity<CommonResponse<GroupCreateResponseDto>> createGroup(
             @RequestBody @Valid GroupCreateRequestDto requestDto,
@@ -71,28 +67,57 @@ public class GroupController {
             , description = "그룹 상태를 변경합니다. 그룹장만이 변경할 수 있습니다.")
     @PatchMapping("/{groupId}")
     public ResponseEntity<GroupStatusUpdateResponseDto> updateGroupStatus(
-            @PathVariable Long groupId,@RequestBody @Valid GroupStatusUpdateRequestDto requestDto,
-            @RequestHeader("user-id") Long userId
+            @PathVariable Long groupId,@RequestBody @Valid GroupStatusUpdateRequestDto requestDto
     ) {
-        GroupStatusUpdateResponseDto responseDto = groupService.updateGroupStatus(groupId, requestDto, userId);
+        GroupStatusUpdateResponseDto responseDto = groupService.updateGroupStatus(groupId, requestDto, requestDto.getUserId());
         return ResponseEntity.ok(responseDto);
     }
 
-    @Operation(summary = "그룹 리스트 조회"
-            , description = "그룹 리스트를 조회합니다. 도서 ISBN13을 통해 도서별 그룹을 조회하며 그룹 상태에 따라 조회합니다.")
-    @PostMapping("/list")
-    public ResponseEntity<List<GroupSearchResponseDto>> getGroupsByIsbn13(
-            @RequestBody @Valid GroupSearchRequestDto requestDto
+    @Operation(summary = "그룹 리스트 조회 (모집 중)", description = "도서 ISBN13으로 모집 중인 그룹을 조회합니다.")
+    @GetMapping("/list/recruiting")
+    public ResponseEntity<CommonResponse<List<GroupListResponseDto>>> getRecruitingGroups(
+            @RequestParam String isbn13
     ) {
-        List<GroupSearchResponseDto> groups = groupService.getGroupsByIsbn13(requestDto);
-        return ResponseEntity.ok(groups);
+        List<GroupListResponseDto> groups = groupService.getRecruitingGroups(isbn13);
+        return ResponseEntity.status(GROUP_LIST_FOUND.getStatus())
+                .body(CommonResponse.from(GROUP_LIST_FOUND.getMessage(), groups));
+    }
+
+    @Operation(summary = "그룹 리스트 조회 (진행 중)", description = "도서 ISBN13으로 진행 중인 그룹을 조회합니다.")
+    @GetMapping("/list/in-progress")
+    public ResponseEntity<CommonResponse<List<GroupListResponseDto>>> getInProgressGroups(
+            @RequestParam String isbn13
+    ) {
+        List<GroupListResponseDto> groups = groupService.getInProgressGroups(isbn13);
+        return ResponseEntity.status(GROUP_LIST_FOUND.getStatus())
+                .body(CommonResponse.from(GROUP_LIST_FOUND.getMessage(), groups));
+    }
+
+    @Operation(summary = "그룹 리스트 조회 (완료)", description = "도서 ISBN13으로 완료된 그룹을 조회합니다.")
+    @GetMapping("/list/completed")
+    public ResponseEntity<CommonResponse<List<GroupListResponseDto>>> getCompletedGroups(
+            @RequestParam String isbn13
+    ) {
+        List<GroupListResponseDto> groups = groupService.getCompletedGroups(isbn13);
+        return ResponseEntity.status(GROUP_LIST_FOUND.getStatus())
+                .body(CommonResponse.from(GROUP_LIST_FOUND.getMessage(), groups));
     }
 
     @Operation(summary = "그룹 상세 정보 조회"
             , description = "특정 그룹의 상세 정보를 조회합니다.")
     @GetMapping("/{groupId}")
-    public ResponseEntity<GroupSearchResponseDto> getGroupDetail(@PathVariable Long groupId) {
-        GroupSearchResponseDto groupDetail = groupService.getGroupDetail(groupId);
+    public ResponseEntity<GroupDetailResponseDto> getGroupDetail(@PathVariable Long groupId) {
+        GroupDetailResponseDto groupDetail = groupService.getGroupDetail(groupId);
         return ResponseEntity.ok(groupDetail);
+    }
+
+    @PatchMapping("/{groupId}/private")
+    @Operation(summary = "그룹 공개/비공개 전환", description = "그룹장은 그룹 공개여부를 변경할 수 있습니다.")
+    public ResponseEntity<CommonResponse<Object>> updateGroupVisibility(
+            @PathVariable Long groupId,
+            @RequestBody @Valid GroupPrivateRequestDto requestDto
+    ) {
+        groupService.updateGroupPrivate(groupId, requestDto.getIsOpen(), requestDto.getUserId());
+        return ResponseEntity.ok(CommonResponse.from(GROUP_PRIVATE_UPDATE.getMessage()));
     }
 }
