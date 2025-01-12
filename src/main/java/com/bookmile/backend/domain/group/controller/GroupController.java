@@ -26,7 +26,10 @@ public class GroupController {
     private final GroupJoinService groupJoinService;
     private final GroupMemberServiceImpl groupMemberServiceImpl;
 
-    @Operation(summary = "그룹 생성하기", description = "그룹을 생성합니다. 생성을 한 유저는 자동으로 MASTER 역할을 부여받으며 설정한 템플릿 정보가 따로 저장됩니다.")
+    @Operation(summary = "그룹 생성하기", description = "그룹을 생성합니다. 비밀번호를 설정하지 않는 그룹의 경우 비밀번호를 띄어쓰기 한 칸으로 입력해주세요.<br>" +
+            "템플릿 공유를 사용할 경우 템플릿 아이디는 숫자로 (ex : 1) 나머지는 null 값으로 입력해주세요. <br>" +
+            "템플릿 공유 없이 생성 할 경우 템플릿 아이디는 null 값으로 GoalType 과 GoalContent는 필수 입력입니다. <br>" +
+            "생성을 한 유저는 자동으로 MASTER 역할을 부여받으며 설정한 템플릿 정보가 따로 저장됩니다.")
     @PostMapping
     public ResponseEntity<CommonResponse<GroupCreateResponseDto>> createGroup(
             @RequestBody @Valid GroupCreateRequestDto requestDto,
