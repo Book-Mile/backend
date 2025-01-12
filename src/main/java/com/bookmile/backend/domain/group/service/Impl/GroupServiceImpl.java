@@ -20,6 +20,7 @@ import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import com.bookmile.backend.domain.userGroup.entity.Role;
 import com.bookmile.backend.domain.userGroup.repository.UserGroupRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.bookmile.backend.global.exception.CustomException;
@@ -125,6 +126,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public void updateGroupPrivate(Long groupId, Boolean isOpen, Long userId) {
         Group group = findGroupById(groupId);
 
@@ -132,7 +134,6 @@ public class GroupServiceImpl implements GroupService {
         validateGroupMaster(userGroup);
 
         group.setIsOpen(isOpen);
-        groupRepository.save(group);
     }
 
     private Group findGroupById(Long groupId) {
