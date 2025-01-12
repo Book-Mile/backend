@@ -88,6 +88,6 @@ public class Group extends BaseEntity {
     }
 
     public void setIsOpen(Boolean isOpen) {
-
+        this.isOpen = isOpen;
     }
 }
