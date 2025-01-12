@@ -1,7 +1,8 @@
 package com.bookmile.backend.domain.group.service;
 
 import com.bookmile.backend.domain.group.dto.req.GroupJoinRequestDto;
+import com.bookmile.backend.domain.group.dto.res.GroupJoinResponseDto;
 
 public interface GroupJoinService {
-    void joinGroup(Long userId, GroupJoinRequestDto groupJoinRequestDto);
+    GroupJoinResponseDto joinGroup(Long userId, GroupJoinRequestDto groupJoinRequestDto);
 }
