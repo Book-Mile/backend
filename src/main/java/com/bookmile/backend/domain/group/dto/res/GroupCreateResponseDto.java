@@ -29,13 +29,13 @@ public class GroupCreateResponseDto {
         this.status = status;
     }
 
-    public static GroupCreateResponseDto toDto(Group group, Template template) {
+    public static GroupCreateResponseDto toDto(Group group, Long templateId) {
         return GroupCreateResponseDto.builder()
                 .groupId(group.getId())
                 .groupName(group.getGroupName())
                 .groupDescription(group.getGroupDescription())
                 .maxMembers(group.getMaxMembers())
-                .templateId(template != null ? template.getId() : null)
+                .templateId(templateId)
                 .goalType(group.getGoalType())
                 .goalContent(group.getGoalContent())
                 .status(group.getStatus().toString())

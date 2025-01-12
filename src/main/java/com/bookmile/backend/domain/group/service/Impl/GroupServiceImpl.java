@@ -56,6 +56,7 @@ public class GroupServiceImpl implements GroupService {
 
         Group group = groupRepository.save(requestDto.toEntity(book, goalType, goalContent));
 
+        Long templateId;
         if (requestDto.getTemplateId() == null) {
             template = Template.builder()
                     .group(group)
@@ -63,11 +64,14 @@ public class GroupServiceImpl implements GroupService {
                     .goalContent(goalContent)
                     .isTemplate(true)
                     .build();
-            templateRepository.save(template);
+            template = templateRepository.save(template);
+            templateId = template.getId();
+        } else {
+            templateId = requestDto.getTemplateId();
         }
         registerGroupCreator(user, group);
 
-        return GroupCreateResponseDto.toDto(group, template);
+        return GroupCreateResponseDto.toDto(group, templateId);
     }
 
     @Override
