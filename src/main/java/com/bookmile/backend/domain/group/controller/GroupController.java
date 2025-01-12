@@ -67,10 +67,9 @@ public class GroupController {
             , description = "그룹 상태를 변경합니다. 그룹장만이 변경할 수 있습니다.")
     @PatchMapping("/{groupId}")
     public ResponseEntity<GroupStatusUpdateResponseDto> updateGroupStatus(
-            @PathVariable Long groupId,@RequestBody @Valid GroupStatusUpdateRequestDto requestDto,
-            @RequestHeader("user-id") Long userId
+            @PathVariable Long groupId,@RequestBody @Valid GroupStatusUpdateRequestDto requestDto
     ) {
-        GroupStatusUpdateResponseDto responseDto = groupService.updateGroupStatus(groupId, requestDto, userId);
+        GroupStatusUpdateResponseDto responseDto = groupService.updateGroupStatus(groupId, requestDto, requestDto.getUserId());
         return ResponseEntity.ok(responseDto);
     }
 
