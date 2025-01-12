@@ -1,5 +1,6 @@
 package com.bookmile.backend.domain.group.dto.res;
 
+import com.bookmile.backend.domain.group.entity.Group;
 import com.bookmile.backend.domain.group.entity.GroupStatus;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,10 +19,10 @@ public class GroupStatusUpdateResponseDto {
         this.status = status;
     }
 
-    public static GroupStatusUpdateResponseDto toDto(Long groupId, GroupStatus status) {
+    public static GroupStatusUpdateResponseDto toDto(Group group) {
         return GroupStatusUpdateResponseDto.builder()
-                .groupId(groupId)
-                .status(status)
+                .groupId(group.getId())
+                .status(group.getStatus())
                 .build();
     }
 }

@@ -47,6 +47,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public GroupCreateResponseDto createGroup(GroupCreateRequestDto requestDto, User user) {
         Book book = bookService.saveBook(requestDto.getIsbn13());
 
@@ -64,7 +65,6 @@ public class GroupServiceImpl implements GroupService {
                     .goalContent(goalContent)
                     .isTemplate(true)
                     .build();
-            template = templateRepository.save(template);
             templateId = template.getId();
         } else {
             templateId = requestDto.getTemplateId();
@@ -75,6 +75,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public GroupStatusUpdateResponseDto updateGroupStatus(Long groupId, GroupStatusUpdateRequestDto requestDto, Long userId) {
         Group group = findGroupById(groupId);
         UserGroup userGroup = findUserGroupById(userId, groupId);
@@ -82,8 +83,7 @@ public class GroupServiceImpl implements GroupService {
         validateGroupMaster(userGroup);
         updateGroupStatus(group, requestDto.getStatus());
 
-        groupRepository.save(group);
-        return GroupStatusUpdateResponseDto.toDto(group.getId(), group.getStatus());
+        return GroupStatusUpdateResponseDto.toDto(group);
     }
 
     private List<GroupListResponseDto> findGroupsByStatus(String isbn13, GroupStatus status, boolean isRecent) {
