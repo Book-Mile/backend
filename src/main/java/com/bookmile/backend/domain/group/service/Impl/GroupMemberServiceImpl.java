@@ -22,13 +22,7 @@ public class GroupMemberServiceImpl implements GroupMemeberService {
         List<UserGroup> userGroups = userGroupRepository.findByGroupId(groupId);
 
         return userGroups.stream()
-                .map(userGroup -> new GroupMemberResponseDto(
-                        userGroup.getUser().getId(),
-                        userGroup.getUser().getNickname(),
-                        userGroup.getRole(),
-                        userGroup.getUser().getImage()
-                )
-                )
+                .map(GroupMemberResponseDto::toDto)
                 .collect(Collectors.toList());
     }
 }

@@ -30,7 +30,6 @@ public class GroupJoinServiceImpl implements GroupJoinService {
         checkGroupCapacity(group);
         checkGroupPassword(group, groupJoinRequestDto.getPassword());
 
-        // 그룹에 참여
         UserGroup userGroup = UserGroup.builder()
                 .user(new User(userId))
                 .group(group)
@@ -38,7 +37,6 @@ public class GroupJoinServiceImpl implements GroupJoinService {
                 .build();
         userGroupRepository.save(userGroup);
 
-        // DTO 변환 및 반환
         return GroupJoinResponseDto.toDto(group);
     }
 

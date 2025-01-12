@@ -1,6 +1,7 @@
 package com.bookmile.backend.domain.group.dto.res;
 
 import com.bookmile.backend.domain.userGroup.entity.Role;
+import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,13 @@ public class GroupMemberResponseDto {
         this.role = role;
         this.image = image;
     }
+    public static GroupMemberResponseDto toDto(UserGroup userGroup) {
+        return GroupMemberResponseDto.builder()
+                .userId(userGroup.getUser().getId())
+                .nickname(userGroup.getUser().getNickname())
+                .role(userGroup.getRole())
+                .image(userGroup.getUser().getImage())
+                .build();
+    }
+
 }
