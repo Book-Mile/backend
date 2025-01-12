@@ -78,7 +78,7 @@ public class GroupServiceImpl implements GroupService {
         updateGroupStatus(group, requestDto.getStatus());
 
         groupRepository.save(group);
-        return new GroupStatusUpdateResponseDto(group.getId(), group.getStatus());
+        return GroupStatusUpdateResponseDto.toDto(group.getId(), group.getStatus());
     }
 
     private List<GroupListResponseDto> findGroupsByStatus(String isbn13, GroupStatus status, boolean isRecent) {

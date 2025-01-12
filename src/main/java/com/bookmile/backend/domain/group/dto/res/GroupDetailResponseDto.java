@@ -24,7 +24,7 @@ public class GroupDetailResponseDto {
     private String masterImage;
 
     @Builder
-    public GroupDetailResponseDto(Long groupId, String groupName, String groupDescription, int maxMembers, int currentMembers,
+    private GroupDetailResponseDto(Long groupId, String groupName, String groupDescription, int maxMembers, int currentMembers,
                                   GroupStatus status, BookResponseDto book, String goalType,
                                   String goalContent, String masterNickname, String masterImage) {
         this.groupId = groupId;

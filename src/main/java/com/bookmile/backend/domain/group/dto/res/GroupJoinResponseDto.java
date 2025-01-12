@@ -11,7 +11,7 @@ public class GroupJoinResponseDto {
     private final String password;
 
     @Builder
-    public GroupJoinResponseDto(long groupId, String password) {
+    private GroupJoinResponseDto(long groupId, String password) {
         this.groupId = groupId;
         this.password = password;
     }

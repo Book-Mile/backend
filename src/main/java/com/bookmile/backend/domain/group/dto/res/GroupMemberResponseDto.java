@@ -15,7 +15,7 @@ public class GroupMemberResponseDto {
     private String image;
 
     @Builder
-    public GroupMemberResponseDto(Long userId, String nickname, Role role, String image) {
+    private GroupMemberResponseDto(Long userId, String nickname, Role role, String image) {
         this.userId = userId;
         this.nickname = nickname;
         this.role = role;
