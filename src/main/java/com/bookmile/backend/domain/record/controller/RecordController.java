@@ -13,7 +13,6 @@ import com.bookmile.backend.global.common.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -50,9 +49,6 @@ public class RecordController {
                                                              @RequestParam Long userId,
                                                              @RequestPart(required = false) @Parameter(description = "업로드할 파일 리스트") List<MultipartFile> files,
                                                              @RequestPart("recordReqDto") @Parameter(description = "기록 요청 DTO (JSON)") @Valid RecordReqDto recordReqDto) {
-        if (files == null) {
-            files = new ArrayList<>();
-        }
         Long recordId = recordServiceImpl.createRecord(groupId, userId, files, recordReqDto);
         return ResponseEntity.status(CREATE_RECORD.getStatus())
                 .body(CommonResponse.from(CREATE_RECORD.getMessage(), recordId));
