@@ -67,6 +67,11 @@ public class ReviewServiceImpl implements ReviewService {
         return review.getId();
     }
 
+    @Override
+    public Double totalRate(Long bookId) {
+        return reviewRepository.findAverageScore(bookId);
+    }
+
     private Review findReviewById(Long reviewId) {
         return reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(REVIEW_NOT_FOUND));

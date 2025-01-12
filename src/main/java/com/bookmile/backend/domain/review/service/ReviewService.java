@@ -12,5 +12,7 @@ public interface ReviewService {
     Long updateReview(Long reviewId, ReviewReqDto reviewReqDto);
 
     Long deleteReview(Long reviewId);
+
+    Double totalRate(Long bookId);
 }
 
