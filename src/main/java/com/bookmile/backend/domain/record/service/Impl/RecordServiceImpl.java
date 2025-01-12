@@ -1,7 +1,6 @@
 package com.bookmile.backend.domain.record.service.Impl;
 
 import static com.bookmile.backend.global.common.StatusCode.GROUP_NOT_FOUND;
-import static com.bookmile.backend.global.common.StatusCode.NO_USER_OR_NO_GROUP;
 import static com.bookmile.backend.global.common.StatusCode.RECORD_NOT_FOUND;
 import static com.bookmile.backend.global.common.StatusCode.USER_NOT_FOUND;
 
@@ -141,7 +140,6 @@ public class RecordServiceImpl implements RecordService {
     }
 
     private Long getUserGroupId(Long groupId, Long userId) {
-        return userGroupRepository.findByUserIdAndGroupId(groupId, userId)
-                .orElseThrow(() -> new CustomException(NO_USER_OR_NO_GROUP)).getId();
+        return userGroupRepository.findByUserIdAndGroupId(groupId, userId);
     }
 }
