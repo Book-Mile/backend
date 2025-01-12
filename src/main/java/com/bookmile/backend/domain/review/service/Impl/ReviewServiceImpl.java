@@ -18,6 +18,8 @@ import com.bookmile.backend.global.exception.CustomException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +31,15 @@ public class ReviewServiceImpl implements ReviewService {
     private final UserRepository userRepository;
 
     @Override
-    public List<ReviewListResDto> viewReviewList(Long bookId) {
+    public Page<ReviewListResDto> viewReviewList(Long bookId,
+                                                 Integer pageNumber,
+                                                 Integer pageSize) {
         Book book = findBookById(bookId);
 
-        return reviewRepository.findAllByBookId(book.getId()).stream()
-                .map(ReviewListResDto::createReview)
-                .collect(Collectors.toList());
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+
+        return reviewRepository.findAllByBookId(pageRequest, book.getId())
+                .map(ReviewListResDto::createReview);
     }
 
     @Override

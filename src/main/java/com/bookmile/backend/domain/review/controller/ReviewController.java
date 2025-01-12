@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,8 +35,10 @@ public class ReviewController {
 
     @Operation(summary = "리뷰 리스트 조회", description = "해당 책의 리뷰 목록을 조회합니다.")
     @GetMapping
-    public ResponseEntity<CommonResponse<List<ReviewListResDto>>> viewReviewList(@RequestParam Long bookId) {
-        List<ReviewListResDto> reviews = reviewServiceImpl.viewReviewList(bookId);
+    public ResponseEntity<CommonResponse<Page<ReviewListResDto>>> viewReviewList(@RequestParam Long bookId,
+                                                                                 @RequestParam Integer pageNumber,
+                                                                                 @RequestParam Integer pageSize) {
+        Page<ReviewListResDto> reviews = reviewServiceImpl.viewReviewList(bookId, pageNumber, pageSize);
         return ResponseEntity.status(VIEW_REVIEW.getStatus())
                 .body(CommonResponse.from(VIEW_REVIEW.getMessage(), reviews));
     }

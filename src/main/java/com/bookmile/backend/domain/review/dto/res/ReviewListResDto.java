@@ -9,6 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ReviewListResDto {
     private Long userId;
+    private Long reviewId;
     private String name;
     private Double rating;
     private String text;
@@ -17,6 +18,7 @@ public class ReviewListResDto {
     public static ReviewListResDto createReview(Review review) {
         return new ReviewListResDto(
                 review.getId(),
+                review.getUser().getId(),
                 review.getUser().getNickname(),
                 review.getRating(),
                 review.getText(),

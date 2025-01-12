@@ -4,9 +4,10 @@ import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
 import com.bookmile.backend.domain.review.dto.res.RecentReviewListResDto;
 import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface ReviewService {
-    List<ReviewListResDto> viewReviewList(Long bookId);
+    Page<ReviewListResDto> viewReviewList(Long bookId, Integer pageNumber, Integer pageSize);
 
     List<RecentReviewListResDto> viewRecentReviewList(Long bookId);
 
