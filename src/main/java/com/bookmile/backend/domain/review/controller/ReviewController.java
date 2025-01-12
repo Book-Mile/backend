@@ -7,6 +7,7 @@ import static com.bookmile.backend.global.common.StatusCode.VIEW_BOOK_REVIEW_RAT
 import static com.bookmile.backend.global.common.StatusCode.VIEW_REVIEW;
 
 import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
+import com.bookmile.backend.domain.review.dto.res.RecentReviewListResDto;
 import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
 import com.bookmile.backend.domain.review.service.Impl.ReviewServiceImpl;
 import com.bookmile.backend.global.common.CommonResponse;
@@ -35,6 +36,14 @@ public class ReviewController {
     @GetMapping
     public ResponseEntity<CommonResponse<List<ReviewListResDto>>> viewReviewList(@RequestParam Long bookId) {
         List<ReviewListResDto> reviews = reviewServiceImpl.viewReviewList(bookId);
+        return ResponseEntity.status(VIEW_REVIEW.getStatus())
+                .body(CommonResponse.from(VIEW_REVIEW.getMessage(), reviews));
+    }
+
+    @Operation(summary = "최신 리뷰 2개 조회", description = "해당 책의 가장 최근 리뷰 2개를 반환합니다.")
+    @GetMapping("{reviewId}/recent-reviews")
+    public ResponseEntity<CommonResponse<List<RecentReviewListResDto>>> recentReviewList(@RequestParam Long bookId) {
+        List<RecentReviewListResDto> reviews = reviewServiceImpl.viewRecentReviewList(bookId);
         return ResponseEntity.status(VIEW_REVIEW.getStatus())
                 .body(CommonResponse.from(VIEW_REVIEW.getMessage(), reviews));
     }

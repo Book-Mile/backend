@@ -6,6 +6,7 @@ import static com.bookmile.backend.global.common.StatusCode.USER_NOT_FOUND;
 
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
+import com.bookmile.backend.domain.review.dto.res.RecentReviewListResDto;
 import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
 import com.bookmile.backend.domain.review.entity.Review;
 import com.bookmile.backend.domain.review.repository.ReviewRepository;
@@ -33,6 +34,15 @@ public class ReviewServiceImpl implements ReviewService {
 
         return reviewRepository.findAllByBookId(book.getId()).stream()
                 .map(ReviewListResDto::createReview)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RecentReviewListResDto> viewRecentReviewList(Long bookId) {
+        Book book = findBookById(bookId);
+
+        return reviewRepository.findRecentReviewByBookId(book.getId()).stream()
+                .map(RecentReviewListResDto::createReview)
                 .collect(Collectors.toList());
     }
 

@@ -13,4 +13,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query(value = "SELECT ROUND(AVG(review.rating), 2) FROM review  WHERE book_id = :bookId", nativeQuery = true)
     Double findAverageScore(Long bookId);
+
+    @Query(value = "SELECT * FROM review WHERE book_id = :bookId ORDER BY created_at DESC LIMIT 2", nativeQuery = true)
+    List<Review> findRecentReviewByBookId(Long bookId);
 }
