@@ -6,6 +6,7 @@ import static com.bookmile.backend.global.common.StatusCode.USER_NOT_FOUND;
 
 import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
+import com.bookmile.backend.domain.review.dto.res.RecentReviewListResDto;
 import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
 import com.bookmile.backend.domain.review.entity.Review;
 import com.bookmile.backend.domain.review.repository.ReviewRepository;
@@ -17,6 +18,8 @@ import com.bookmile.backend.global.exception.CustomException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +31,23 @@ public class ReviewServiceImpl implements ReviewService {
     private final UserRepository userRepository;
 
     @Override
-    public List<ReviewListResDto> viewReviewList(Long bookId) {
+    public Page<ReviewListResDto> viewReviewList(Long bookId,
+                                                 Integer pageNumber,
+                                                 Integer pageSize) {
         Book book = findBookById(bookId);
 
-        return reviewRepository.findAllByBookId(book.getId()).stream()
-                .map(ReviewListResDto::createReview)
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+
+        return reviewRepository.findAllByBookId(pageRequest, book.getId())
+                .map(ReviewListResDto::createReview);
+    }
+
+    @Override
+    public List<RecentReviewListResDto> viewRecentReviewList(Long bookId) {
+        Book book = findBookById(bookId);
+
+        return reviewRepository.findRecentReviewByBookId(book.getId()).stream()
+                .map(RecentReviewListResDto::createReview)
                 .collect(Collectors.toList());
     }
 
@@ -65,6 +80,11 @@ public class ReviewServiceImpl implements ReviewService {
         review.delete(review);
 
         return review.getId();
+    }
+
+    @Override
+    public Double totalRate(Long bookId) {
+        return reviewRepository.findAverageScore(bookId);
     }
 
     private Review findReviewById(Long reviewId) {

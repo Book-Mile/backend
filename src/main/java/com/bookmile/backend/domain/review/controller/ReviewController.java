@@ -3,9 +3,11 @@ package com.bookmile.backend.domain.review.controller;
 import static com.bookmile.backend.global.common.StatusCode.CREATE_REVIEW;
 import static com.bookmile.backend.global.common.StatusCode.DELETE_REVIEW;
 import static com.bookmile.backend.global.common.StatusCode.UPDATE_REVIEW;
+import static com.bookmile.backend.global.common.StatusCode.VIEW_BOOK_REVIEW_RATE;
 import static com.bookmile.backend.global.common.StatusCode.VIEW_REVIEW;
 
 import com.bookmile.backend.domain.review.dto.req.ReviewReqDto;
+import com.bookmile.backend.domain.review.dto.res.RecentReviewListResDto;
 import com.bookmile.backend.domain.review.dto.res.ReviewListResDto;
 import com.bookmile.backend.domain.review.service.Impl.ReviewServiceImpl;
 import com.bookmile.backend.global.common.CommonResponse;
@@ -13,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,10 +33,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReviewController {
     private final ReviewServiceImpl reviewServiceImpl;
 
-    @Operation(summary = "리뷰 리스트 조회", description = "해당 책의 리뷰 목록을 조회합니다.")
+    @Operation(summary = "리뷰 리스트 조회", description = "해당 책의 모든 사용자 리뷰 목록을 페이지별로 조회합니다."
+            + "pageNumber은 1부터 사용해주시면 될 것 같습니다!")
     @GetMapping
-    public ResponseEntity<CommonResponse<List<ReviewListResDto>>> viewReviewList(@RequestParam Long bookId) {
-        List<ReviewListResDto> reviews = reviewServiceImpl.viewReviewList(bookId);
+    public ResponseEntity<CommonResponse<Page<ReviewListResDto>>> viewReviewList(@RequestParam Long bookId,
+                                                                                 @RequestParam Integer pageNumber,
+                                                                                 @RequestParam Integer pageSize) {
+        Page<ReviewListResDto> reviews = reviewServiceImpl.viewReviewList(bookId, pageNumber, pageSize);
+        return ResponseEntity.status(VIEW_REVIEW.getStatus())
+                .body(CommonResponse.from(VIEW_REVIEW.getMessage(), reviews));
+    }
+
+    @Operation(summary = "최신 리뷰 2개 조회", description = "해당 책의 가장 최근 리뷰 2개를 반환합니다.")
+    @GetMapping("/recent-reviews")
+    public ResponseEntity<CommonResponse<List<RecentReviewListResDto>>> recentReviewList(@RequestParam Long bookId) {
+        List<RecentReviewListResDto> reviews = reviewServiceImpl.viewRecentReviewList(bookId);
         return ResponseEntity.status(VIEW_REVIEW.getStatus())
                 .body(CommonResponse.from(VIEW_REVIEW.getMessage(), reviews));
     }
@@ -62,5 +76,13 @@ public class ReviewController {
         Long deleteReview = reviewServiceImpl.deleteReview(reviewId);
         return ResponseEntity.status(DELETE_REVIEW.getStatus())
                 .body(CommonResponse.from(DELETE_REVIEW.getMessage(), deleteReview));
+    }
+
+    @Operation(summary = "해당 책의 리뷰 전체 평점 반환", description = "책의 리뷰 전체 평점을 조회합니다.")
+    @GetMapping("/{bookId}/total-rate")
+    public ResponseEntity<CommonResponse<Double>> totalRateView(@PathVariable Long bookId) {
+        Double bookTotalRate = reviewServiceImpl.totalRate(bookId);
+        return ResponseEntity.status(VIEW_BOOK_REVIEW_RATE.getStatus())
+                .body(CommonResponse.from(VIEW_BOOK_REVIEW_RATE.getMessage(), bookTotalRate));
     }
 }

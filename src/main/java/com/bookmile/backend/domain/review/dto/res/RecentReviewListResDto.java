@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class ReviewListResDto {
+public class RecentReviewListResDto {
     private Long userId;
     private Long reviewId;
     private String name;
@@ -15,8 +15,8 @@ public class ReviewListResDto {
     private LocalDateTime createdAt;
 
     @Builder
-    public ReviewListResDto(Long userId, Long reviewId, String name, Double rating, String text,
-                            LocalDateTime createdAt) {
+    public RecentReviewListResDto(Long userId, Long reviewId, String name, Double rating, String text,
+                                  LocalDateTime createdAt) {
         this.userId = userId;
         this.reviewId = reviewId;
         this.name = name;
@@ -25,8 +25,8 @@ public class ReviewListResDto {
         this.createdAt = createdAt;
     }
 
-    public static ReviewListResDto createReview(Review review) {
-        return ReviewListResDto.builder()
+    public static RecentReviewListResDto createReview(Review review) {
+        return RecentReviewListResDto.builder()
                 .userId(review.getUser().getId())
                 .reviewId(review.getId())
                 .name(review.getUser().getNickname())

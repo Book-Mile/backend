@@ -11,7 +11,6 @@ import com.bookmile.backend.domain.record.entity.Record;
 import com.bookmile.backend.domain.record.repository.RecordRepository;
 import com.bookmile.backend.domain.record.service.Impl.RecordServiceImpl;
 import com.bookmile.backend.domain.record.service.RecordGroupRepository;
-import com.bookmile.backend.domain.record.service.RecordUserGroupRepository;
 import com.bookmile.backend.domain.review.service.ReviewBookRepository;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.repository.UserRepository;

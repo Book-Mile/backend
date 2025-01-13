@@ -4,13 +4,14 @@ import static com.bookmile.backend.global.common.StatusCode.CREATE_RECORD;
 import static com.bookmile.backend.global.common.StatusCode.UPDATE_RECORD;
 import static com.bookmile.backend.global.common.StatusCode.VIEW_RECORD;
 
-import com.bookmile.backend.domain.record.dto.req.RecentRecordResDto;
 import com.bookmile.backend.domain.record.dto.req.RecordReqDto;
 import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
+import com.bookmile.backend.domain.record.dto.res.RecentRecordResDto;
 import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
 import com.bookmile.backend.domain.record.service.Impl.RecordServiceImpl;
 import com.bookmile.backend.global.common.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,8 +47,8 @@ public class RecordController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommonResponse<Long>> createRecord(@RequestParam Long groupId,
                                                              @RequestParam Long userId,
-                                                             @RequestParam("files") List<MultipartFile> files,
-                                                             @RequestBody @Valid RecordReqDto recordReqDto) {
+                                                             @RequestPart(required = false) @Parameter(description = "업로드할 파일 리스트") List<MultipartFile> files,
+                                                             @RequestPart("recordReqDto") @Parameter(description = "기록 요청 DTO (JSON)") @Valid RecordReqDto recordReqDto) {
         Long recordId = recordServiceImpl.createRecord(groupId, userId, files, recordReqDto);
         return ResponseEntity.status(CREATE_RECORD.getStatus())
                 .body(CommonResponse.from(CREATE_RECORD.getMessage(), recordId));

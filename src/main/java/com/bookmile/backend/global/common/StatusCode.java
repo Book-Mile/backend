@@ -33,6 +33,7 @@ public enum StatusCode {
     CREATE_REVIEW(CREATED, "리뷰 생성이 되었습니다."),
     UPDATE_REVIEW(RESET_CONTENT, "리뷰 수정이 되었습니다."),
     DELETE_REVIEW(RESET_CONTENT, "리뷰 삭제가 되었습니다."),
+    VIEW_BOOK_REVIEW_RATE(OK, "해당 책의 리뷰 전체 평점이 조회 되었습니다."),
 
     /* Record */
     VIEW_RECORD(OK, "기록이 조회 되었습니다."),
