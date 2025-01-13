@@ -16,7 +16,7 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
 
     List<UserGroup> findByGroupId(Long groupId);
 
-    Long findByUserIdAndGroupId(Long userId, Long groupId);
+    Optional<UserGroup> findByUserIdAndGroupId(Long userId, Long groupId);
 
     @Query("SELECT u.user.nickname FROM UserGroup u WHERE u.group.id = :groupId AND u.role = 'MASTER'")
     Optional<String> findMasterNicknameByGroupId(@Param("groupId") Long groupId);

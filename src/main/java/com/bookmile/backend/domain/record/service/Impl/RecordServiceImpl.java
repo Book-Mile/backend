@@ -1,6 +1,7 @@
 package com.bookmile.backend.domain.record.service.Impl;
 
 import static com.bookmile.backend.global.common.StatusCode.GROUP_NOT_FOUND;
+import static com.bookmile.backend.global.common.StatusCode.NO_USER_OR_NO_GROUP;
 import static com.bookmile.backend.global.common.StatusCode.RECORD_NOT_FOUND;
 import static com.bookmile.backend.global.common.StatusCode.USER_NOT_FOUND;
 
@@ -43,7 +44,7 @@ public class RecordServiceImpl implements RecordService {
         Group group = findGroupById(groupId);
         User user = findUserById(userId);
 
-        Long userGroupId = getUserGroupId(group.getId(), user.getId());
+        Long userGroupId = getUserGroupId(group.getId(), user.getId()).getId();
 
         List<Record> records = recordRepository.findAllByUserGroupId(userGroupId);
         List<RecordListResDto> result = new ArrayList<>();
@@ -61,7 +62,7 @@ public class RecordServiceImpl implements RecordService {
         Group group = findGroupById(groupId);
         User user = findUserById(userId);
 
-        Long userGroupId = getUserGroupId(group.getId(), user.getId());
+        Long userGroupId = getUserGroupId(group.getId(), user.getId()).getId();
 
         UserGroup userGroup = userGroupRepository.findById(userGroupId)
                 .orElseThrow();
@@ -106,9 +107,9 @@ public class RecordServiceImpl implements RecordService {
         List<RecentRecordResDto> recentRecordResDtos = new ArrayList<>();
         Random random = new Random();
         for (User user : users) {
-            Long userGroupId = getUserGroupId(groupId, user.getId());
+            UserGroup userGroup = getUserGroupId(groupId, user.getId());
 
-            List<Record> records = recordRepository.findAllRandomSortByUserGroupId(userGroupId);
+            List<Record> records = recordRepository.findAllRandomSortByUserGroupId(userGroup.getId());
 
             for (Record record : records) {
                 if (record.getImages().isEmpty()) { // 이미지 리스트 비어있으면 그냥 이미지 없는거로 추가
@@ -139,7 +140,8 @@ public class RecordServiceImpl implements RecordService {
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 
-    private Long getUserGroupId(Long groupId, Long userId) {
-        return userGroupRepository.findByUserIdAndGroupId(groupId, userId);
+    private UserGroup getUserGroupId(Long groupId, Long userId) {
+        return userGroupRepository.findByUserIdAndGroupId(groupId, userId)
+                .orElseThrow(() -> new CustomException(NO_USER_OR_NO_GROUP));
     }
 }
