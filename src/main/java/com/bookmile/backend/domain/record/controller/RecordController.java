@@ -4,9 +4,9 @@ import static com.bookmile.backend.global.common.StatusCode.CREATE_RECORD;
 import static com.bookmile.backend.global.common.StatusCode.UPDATE_RECORD;
 import static com.bookmile.backend.global.common.StatusCode.VIEW_RECORD;
 
-import com.bookmile.backend.domain.record.dto.req.RecentRecordResDto;
 import com.bookmile.backend.domain.record.dto.req.RecordReqDto;
 import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
+import com.bookmile.backend.domain.record.dto.res.RecentRecordResDto;
 import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
 import com.bookmile.backend.domain.record.service.Impl.RecordServiceImpl;
 import com.bookmile.backend.global.common.CommonResponse;

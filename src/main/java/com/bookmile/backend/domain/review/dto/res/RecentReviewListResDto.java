@@ -2,13 +2,10 @@ package com.bookmile.backend.domain.review.dto.res;
 
 import com.bookmile.backend.domain.review.entity.Review;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
-@AllArgsConstructor
 public class RecentReviewListResDto {
     private Long userId;
     private Long reviewId;
@@ -16,6 +13,17 @@ public class RecentReviewListResDto {
     private Double rating;
     private String text;
     private LocalDateTime createdAt;
+
+    @Builder
+    public RecentReviewListResDto(Long userId, Long reviewId, String name, Double rating, String text,
+                                  LocalDateTime createdAt) {
+        this.userId = userId;
+        this.reviewId = reviewId;
+        this.name = name;
+        this.rating = rating;
+        this.text = text;
+        this.createdAt = createdAt;
+    }
 
     public static RecentReviewListResDto createReview(Review review) {
         return RecentReviewListResDto.builder()

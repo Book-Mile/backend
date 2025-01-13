@@ -1,8 +1,8 @@
 package com.bookmile.backend.domain.record.service;
 
-import com.bookmile.backend.domain.record.dto.req.RecentRecordResDto;
 import com.bookmile.backend.domain.record.dto.req.RecordReqDto;
 import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
+import com.bookmile.backend.domain.record.dto.res.RecentRecordResDto;
 import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
