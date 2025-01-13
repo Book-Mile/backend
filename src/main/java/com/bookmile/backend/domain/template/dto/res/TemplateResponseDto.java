@@ -7,13 +7,9 @@ import lombok.Getter;
 
 @Getter
 public class TemplateResponseDto {
-
     private final Long templateId;
-
     private final String goalType;
-
     private final String goalContent;
-
     private final int usageCount;
 
     @Builder
