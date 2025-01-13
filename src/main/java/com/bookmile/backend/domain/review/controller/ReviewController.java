@@ -33,7 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReviewController {
     private final ReviewServiceImpl reviewServiceImpl;
 
-    @Operation(summary = "리뷰 리스트 조회", description = "해당 책의 리뷰 목록을 조회합니다.")
+    @Operation(summary = "리뷰 리스트 조회", description = "해당 책의 모든 사용자 리뷰 목록을 페이지별로 조회합니다."
+            + "pageNumber은 1부터 사용해주시면 될 것 같습니다!")
     @GetMapping
     public ResponseEntity<CommonResponse<Page<ReviewListResDto>>> viewReviewList(@RequestParam Long bookId,
                                                                                  @RequestParam Integer pageNumber,

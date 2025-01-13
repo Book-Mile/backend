@@ -36,7 +36,7 @@ public class ReviewServiceImpl implements ReviewService {
                                                  Integer pageSize) {
         Book book = findBookById(bookId);
 
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
 
         return reviewRepository.findAllByBookId(pageRequest, book.getId())
                 .map(ReviewListResDto::createReview);
