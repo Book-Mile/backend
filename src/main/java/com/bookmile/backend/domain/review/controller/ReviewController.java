@@ -44,7 +44,7 @@ public class ReviewController {
     }
 
     @Operation(summary = "최신 리뷰 2개 조회", description = "해당 책의 가장 최근 리뷰 2개를 반환합니다.")
-    @GetMapping("{reviewId}/recent-reviews")
+    @GetMapping("/recent-reviews")
     public ResponseEntity<CommonResponse<List<RecentReviewListResDto>>> recentReviewList(@RequestParam Long bookId) {
         List<RecentReviewListResDto> reviews = reviewServiceImpl.viewRecentReviewList(bookId);
         return ResponseEntity.status(VIEW_REVIEW.getStatus())
