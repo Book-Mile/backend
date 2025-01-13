@@ -44,9 +44,9 @@ public class RecordServiceImpl implements RecordService {
         Group group = findGroupById(groupId);
         User user = findUserById(userId);
 
-        Long userGroupId = getUserGroupId(group.getId(), user.getId()).getId();
+        UserGroup userGroup = getUserGroup(group.getId(), user.getId());
 
-        List<Record> records = recordRepository.findAllByUserGroupId(userGroupId);
+        List<Record> records = recordRepository.findAllByUserGroupId(userGroup.getId());
         List<RecordListResDto> result = new ArrayList<>();
 
         for (Record record : records) {
@@ -62,10 +62,7 @@ public class RecordServiceImpl implements RecordService {
         Group group = findGroupById(groupId);
         User user = findUserById(userId);
 
-        Long userGroupId = getUserGroupId(group.getId(), user.getId()).getId();
-
-        UserGroup userGroup = userGroupRepository.findById(userGroupId)
-                .orElseThrow();
+        UserGroup userGroup = getUserGroup(group.getId(), user.getId());
 
         Record record = Record.from(userGroup, recordReqDto);
         recordRepository.save(record);
@@ -100,12 +97,12 @@ public class RecordServiceImpl implements RecordService {
         List<Long> userIds = userGroupRepository.findUserRandomSortByGroupId(groupId);
         List<User> users = new ArrayList<>();
         for (Long userId : userIds) {
-            users.add(userRepository.findById(userId).orElseThrow());
+            users.add(findUserById(userId));
         }
         List<RecentRecordResDto> recentRecordResDtos = new ArrayList<>();
         Random random = new Random();
         for (User user : users) {
-            UserGroup userGroup = getUserGroupId(groupId, user.getId());
+            UserGroup userGroup = getUserGroup(groupId, user.getId());
 
             List<Record> records = recordRepository.findAllRandomSortByUserGroupId(userGroup.getId());
 
@@ -138,7 +135,7 @@ public class RecordServiceImpl implements RecordService {
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 
-    private UserGroup getUserGroupId(Long groupId, Long userId) {
+    private UserGroup getUserGroup(Long groupId, Long userId) {
         return userGroupRepository.findByUserIdAndGroupId(groupId, userId)
                 .orElseThrow(() -> new CustomException(NO_USER_OR_NO_GROUP));
     }
