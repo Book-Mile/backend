@@ -70,11 +70,9 @@ public class RecordServiceImpl implements RecordService {
         Record record = Record.from(userGroup, recordReqDto);
         recordRepository.save(record);
 
-        if (files == null) {
-            files = new ArrayList<>();
+        if (files != null) {
+            imageService.saveImages(record.getId(), files);
         }
-
-        imageService.saveImages(record.getId(), files);
 
         return record.getId();
     }
