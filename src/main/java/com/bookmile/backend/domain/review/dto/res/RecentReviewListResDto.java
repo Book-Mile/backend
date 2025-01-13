@@ -3,9 +3,11 @@ package com.bookmile.backend.domain.review.dto.res;
 import com.bookmile.backend.domain.review.entity.Review;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 @AllArgsConstructor
 public class RecentReviewListResDto {
     private Long userId;
@@ -16,13 +18,13 @@ public class RecentReviewListResDto {
     private LocalDateTime createdAt;
 
     public static RecentReviewListResDto createReview(Review review) {
-        return new RecentReviewListResDto(
-                review.getId(),
-                review.getUser().getId(),
-                review.getUser().getNickname(),
-                review.getRating(),
-                review.getText(),
-                review.getCreatedAt()
-        );
+        return RecentReviewListResDto.builder()
+                .userId(review.getUser().getId())
+                .reviewId(review.getId())
+                .name(review.getUser().getNickname())
+                .rating(review.getRating())
+                .text(review.getText())
+                .createdAt(review.getCreatedAt())
+                .build();
     }
 }
