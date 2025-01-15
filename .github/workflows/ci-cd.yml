@@ -54,8 +54,8 @@ jobs:
       run: |
         touch ./src/main/resources/application-oauth.properties
         touch ./src/main/resources/application-private.properties
-        echo "${{ secrets.OAUTHPROPERTIES }}" > ./src/main/resources/application.properties
-        echo "${{ secrets.PRIVATEPROPERTIES }}" > ./src/main/resources/application.properties
+        echo "${{ secrets.OAUTHPROPERTIES }}" > ./src/main/resources/application-oauth.properties
+        echo "${{ secrets.PRIVATEPROPERTIES }}" > ./src/main/resources/application-private.properties
         
     # Transfer Docker Compose File to EC2
     - name: Transfer Docker Compose to EC2
