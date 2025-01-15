@@ -21,7 +21,7 @@ jobs:
 
     # Build and Push Docker Image
     - name: Build and Push Docker Image
-      working-directory: ./backend
+      working-directory: ./
       run: |
         docker build -t ${{ secrets.DOCKER_USERNAME }}/bookmile-app:latest .
         docker push ${{ secrets.DOCKER_USERNAME }}/bookmile-app:latest
@@ -58,7 +58,7 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_KEY }}
         source: |
-          ./backend
+          ./
         target: ~/backend/
 
     # Deploy to EC2
