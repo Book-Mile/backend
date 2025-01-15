@@ -29,26 +29,25 @@ jobs:
     # .env 파일 생성
     - name: Create .env File
       run: |
-        mkdir -p ./bookmile
-        echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" >> ./bookmile/.env
-        echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> ./bookmile/.env
-        echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> ./bookmile/.env
-        echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> ./bookmile/.env
-        echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> ./bookmile/.env
-        echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> ./bookmile/.env
-        echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> ./bookmile/.env
-        echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> ./bookmile/.env
-        echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> ./bookmile/.env
-        echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> ./bookmile/.env
-        echo "AWS_BUCKET_FOLDER=${{ secrets.AWS_BUCKET_FOLDER }}" >> ./bookmile/.env
-        echo "AWS_BUCKET_PROFILE_FOLDER=${{ secrets.AWS_BUCKET_PROFILE_FOLDER }}" >> ./bookmile/.env
-        echo "AWS_BUCKET_MAIN_PROFILE=${{ secrets.AWS_BUCKET_MAIN_PROFILE }}" >> ./bookmile/.env
+        echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" >> ./.env
+        echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> ./.env
+        echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> ./.env
+        echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> ./.env
+        echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> ./.env
+        echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> ./.env
+        echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> ./.env
+        echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> ./.env
+        echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> ./.env
+        echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> ./.env
+        echo "AWS_BUCKET_FOLDER=${{ secrets.AWS_BUCKET_FOLDER }}" >> ./.env
+        echo "AWS_BUCKET_PROFILE_FOLDER=${{ secrets.AWS_BUCKET_PROFILE_FOLDER }}" >> ./.env
+        echo "AWS_BUCKET_MAIN_PROFILE=${{ secrets.AWS_BUCKET_MAIN_PROFILE }}" >> ./.env
 
-    # # .env 내용
-    # - name: reading env file
-    #   run: |
-    #     cat ./backend/.env
-    #     ls ./backend
+    # .env 내용
+    - name: reading env file
+      run: |
+        cat ./.env
+        ls ./
         
     # Transfer Docker Compose File to EC2
     - name: Transfer Docker Compose to EC2
