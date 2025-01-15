@@ -73,5 +73,6 @@ jobs:
           cd ~/backend
           docker pull ${{ secrets.DOCKER_USERNAME }}/bookmile-app:latest
           chmod 644 .env
-          docker-compose down
-          docker-compose up --build -d
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/bookmile-app:latest
+          sudo docker-compose -f docker-compose.yml down
+          sudo docker-compose -f docker-compose.yml up --build -d
