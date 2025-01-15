@@ -44,11 +44,11 @@ jobs:
         echo "AWS_BUCKET_PROFILE_FOLDER=${{ secrets.AWS_BUCKET_PROFILE_FOLDER }}" >> ./bookmile/.env
         echo "AWS_BUCKET_MAIN_PROFILE=${{ secrets.AWS_BUCKET_MAIN_PROFILE }}" >> ./bookmile/.env
 
-    # .env 내용
-    - name: reading env file
-      run: |
-        cat ./backend/.env
-        ls ./backend
+    # # .env 내용
+    # - name: reading env file
+    #   run: |
+    #     cat ./backend/.env
+    #     ls ./backend
         
     # Transfer Docker Compose File to EC2
     - name: Transfer Docker Compose to EC2
