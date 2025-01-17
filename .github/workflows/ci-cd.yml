@@ -55,18 +55,15 @@ jobs:
         echo "${{ secrets.OAUTHPROPERTIES }}" > ./src/main/resources/application-oauth.properties
         echo "${{ secrets.PRIVATEPROPERTIES }}" > ./src/main/resources/application-private.properties
         
-    # Transfer Files to EC2
     - name: Transfer Files to EC2
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ubuntu
         key: ${{ secrets.EC2_KEY }}
-        source: |
-          ./
+        source: ./
         target: ~/backend/
 
-    # Deploy Docker Containers on EC2
     - name: Deploy Docker Containers
       uses: appleboy/ssh-action@v1.2.0
       with:
@@ -78,17 +75,16 @@ jobs:
           docker-compose down
           docker-compose up -d nginx application redis mysql
 
-    # Obtain SSL Certificates with Certbot
     - name: Obtain SSL Certificates with Certbot
       uses: appleboy/ssh-action@v1.2.0
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ubuntu
         key: ${{ secrets.EC2_KEY }}
+        debug: true
         script: |
           docker-compose run --rm certbot certonly --webroot -w /var/www/certbot -d bookmile.site -d www.bookmile.site
 
-    # Restart Nginx to Apply HTTPS
     - name: Restart Nginx with HTTPS
       uses: appleboy/ssh-action@v1.2.0
       with:
@@ -96,4 +92,5 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_KEY }}
         script: |
-          docker-compose restart nginx
+          docker-compose exec nginx nginx -s reload
+
