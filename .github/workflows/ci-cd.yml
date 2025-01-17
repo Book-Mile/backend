@@ -76,7 +76,7 @@ jobs:
         script: |
           cd ~/backend
           docker-compose down
-          docker-compose up -d
+          docker-compose up -d nginx application redis mysql
 
     # Obtain SSL Certificates with Certbot
     - name: Obtain SSL Certificates with Certbot
@@ -87,14 +87,13 @@ jobs:
         key: ${{ secrets.EC2_KEY }}
         script: |
           docker-compose run --rm certbot certonly --webroot -w /var/www/certbot -d bookmile.site -d www.bookmile.site
-          docker-compose restart nginx
 
-    # Verify Deployment
-    - name: Verify Deployment
+    # Restart Nginx to Apply HTTPS
+    - name: Restart Nginx with HTTPS
       uses: appleboy/ssh-action@v1.2.0
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ubuntu
         key: ${{ secrets.EC2_KEY }}
         script: |
-          curl -I https://bookmile.site
+          docker-compose restart nginx
