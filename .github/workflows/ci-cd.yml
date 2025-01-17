@@ -1,3 +1,4 @@
+# New instance3
 name: CI/CD Pipeline
 
 on:
@@ -20,6 +21,7 @@ jobs:
 
     # Build and Push Docker Image
     - name: Build and Push Docker Image
+      working-directory: ./
       run: |
         docker build -t ${{ secrets.DOCKER_USERNAME }}/bookmile-app:latest .
         docker push ${{ secrets.DOCKER_USERNAME }}/bookmile-app:latest
@@ -41,13 +43,13 @@ jobs:
         echo "AWS_BUCKET_PROFILE_FOLDER=${{ secrets.AWS_BUCKET_PROFILE_FOLDER }}" >> ./.env
         echo "AWS_BUCKET_MAIN_PROFILE=${{ secrets.AWS_BUCKET_MAIN_PROFILE }}" >> ./.env
 
-    # .env 내용 확인
-    - name: Reading env file
+    # .env 내용
+    - name: reading env file
       run: |
         cat ./.env
         ls ./
         
-    # .gitignore에 있는 properties 파일 추가
+      # .gitignore에 있는 properties파일 추가
     - name: Add prod_properties
       run: |
         touch ./src/main/resources/application-oauth.properties
@@ -55,27 +57,19 @@ jobs:
         echo "${{ secrets.OAUTHPROPERTIES }}" > ./src/main/resources/application-oauth.properties
         echo "${{ secrets.PRIVATEPROPERTIES }}" > ./src/main/resources/application-private.properties
         
-    - name: Transfer Files to EC2
+    # Transfer Docker Compose File to EC2
+    - name: Transfer Docker Compose to EC2
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ubuntu
         key: ${{ secrets.EC2_KEY }}
-        source: ./
+        source: |
+          ./
         target: ~/backend/
 
-    - name: Deploy Docker Containers
-      uses: appleboy/ssh-action@v1.2.0
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ubuntu
-        key: ${{ secrets.EC2_KEY }}
-        script: |
-          cd ~/backend
-          docker-compose down
-          docker-compose up -d nginx application redis mysql
-
-    - name: Obtain SSL Certificates with Certbot
+    # Deploy to EC2
+    - name: Deploy to EC2
       uses: appleboy/ssh-action@v1.2.0
       with:
         host: ${{ secrets.EC2_HOST }}
@@ -83,14 +77,10 @@ jobs:
         key: ${{ secrets.EC2_KEY }}
         debug: true
         script: |
-          docker-compose run --rm certbot certonly --webroot -w /var/www/certbot -d bookmile.site -d www.bookmile.site
-
-    - name: Restart Nginx with HTTPS
-      uses: appleboy/ssh-action@v1.2.0
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ubuntu
-        key: ${{ secrets.EC2_KEY }}
-        script: |
-          docker-compose exec nginx nginx -s reload
-
+          # Docker 이미지 업데이트 및 애플리케이션 실행
+          cd ~/backend
+          docker pull ${{ secrets.DOCKER_USERNAME }}/bookmile-app:latest
+          chmod 644 .env
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/bookmile-app:latest
+          sudo docker-compose -f docker-compose.yml down
+          sudo docker-compose -f docker-compose.yml up --build -d
