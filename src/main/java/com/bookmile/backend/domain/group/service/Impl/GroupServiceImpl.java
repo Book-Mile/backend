@@ -49,7 +49,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupCreateResponseDto createGroup(GroupCreateRequestDto requestDto, User user) {
+    public GroupCreateResponseDto createGroup(GroupCreateRequestDto requestDto, String userEmail) {
+        User user = validateUserByEmail(userEmail);
+
         Book book = bookService.saveBook(requestDto.getIsbn13());
 
         Template template = checkTemplate(requestDto);

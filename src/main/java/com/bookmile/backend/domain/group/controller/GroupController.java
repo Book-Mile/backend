@@ -35,13 +35,12 @@ public class GroupController {
     @PostMapping
     public ResponseEntity<CommonResponse<GroupCreateResponseDto>> createGroup(
             @RequestBody @Valid GroupCreateRequestDto requestDto,
-            @RequestParam Long userId // userId를 직접 받음
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        // User 정보를 UserRepository에서 조회
-        User user = groupService.getUserById(userId);
+        String userEmail = userDetails.getUsername();
 
         // 그룹 생성 요청 처리
-        GroupCreateResponseDto responseDto = groupService.createGroup(requestDto, user);
+        GroupCreateResponseDto responseDto = groupService.createGroup(requestDto, userEmail);
         return ResponseEntity.status(GROUP_CREATE.getStatus())
                 .body(CommonResponse.from(GROUP_CREATE.getMessage(), responseDto));
     }
