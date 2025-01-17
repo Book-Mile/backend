@@ -14,7 +14,7 @@ import java.util.List;
 public interface GroupService {
     User getUserById(Long userId); // User 정보 조회
     GroupCreateResponseDto createGroup(GroupCreateRequestDto requestDto, User user);
-    GroupStatusUpdateResponseDto updateGroupStatus(Long groupId, GroupStatusUpdateRequestDto requestDto, Long userId);
+    GroupStatusUpdateResponseDto updateGroupStatus(Long groupId, GroupStatusUpdateRequestDto requestDto, String userEmail);
 
     List<GroupListResponseDto> getRecruitingGroups(String isbn13);
     List<GroupListResponseDto> getInProgressGroups(String isbn13);

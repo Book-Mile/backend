@@ -20,6 +20,7 @@ import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import com.bookmile.backend.domain.userGroup.entity.Role;
 import com.bookmile.backend.domain.userGroup.repository.UserGroupRepository;
+import com.bookmile.backend.global.common.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.bookmile.backend.global.exception.CustomException;
@@ -76,16 +77,17 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupStatusUpdateResponseDto updateGroupStatus(Long groupId, GroupStatusUpdateRequestDto requestDto, Long userId) {
+    public GroupStatusUpdateResponseDto updateGroupStatus(Long groupId, GroupStatusUpdateRequestDto requestDto, String userEmail) {
+        User user = validateUserByEmail(userEmail);
+
         Group group = findGroupById(groupId);
-        UserGroup userGroup = findUserGroupById(userId, groupId);
+        UserGroup userGroup = findUserGroupById(user.getId(), groupId);
 
         validateGroupMaster(userGroup);
         updateGroupStatus(group, requestDto.getStatus());
 
         return GroupStatusUpdateResponseDto.toDto(group);
     }
-
     private List<GroupListResponseDto> findGroupsByStatus(String isbn13, GroupStatus status, boolean isRecent) {
         List<Group> groups;
         if (isRecent) {
@@ -145,6 +147,10 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new CustomException(GROUP_NOT_FOUND));
     }
 
+    private User validateUserByEmail(String email) {
+        return  userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(StatusCode.USER_NOT_FOUND));
+    }
     private UserGroup findUserGroupById(Long userId, Long groupId) {
         return userGroupRepository.findByUserIdAndGroupId(userId, groupId)
                 .orElseThrow(() -> new CustomException(NOT_MEMBER));

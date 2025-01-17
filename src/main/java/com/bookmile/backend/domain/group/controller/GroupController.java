@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -67,9 +69,12 @@ public class GroupController {
             , description = "그룹 상태를 변경합니다. 그룹장만이 변경할 수 있습니다.")
     @PatchMapping("/{groupId}")
     public ResponseEntity<GroupStatusUpdateResponseDto> updateGroupStatus(
-            @PathVariable Long groupId,@RequestBody @Valid GroupStatusUpdateRequestDto requestDto
+            @PathVariable Long groupId,
+            @RequestBody @Valid GroupStatusUpdateRequestDto requestDto,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        GroupStatusUpdateResponseDto responseDto = groupService.updateGroupStatus(groupId, requestDto, requestDto.getUserId());
+        String userEmail = userDetails.getUsername();
+        GroupStatusUpdateResponseDto responseDto = groupService.updateGroupStatus(groupId, requestDto, userEmail);
         return ResponseEntity.ok(responseDto);
     }
 
