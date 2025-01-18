@@ -6,7 +6,6 @@ import com.bookmile.backend.domain.group.service.GroupJoinService;
 import com.bookmile.backend.domain.group.service.GroupService;
 import com.bookmile.backend.domain.group.service.Impl.GroupMemberServiceImpl;
 import com.bookmile.backend.global.common.CommonResponse;
-import com.bookmile.backend.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -120,9 +119,11 @@ public class GroupController {
     @Operation(summary = "그룹 공개/비공개 전환", description = "그룹장은 그룹 공개여부를 변경할 수 있습니다.")
     public ResponseEntity<CommonResponse<Object>> updateGroupVisibility(
             @PathVariable Long groupId,
-            @RequestBody @Valid GroupPrivateRequestDto requestDto
+            @RequestBody @Valid GroupPrivateRequestDto requestDto,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        groupService.updateGroupPrivate(groupId, requestDto.getIsOpen(), requestDto.getUserId());
+        String userEmail = userDetails.getUsername();
+        groupService.updateGroupPrivate(groupId, requestDto.getIsOpen(), userEmail);
         return ResponseEntity.ok(CommonResponse.from(GROUP_PRIVATE_UPDATE.getMessage()));
     }
 }

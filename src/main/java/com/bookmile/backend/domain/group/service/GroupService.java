@@ -21,5 +21,5 @@ public interface GroupService {
 
     GroupDetailResponseDto getGroupDetail(Long groupId);
 
-    void updateGroupPrivate(Long groupId, Boolean isOpen, Long userId);
+    void updateGroupPrivate(Long groupId, Boolean isOpen, String userEmail);
 }

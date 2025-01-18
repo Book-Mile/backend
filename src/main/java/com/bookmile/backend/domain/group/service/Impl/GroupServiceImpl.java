@@ -135,10 +135,11 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public void updateGroupPrivate(Long groupId, Boolean isOpen, Long userId) {
+    public void updateGroupPrivate(Long groupId, Boolean isOpen, String userEmail) {
+        User user = validateUserByEmail(userEmail);
         Group group = findGroupById(groupId);
 
-        UserGroup userGroup = findUserGroupById(userId, groupId);
+        UserGroup userGroup = findUserGroupById(user.getId(), groupId);
         validateGroupMaster(userGroup);
 
         group.setIsOpen(isOpen);
