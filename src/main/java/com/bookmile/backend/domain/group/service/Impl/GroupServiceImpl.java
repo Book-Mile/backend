@@ -150,9 +150,10 @@ public class GroupServiceImpl implements GroupService {
     }
 
     private User validateUserByEmail(String email) {
-        return  userRepository.findByEmail(email)
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(StatusCode.USER_NOT_FOUND));
     }
+
     private UserGroup findUserGroupById(Long userId, Long groupId) {
         return userGroupRepository.findByUserIdAndGroupId(userId, groupId)
                 .orElseThrow(() -> new CustomException(NOT_MEMBER));
