@@ -4,8 +4,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
-import static com.bookmile.backend.global.common.StatusCode.INPUT_VALUE_INVALID;
+import java.io.IOException;
+
+import static com.bookmile.backend.global.common.StatusCode.*;
 
 @RestControllerAdvice
 public class ExceptionControllerAdvice {
@@ -26,7 +29,25 @@ public class ExceptionControllerAdvice {
                 .body(errorResponse);
     }
 
+    // requestPart로 받은 multiPartFile이 null이면 발생하는 예외
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ErrorResponse> handleMissingServletRequestPartException(MissingServletRequestPartException e) {
+        ErrorResponse errorResponse= ErrorResponse.builder()
+                .message(MULTI_PART_FILE_INVALID.getMessage())
+                .build();
+        return ResponseEntity.status(MULTI_PART_FILE_INVALID.getStatus())
+                .body(errorResponse);
+    }
 
+    // 이미지 저장 시 생길 수 있는 예외, 주로 파일 입출력 오류 시 나타난다.
+    @ExceptionHandler(IOException.class)  // 특정 예외를 처리
+    public ResponseEntity<ErrorResponse> handleIOException(IOException e) {
+        ErrorResponse errorResponse=ErrorResponse.builder()
+                .message(FILE_INVALID.getMessage())
+                .build();
+        return ResponseEntity.status(FILE_INVALID.getStatus())
+                .body(errorResponse);
+    }
 
     // 무슨 예외가 터졌는지 메시지만 담는다.
     @ExceptionHandler(CustomException.class)

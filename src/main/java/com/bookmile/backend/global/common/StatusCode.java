@@ -74,6 +74,8 @@ public enum StatusCode {
     FILE_DELETE_INVALID(BAD_REQUEST, "파일 삭제 중 오류가 발생했습니다."),
     FILE_CHANGE_INVALID(BAD_REQUEST, "MultiPart 파일 변환 중 오류가 발생했습니다."),
     CUSTOM_GOAL_REQUIRED(BAD_REQUEST, "GoalType이 CUSTOM일 경우 사용자 정의 목표(customGoal)는 필수입니다."),
+    MULTI_PART_FILE_INVALID(BAD_REQUEST,"유효하지 않은 MultiPartFile입니다."),
+    FILE_INVALID(BAD_REQUEST,"파일 저장 중 오류가 발생했습니다."),
 
     /* 401 UNAUTHORIZED : 비인증 사용자 */
     AUTHENTICATION_FAILED(UNAUTHORIZED, "회원의 정보가 일치하지 않습니다."),
