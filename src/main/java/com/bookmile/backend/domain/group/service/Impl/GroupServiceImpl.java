@@ -20,6 +20,7 @@ import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import com.bookmile.backend.domain.userGroup.entity.Role;
 import com.bookmile.backend.domain.userGroup.repository.UserGroupRepository;
+import com.bookmile.backend.global.common.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.bookmile.backend.global.exception.CustomException;
@@ -48,7 +49,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupCreateResponseDto createGroup(GroupCreateRequestDto requestDto, User user) {
+    public GroupCreateResponseDto createGroup(GroupCreateRequestDto requestDto, String userEmail) {
+        User user = validateUserByEmail(userEmail);
+
         Book book = bookService.saveBook(requestDto.getIsbn13());
 
         Template template = checkTemplate(requestDto);
@@ -57,7 +60,7 @@ public class GroupServiceImpl implements GroupService {
 
         Group group = groupRepository.save(requestDto.toEntity(book, goalType, goalContent));
 
-        Long templateId;
+        Long templateId = null;
         if (requestDto.getTemplateId() == null) {
             template = Template.builder()
                     .group(group)
@@ -65,7 +68,7 @@ public class GroupServiceImpl implements GroupService {
                     .goalContent(goalContent)
                     .isTemplate(true)
                     .build();
-            templateId = template.getId();
+            templateRepository.save(template);
         } else {
             templateId = requestDto.getTemplateId();
         }
@@ -76,16 +79,17 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupStatusUpdateResponseDto updateGroupStatus(Long groupId, GroupStatusUpdateRequestDto requestDto, Long userId) {
+    public GroupStatusUpdateResponseDto updateGroupStatus(Long groupId, GroupStatusUpdateRequestDto requestDto, String userEmail) {
+        User user = validateUserByEmail(userEmail);
+
         Group group = findGroupById(groupId);
-        UserGroup userGroup = findUserGroupById(userId, groupId);
+        UserGroup userGroup = findUserGroupById(user.getId(), groupId);
 
         validateGroupMaster(userGroup);
         updateGroupStatus(group, requestDto.getStatus());
 
         return GroupStatusUpdateResponseDto.toDto(group);
     }
-
     private List<GroupListResponseDto> findGroupsByStatus(String isbn13, GroupStatus status, boolean isRecent) {
         List<Group> groups;
         if (isRecent) {
@@ -131,10 +135,11 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public void updateGroupPrivate(Long groupId, Boolean isOpen, Long userId) {
+    public void updateGroupPrivate(Long groupId, Boolean isOpen, String userEmail) {
+        User user = validateUserByEmail(userEmail);
         Group group = findGroupById(groupId);
 
-        UserGroup userGroup = findUserGroupById(userId, groupId);
+        UserGroup userGroup = findUserGroupById(user.getId(), groupId);
         validateGroupMaster(userGroup);
 
         group.setIsOpen(isOpen);
@@ -143,6 +148,11 @@ public class GroupServiceImpl implements GroupService {
     private Group findGroupById(Long groupId) {
         return groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(GROUP_NOT_FOUND));
+    }
+
+    private User validateUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(StatusCode.USER_NOT_FOUND));
     }
 
     private UserGroup findUserGroupById(Long userId, Long groupId) {

@@ -6,11 +6,12 @@ import com.bookmile.backend.domain.group.service.GroupJoinService;
 import com.bookmile.backend.domain.group.service.GroupService;
 import com.bookmile.backend.domain.group.service.Impl.GroupMemberServiceImpl;
 import com.bookmile.backend.global.common.CommonResponse;
-import com.bookmile.backend.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,13 +34,12 @@ public class GroupController {
     @PostMapping
     public ResponseEntity<CommonResponse<GroupCreateResponseDto>> createGroup(
             @RequestBody @Valid GroupCreateRequestDto requestDto,
-            @RequestParam Long userId // userId를 직접 받음
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        // User 정보를 UserRepository에서 조회
-        User user = groupService.getUserById(userId);
+        String userEmail = userDetails.getUsername();
 
         // 그룹 생성 요청 처리
-        GroupCreateResponseDto responseDto = groupService.createGroup(requestDto, user);
+        GroupCreateResponseDto responseDto = groupService.createGroup(requestDto, userEmail);
         return ResponseEntity.status(GROUP_CREATE.getStatus())
                 .body(CommonResponse.from(GROUP_CREATE.getMessage(), responseDto));
     }
@@ -47,12 +47,13 @@ public class GroupController {
     @Operation(summary = "그룹 참여하기", description = "이미 존재하는 그룹에 참여합니다. 참여한 유저는 자동으로 MEMBER 역할을 부여받으며 비공개 그룹의 경우 비밀번호가 필요합니다. <br>"
     + "공개 그룹의 경우 비밀번호를 null 값이 아닌 공백(그냥 띄어쓰기 한 칸)으로 입력해주세요")
     @PostMapping("/{groupId}")
-    public ResponseEntity<CommonResponse<Void>> joinGroup(
+    public ResponseEntity<CommonResponse<GroupJoinResponseDto>> joinGroup(
             @RequestBody @Valid GroupJoinRequestDto requestDto,
-            @RequestHeader("user_id") Long userId
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        groupJoinService.joinGroup(userId, requestDto);
-        return ResponseEntity.ok(CommonResponse.from(GROUP_JOIN.getMessage(), null));
+        String userEmail = userDetails.getUsername();
+        GroupJoinResponseDto responseDto = groupJoinService.joinGroup(userEmail, requestDto);
+        return ResponseEntity.ok(CommonResponse.from(GROUP_JOIN.getMessage(), responseDto));
     }
 
     @Operation(summary = "그룹 멤버 조회"
@@ -67,9 +68,12 @@ public class GroupController {
             , description = "그룹 상태를 변경합니다. 그룹장만이 변경할 수 있습니다.")
     @PatchMapping("/{groupId}")
     public ResponseEntity<GroupStatusUpdateResponseDto> updateGroupStatus(
-            @PathVariable Long groupId,@RequestBody @Valid GroupStatusUpdateRequestDto requestDto
+            @PathVariable Long groupId,
+            @RequestBody @Valid GroupStatusUpdateRequestDto requestDto,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        GroupStatusUpdateResponseDto responseDto = groupService.updateGroupStatus(groupId, requestDto, requestDto.getUserId());
+        String userEmail = userDetails.getUsername();
+        GroupStatusUpdateResponseDto responseDto = groupService.updateGroupStatus(groupId, requestDto, userEmail);
         return ResponseEntity.ok(responseDto);
     }
 
@@ -115,9 +119,11 @@ public class GroupController {
     @Operation(summary = "그룹 공개/비공개 전환", description = "그룹장은 그룹 공개여부를 변경할 수 있습니다.")
     public ResponseEntity<CommonResponse<Object>> updateGroupVisibility(
             @PathVariable Long groupId,
-            @RequestBody @Valid GroupPrivateRequestDto requestDto
+            @RequestBody @Valid GroupPrivateRequestDto requestDto,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        groupService.updateGroupPrivate(groupId, requestDto.getIsOpen(), requestDto.getUserId());
+        String userEmail = userDetails.getUsername();
+        groupService.updateGroupPrivate(groupId, requestDto.getIsOpen(), userEmail);
         return ResponseEntity.ok(CommonResponse.from(GROUP_PRIVATE_UPDATE.getMessage()));
     }
 }
