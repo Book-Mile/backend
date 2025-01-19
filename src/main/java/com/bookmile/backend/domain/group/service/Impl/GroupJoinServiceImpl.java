@@ -6,6 +6,7 @@ import com.bookmile.backend.domain.group.entity.Group;
 import com.bookmile.backend.domain.group.repository.GroupRepository;
 import com.bookmile.backend.domain.group.service.GroupJoinService;
 import com.bookmile.backend.domain.user.entity.User;
+import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.userGroup.entity.Role;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import com.bookmile.backend.domain.userGroup.repository.UserGroupRepository;
@@ -20,18 +21,20 @@ public class GroupJoinServiceImpl implements GroupJoinService {
 
     private final GroupRepository groupRepository;
     private final UserGroupRepository userGroupRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public GroupJoinResponseDto joinGroup(Long userId, GroupJoinRequestDto groupJoinRequestDto) {
+    public GroupJoinResponseDto joinGroup(String userEmail, GroupJoinRequestDto requestDto) {
+        User user = validateUserByEmail(userEmail);
 
-        Group group = findGroup(groupJoinRequestDto.getGroupId());
+        Group group = findGroup(requestDto.getGroupId());
 
-        checkUserAlreadyJoined(userId, group.getId());
+        checkUserAlreadyJoined(user.getId(), group.getId());
         checkGroupCapacity(group);
-        checkGroupPassword(group, groupJoinRequestDto.getPassword());
+        checkGroupPassword(group, requestDto.getPassword());
 
         UserGroup userGroup = UserGroup.builder()
-                .user(new User(userId))
+                .user(user)
                 .group(group)
                 .role(Role.MEMBER)
                 .build();
@@ -63,5 +66,10 @@ public class GroupJoinServiceImpl implements GroupJoinService {
         if (!group.getIsOpen() && (password == null || !group.getPassword().equals(password))) {
             throw new CustomException(StatusCode.INVALID_GROUP_PASSWORD);
         }
+    }
+
+    private User validateUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(StatusCode.USER_NOT_FOUND));
     }
 }
