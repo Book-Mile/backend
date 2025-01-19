@@ -45,10 +45,10 @@ public class RecordController {
 
     @Operation(summary = "기록 작성", description = "해당 그룹의 기록을 작성합니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CommonResponse<Long>> createRecord(@RequestParam Long groupId,
-                                                             @RequestParam Long userId,
-                                                             @RequestPart(required = false) @Parameter(description = "업로드할 파일 리스트") List<MultipartFile> files,
-                                                             @RequestPart("recordReqDto") @Parameter(description = "기록 요청 DTO (JSON)") @Valid RecordReqDto recordReqDto) {
+    public ResponseEntity<CommonResponse<Long>> createRecord(@RequestParam(name="groupId") Long groupId,
+                                                             @RequestParam(name = "userId") Long userId,
+                                                             @RequestPart(value = "jsonData") @Valid RecordReqDto recordReqDto,
+                                                             @RequestPart(value = "images", required = false) List<MultipartFile> files){
         Long recordId = recordServiceImpl.createRecord(groupId, userId, files, recordReqDto);
         return ResponseEntity.status(CREATE_RECORD.getStatus())
                 .body(CommonResponse.from(CREATE_RECORD.getMessage(), recordId));
