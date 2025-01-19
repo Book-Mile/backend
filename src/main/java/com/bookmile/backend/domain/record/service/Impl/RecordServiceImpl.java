@@ -25,12 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RecordServiceImpl implements RecordService {
     private final UserRepository userRepository;
     private final RecordGroupRepository groupRepository;
@@ -64,13 +66,13 @@ public class RecordServiceImpl implements RecordService {
 
         UserGroup userGroup = getUserGroup(group.getId(), user.getId());
 
-        Record record = Record.from(userGroup, recordReqDto);
-        recordRepository.save(record);
+        Record record = recordRepository.save(Record.from(userGroup, recordReqDto));
+
+        log.info("Record 저장 - {}", record);
 
         if (files != null) {
             imageService.saveImages(record.getId(), files);
         }
-
         return record.getId();
     }
 

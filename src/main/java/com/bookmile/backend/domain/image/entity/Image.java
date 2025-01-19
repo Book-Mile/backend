@@ -30,6 +30,7 @@ public class Image extends BaseEntity {
         this.record = record;
     }
 
+    @Builder
     public Image(Record record, String imageUrl) {
         this.record = record;
         this.imageUrl = imageUrl;

@@ -16,10 +16,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 
 @Entity
 @Getter
@@ -41,9 +39,11 @@ public class Record extends BaseEntity {
     @Column(nullable = false)
     private Integer currentPage;
 
+    // 추후, OneToMany는 N+1 문제 일으킬 가능성 있으므로 뺴기로.
     @OneToMany(mappedBy = "record")
     private List<Image> images = new ArrayList<>();
 
+    @Builder
     public Record(UserGroup userGroup, String text, Integer currentPage) {
         this.userGroup = userGroup;
         this.text = text;
@@ -51,12 +51,11 @@ public class Record extends BaseEntity {
     }
 
     public static Record from(UserGroup userGroup, RecordReqDto recordReqDto) {
-
-        return new Record(
-                userGroup,
-                recordReqDto.getText(),
-                recordReqDto.getCurrentPage()
-        );
+       return Record.builder()
+               .userGroup(userGroup)
+               .text(recordReqDto.getText())
+               .currentPage(recordReqDto.getCurrentPage())
+               .build();
     }
 
     public void update(UpdateRecordReqDto updateRecordReqDto) {
@@ -64,8 +63,4 @@ public class Record extends BaseEntity {
         this.currentPage = updateRecordReqDto.getCurrentPage();
     }
 
-    public void addImage(Image image) {
-        this.images.add(image);
-        image.addRecord(this);
-    }
 }
