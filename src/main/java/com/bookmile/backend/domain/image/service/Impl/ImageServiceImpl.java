@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,15 +28,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ImageServiceImpl implements ImageService {
-
 
     // s3 버킷 클라이언트
     private final AmazonS3Client s3Client;
     private final ImageRepository imageRepository;
     private final RecordRepository recordRepository;
 
-    @Value("{aws.bucket.name}")
+    @Value("${aws.bucket.name}")
     private String bucketName;
 
     @Override
@@ -60,10 +61,13 @@ public class ImageServiceImpl implements ImageService {
         }
 
         List<Image> images = files.stream()
-                .map(url -> new Image(record, url))
+                .map(url -> Image.builder()
+                        .record(record)
+                        .imageUrl(url)
+                        .build())
                 .toList();
 
-        images.forEach(record::addImage);
+        log.info("Saving images: {}", images);
 
         imageRepository.saveAll(images);
     }
