@@ -16,7 +16,9 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
 
     List<UserGroup> findByGroupId(Long groupId);
 
-    Optional<UserGroup> findByUserIdAndGroupId(Long groupId, Long userId);
+    // 순서상 userId, groupId로 검사하여 -> 404 에러가 뜰 경우 있음
+    // @Param으로 명서
+    Optional<UserGroup> findByUserIdAndGroupId(@Param("groupId") Long groupId,@Param("userId") Long userId);
 
     @Query("SELECT ug FROM UserGroup ug WHERE ug.group.id = :groupId AND ug.role = 'MASTER'")
     Optional<UserGroup> findMasterByGroupId(@Param("groupId") Long groupId);
