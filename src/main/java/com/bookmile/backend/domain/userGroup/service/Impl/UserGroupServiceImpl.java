@@ -1,6 +1,5 @@
 package com.bookmile.backend.domain.userGroup.service.Impl;
 
-import com.bookmile.backend.domain.group.dto.res.GroupDetailResponseDto;
 import com.bookmile.backend.domain.group.entity.Group;
 import com.bookmile.backend.domain.group.entity.GroupStatus;
 import com.bookmile.backend.domain.user.entity.User;
@@ -29,7 +28,11 @@ public class UserGroupServiceImpl implements UserGroupService {
     public List<UserGroupSearchResponseDto> getUserGroupsByStatus(String userEmail, GroupStatus status) {
         User user = validateUserByEmail(userEmail);
 
-        List<Group> groups = userGroupRepository.findGroupsByUserEmaillAndStatus(userEmail, status);
+        List<UserGroup> userGroups = userGroupRepository.findGroupsByUserEmailAndStatus(userEmail, status);
+
+        List<Group> groups = userGroups.stream()
+                .map(UserGroup::getGroup)
+                .toList();
 
         return groups.stream()
                 .map(group -> {

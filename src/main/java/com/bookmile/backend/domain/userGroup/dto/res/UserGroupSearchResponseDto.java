@@ -1,7 +1,6 @@
 package com.bookmile.backend.domain.userGroup.dto.res;
 
 import com.bookmile.backend.domain.book.dto.res.BookResponseDto;
-import com.bookmile.backend.domain.group.dto.res.GroupDetailResponseDto;
 import com.bookmile.backend.domain.group.entity.Group;
 import com.bookmile.backend.domain.group.entity.GroupStatus;
 import com.bookmile.backend.domain.user.entity.User;
