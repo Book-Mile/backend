@@ -1,5 +1,6 @@
 package com.bookmile.backend.domain.userGroup.repository;
 
+import com.bookmile.backend.domain.group.entity.GroupStatus;
 import com.bookmile.backend.domain.userGroup.entity.UserGroup;
 import java.util.List;
 import java.util.Optional;
@@ -25,4 +26,8 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
 
     @Query(value = "SELECT user_id FROM user_group WHERE group_id = :groupId ORDER BY RAND()", nativeQuery = true)
     List<Long> findUserRandomSortByGroupId(Long groupId);
+
+    @Query("SELECT ug FROM UserGroup ug JOIN ug.group g WHERE ug.user.email = :userEmail AND g.status = :status")
+    List<UserGroup> findGroupsByUserEmailAndStatus(@Param("userEmail") String userEmail, @Param("status") GroupStatus status);
+
 }
