@@ -61,6 +61,7 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
+    @Transactional
     public Long createRecord(Long groupId, Long userId, List<MultipartFile> files, RecordReqDto recordReqDto) {
         Group group = findGroupById(groupId);
         User user = findUserById(userId);
