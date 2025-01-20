@@ -47,7 +47,7 @@ public class RecordServiceImpl implements RecordService {
         Group group = findGroupById(groupId);
         User user = findUserById(userId);
 
-        UserGroup userGroup = getUserGroup(group.getId(), user.getId());
+        UserGroup userGroup = getUserGroup(user.getId(), group.getId());
 
         List<Record> records = recordRepository.findAllByUserGroupId(userGroup.getId());
         List<RecordListResDto> result = new ArrayList<>();
