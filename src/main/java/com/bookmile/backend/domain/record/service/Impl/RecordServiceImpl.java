@@ -33,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class RecordServiceImpl implements RecordService {
     private final UserRepository userRepository;
     private final RecordGroupRepository groupRepository;
@@ -64,7 +65,7 @@ public class RecordServiceImpl implements RecordService {
         Group group = findGroupById(groupId);
         User user = findUserById(userId);
 
-        UserGroup userGroup = getUserGroup(group.getId(), user.getId());
+        UserGroup userGroup = getUserGroup(user.getId(), group.getId());
 
         Record record = recordRepository.save(Record.from(userGroup, recordReqDto));
 
@@ -137,8 +138,8 @@ public class RecordServiceImpl implements RecordService {
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 
-    private UserGroup getUserGroup(Long groupId, Long userId) {
-        return userGroupRepository.findByUserIdAndGroupId(groupId, userId)
+    private UserGroup getUserGroup(Long userId, Long groupId) {
+        return userGroupRepository.findByUserIdAndGroupId(userId, groupId)
                 .orElseThrow(() -> new CustomException(NO_USER_OR_NO_GROUP));
     }
 }
