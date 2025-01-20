@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @OpenAPIDefinition(servers =
 		{@Server(url = "https://bookmile.site/", description = "배포 서버 주소"),
-		@Server(url= "/", description = "기본 서버 주소")})
+		@Server(url = "/", description = "개발용 서버 주소")})
 @SpringBootApplication
 public class BackendApplication {
 
