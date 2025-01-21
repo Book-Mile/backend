@@ -16,6 +16,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,8 +38,9 @@ public class RecordController {
     @Operation(summary = "기록 리스트 조회", description = "해당 그룹의 기록 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<CommonResponse<List<RecordListResDto>>> viewRecordList(@RequestParam Long groupId,
-                                                                                 @RequestParam Long userId) {
-        List<RecordListResDto> records = recordService.viewRecordList(groupId, userId);
+                                                                                 @AuthenticationPrincipal UserDetails userDetails) {
+        String userEmail = userDetails.getUsername();
+        List<RecordListResDto> records = recordService.viewRecordList(groupId, userEmail);
         return ResponseEntity.status(VIEW_RECORD.getStatus())
                 .body(CommonResponse.from(VIEW_RECORD.getMessage(), records));
     }
@@ -45,10 +48,11 @@ public class RecordController {
     @Operation(summary = "기록 작성", description = "해당 그룹의 기록을 작성합니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommonResponse<Long>> createRecord(@RequestParam(name = "groupId") Long groupId,
-                                                             @RequestParam(name = "userId") Long userId,
+                                                             @AuthenticationPrincipal UserDetails userDetails,
                                                              @RequestPart(value = "jsonData") @Valid RecordReqDto recordReqDto,
                                                              @RequestPart(value = "images", required = false) List<MultipartFile> files) {
-        Long recordId = recordService.createRecord(groupId, userId, files, recordReqDto);
+        String userEmail = userDetails.getUsername();
+        Long recordId = recordService.createRecord(groupId, userEmail, files, recordReqDto);
         return ResponseEntity.status(CREATE_RECORD.getStatus())
                 .body(CommonResponse.from(CREATE_RECORD.getMessage(), recordId));
     }

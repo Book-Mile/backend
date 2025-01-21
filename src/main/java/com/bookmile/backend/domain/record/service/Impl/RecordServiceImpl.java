@@ -43,9 +43,9 @@ public class RecordServiceImpl implements RecordService {
     private final ImageServiceImpl imageService;
 
     @Override
-    public List<RecordListResDto> viewRecordList(Long groupId, Long userId) {
+    public List<RecordListResDto> viewRecordList(Long groupId, String userEmail) {
         Group group = findGroupById(groupId);
-        User user = findUserById(userId);
+        User user = findUserByEmail(userEmail);
 
         UserGroup userGroup = getUserGroup(user.getId(), group.getId());
 
@@ -62,9 +62,9 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional
-    public Long createRecord(Long groupId, Long userId, List<MultipartFile> files, RecordReqDto recordReqDto) {
+    public Long createRecord(Long groupId, String userEmail, List<MultipartFile> files, RecordReqDto recordReqDto) {
         Group group = findGroupById(groupId);
-        User user = findUserById(userId);
+        User user = findUserByEmail(userEmail);
 
         UserGroup userGroup = getUserGroup(user.getId(), group.getId());
 
@@ -98,10 +98,10 @@ public class RecordServiceImpl implements RecordService {
      * */
     @Override
     public List<RecentRecordResDto> viewRandomRecord(Long groupId) {
-        List<Long> userIds = userGroupRepository.findUserRandomSortByGroupId(groupId);
+        List<String> userEmails = userGroupRepository.findUserEmailRandomSortByGroupId(groupId);
         List<User> users = new ArrayList<>();
-        for (Long userId : userIds) {
-            users.add(findUserById(userId));
+        for (String userEmail : userEmails) {
+            users.add(findUserByEmail(userEmail));
         }
         List<RecentRecordResDto> recentRecordResDtos = new ArrayList<>();
         Random random = new Random();
@@ -134,8 +134,8 @@ public class RecordServiceImpl implements RecordService {
                 .orElseThrow(() -> new CustomException(GROUP_NOT_FOUND));
     }
 
-    private User findUserById(Long userId) {
-        return userRepository.findById(userId)
+    private User findUserByEmail(String userEmail) {
+        return userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 
