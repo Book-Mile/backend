@@ -1,5 +1,7 @@
 package com.bookmile.backend.domain.user.service.impl;
 
+import static com.bookmile.backend.global.common.StatusCode.*;
+
 import com.bookmile.backend.domain.image.service.ImageService;
 import com.bookmile.backend.domain.user.dto.req.PasswordReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
@@ -27,7 +29,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -43,8 +44,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import static com.bookmile.backend.global.common.StatusCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -284,7 +283,7 @@ public class UserServiceImpl implements UserService {
         user.updateImage(url);
     }
 
-    // 회원의 연동 정보 조회
+    // 회원의 소셜 연동 정보 조회
     @Override
     @Transactional
     public List<String> getOAuthProviders(String email) {
@@ -295,9 +294,6 @@ public class UserServiceImpl implements UserService {
                 .toList();
 
         return providers;
-
-
-
     }
 
     // 회원 탈퇴
@@ -311,13 +307,13 @@ public class UserServiceImpl implements UserService {
     // 연동 해제
     @Override
     @Transactional
-    public void unlinkUserOAuth(HttpServletRequest request,String provider, String email) {
+    public void unlinkUserOAuth(HttpServletRequest request, String provider, String email) {
         String token = jwtTokenProvider.resolveToken(request);
 
         User user = findByEmail(email);
 
         UserOAuth userOAuth = userOAuthRepository.findByUserIdAndProvider(user.getId(), provider).orElseThrow(
-                ()-> new CustomException(INVALID_OAUTH_USER));
+                () -> new CustomException(INVALID_OAUTH_USER));
 
         // 연동 해제
         oAuth2UnlinkService.unlinkAccount(provider, token);

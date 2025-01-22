@@ -8,13 +8,11 @@ import com.bookmile.backend.domain.user.dto.res.TokenResDto;
 import com.bookmile.backend.domain.user.dto.res.UserDetailResDto;
 import com.bookmile.backend.domain.user.dto.res.UserInfoDto;
 import com.bookmile.backend.domain.user.dto.res.UserResDto;
-import com.bookmile.backend.domain.user.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public interface UserService {
     UserResDto signUp(SignUpReqDto signUpReqDto);
@@ -32,7 +30,7 @@ public interface UserService {
     List<String> getOAuthProviders(String email);
     void deleteUser(String email);
     void unlinkUserOAuth(HttpServletRequest request, String provider, String email);
-
+    
     // 테스트 로그인
     TokenResDto testSignIn(SignInReqDto signInReqDto);
     Map<String, String> testSocialLogin(String email);

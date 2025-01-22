@@ -40,7 +40,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // OAuth2UserService를 사용하여 가져온 OAuth2User 정보로 OAuth2UserInfo 객체를 만든다.
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfo.of(provider, oauth2User.getAttributes());
-        log.info("CustomOAuth2UserService.loadUser: OAuth2UserInfo - {}", oAuth2UserInfo);
+        //log.info("CustomOAuth2UserService.loadUser: OAuth2UserInfo - {}", oAuth2UserInfo);
 
         Map<String ,Object> userAttributes = oAuth2UserInfo.convertToMap();
         log.info("CustomOAuth2UserService.loadUser: userAttributes {}", userAttributes);

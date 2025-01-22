@@ -156,5 +156,12 @@ public class UserController {
                 .body(CommonResponse.from(SIGN_IN.getMessage(), userService.testRedirect(testAccessReqDto.getAccessToken())));
     }
 
+    @Operation(summary = "연동된 소셜 로그인 조회", description = "현재 로그인한 사용자의 연동된 소셜 로그인 목록을 조회합니다.")
+    @GetMapping("/oauth2")
+    public ResponseEntity<CommonResponse<List<String>>> getOAuthProviders(
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        return ResponseEntity.ok(CommonResponse.from(USER_FOUND.getMessage(),  userService.getOAuthProviders(userDetails.getUsername())));
+    }
 }
 
