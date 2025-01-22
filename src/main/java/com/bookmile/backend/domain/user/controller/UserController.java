@@ -6,19 +6,19 @@ import com.bookmile.backend.domain.user.dto.res.UserDetailResDto;
 import com.bookmile.backend.domain.user.dto.res.UserResDto;
 import com.bookmile.backend.domain.user.service.UserService;
 import com.bookmile.backend.global.common.CommonResponse;
+import com.bookmile.backend.global.oauth.OAuth2UnlinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.bookmile.backend.global.common.StatusCode.*;
@@ -136,9 +136,10 @@ public class UserController {
     }
 
     @Operation(summary = "[테스트] OAuth2 로그인 (소셜로그인)", description = "테스트용입니다. <br>" +
-            "회원가입 따로 없이, test용 email을 입력하여 계정을 생성하고, rediectUrl이 올바르게 나오는지 확인합니다. <br>" +
+            "토큰의 유효시간이 매우 짧습니다. accessToken : 30초, refreshToken : 1분 <br>" +
+            "회원가입 따로 없이, test용 email을 입력하여 계정을 생성하고, redirectUrl이 올바르게 나오는지 확인합니다. <br>" +
             "또한, 제공한 accessToken, refreshToken을 유효한지 확인합니다. ")
-    @PostMapping("/test/social-login")
+    @PostMapping("/test/oauth2")
     public ResponseEntity<CommonResponse<Map<String, String>>> testSocialLogin(
             @RequestParam String email
     ) {
@@ -146,7 +147,7 @@ public class UserController {
                 .body(CommonResponse.from(SIGN_IN.getMessage(), userService.testSocialLogin(email)));
     }
 
-    @Operation(summary = "[테스트] 리다이렉트",description = "리다이렉트 url에 토큰이 올바른지 검사합니다. <br>" +
+    @Operation(summary = "[테스트] 토큰 확인용",description = "리다이렉트 url에 토큰이 올바른지 검사합니다. <br>" +
             "유저의 정보를 확인합니다.")
     @PostMapping("/test/redirect")
     public ResponseEntity<CommonResponse<Map<String, String>>> testRedirect(
@@ -162,6 +163,18 @@ public class UserController {
             @AuthenticationPrincipal UserDetails userDetails) {
 
         return ResponseEntity.ok(CommonResponse.from(USER_FOUND.getMessage(),  userService.getOAuthProviders(userDetails.getUsername())));
+    }
+
+    @Operation(summary = "소셜로그인 연동 해제", description = "소셜 로그인 연동을 해제합니다. ")
+    @PostMapping("/oauth2/unlink/{provider}")
+    public ResponseEntity<CommonResponse<Object>> unlink(
+            HttpServletRequest request,
+            @PathVariable(name = "provider") String provider,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        userService.unlinkUserOAuth(request, provider, userDetails.getUsername());
+
+        return ResponseEntity.ok(CommonResponse.from("연동해제 성공"));
+
     }
 }
 
