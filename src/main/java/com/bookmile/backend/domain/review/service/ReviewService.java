@@ -11,7 +11,7 @@ public interface ReviewService {
 
     List<RecentReviewListResDto> viewRecentReviewList(Long bookId);
 
-    Long createReview(Long bookId, Long userId, ReviewReqDto reviewReqDto);
+    Long createReview(Long bookId, String userEmail, ReviewReqDto reviewReqDto);
 
     Long updateReview(Long reviewId, ReviewReqDto reviewReqDto);
 

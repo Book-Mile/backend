@@ -52,9 +52,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Long createReview(Long bookId, Long userId, ReviewReqDto reviewReqDto) {
+    public Long createReview(Long bookId, String userEmail, ReviewReqDto reviewReqDto) {
         Book book = findBookById(bookId);
-        User user = findUserById(userId);
+        User user = findUserByEmail(userEmail);
 
         Review review = Review.from(user, book, reviewReqDto);
 
@@ -97,8 +97,8 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new CustomException(BOOK_NOT_FOUND));
     }
 
-    private User findUserById(Long userId) {
-        return userRepository.findById(userId)
+    private User findUserByEmail(String userEmail) {
+        return userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 }

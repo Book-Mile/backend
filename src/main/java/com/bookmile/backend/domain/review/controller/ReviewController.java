@@ -17,6 +17,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,9 +56,11 @@ public class ReviewController {
 
     @Operation(summary = "리뷰 작성", description = "해당 책의 리뷰를 작성합니다.")
     @PostMapping
-    public ResponseEntity<CommonResponse<Long>> createReview(@RequestParam Long bookId, @RequestParam Long userId,
+    public ResponseEntity<CommonResponse<Long>> createReview(@RequestParam Long bookId,
+                                                             @AuthenticationPrincipal UserDetails userDetails,
                                                              @Valid @RequestBody ReviewReqDto reviewReqDto) {
-        Long createReview = reviewService.createReview(bookId, userId, reviewReqDto);
+        String userEmail = userDetails.getUsername();
+        Long createReview = reviewService.createReview(bookId, userEmail, reviewReqDto);
         return ResponseEntity.status(CREATE_REVIEW.getStatus())
                 .body(CommonResponse.from(CREATE_REVIEW.getMessage(), createReview));
     }
