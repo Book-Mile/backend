@@ -1,17 +1,5 @@
 package com.bookmile.backend.domain.user.service.impl;
 
-import static com.bookmile.backend.global.common.StatusCode.AUTHENTICATION_FAILED;
-import static com.bookmile.backend.global.common.StatusCode.EMAIL_CODE_NOT_MATCH;
-import static com.bookmile.backend.global.common.StatusCode.EMAIL_TOO_MANY_REQUESTS;
-import static com.bookmile.backend.global.common.StatusCode.INVALID_FILE_TYPE;
-import static com.bookmile.backend.global.common.StatusCode.INVALID_TOKEN;
-import static com.bookmile.backend.global.common.StatusCode.MAIL_SERVER_ERROR;
-import static com.bookmile.backend.global.common.StatusCode.PASSWORD_DUPLICATE;
-import static com.bookmile.backend.global.common.StatusCode.PASSWORD_NOT_MATCH;
-import static com.bookmile.backend.global.common.StatusCode.TOKEN_NOT_FOUND;
-import static com.bookmile.backend.global.common.StatusCode.USER_ALREADY_EXISTS;
-import static com.bookmile.backend.global.common.StatusCode.USER_NOT_FOUND;
-
 import com.bookmile.backend.domain.image.service.ImageService;
 import com.bookmile.backend.domain.user.dto.req.PasswordReqDto;
 import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
@@ -22,22 +10,24 @@ import com.bookmile.backend.domain.user.dto.res.UserDetailResDto;
 import com.bookmile.backend.domain.user.dto.res.UserInfoDto;
 import com.bookmile.backend.domain.user.dto.res.UserResDto;
 import com.bookmile.backend.domain.user.entity.User;
+import com.bookmile.backend.domain.user.entity.UserOAuth;
+import com.bookmile.backend.domain.user.repository.UserOAuthRepository;
 import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.domain.user.service.UserService;
 import com.bookmile.backend.global.common.UserRole;
 import com.bookmile.backend.global.exception.CustomException;
 import com.bookmile.backend.global.jwt.JwtTokenProvider;
+import com.bookmile.backend.global.oauth.OAuth2UnlinkService;
 import com.bookmile.backend.global.oauth.nickname.RandomNickname;
 import com.bookmile.backend.global.redis.RefreshToken;
 import com.bookmile.backend.global.redis.RefreshTokenRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -54,11 +44,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import static com.bookmile.backend.global.common.StatusCode.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserOAuthRepository userOAuthRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -66,6 +59,7 @@ public class UserServiceImpl implements UserService {
     private final JavaMailSender mailSender;
     private final RandomNickname randomNickname;
     private final ImageService imageService;
+    private final OAuth2UnlinkService oAuth2UnlinkService;
 
     @Value("${spring.mail.username}")
     private String maileSenderEmail;
@@ -290,6 +284,22 @@ public class UserServiceImpl implements UserService {
         user.updateImage(url);
     }
 
+    // 회원의 연동 정보 조회
+    @Override
+    @Transactional
+    public List<String> getOAuthProviders(String email) {
+        User user = findByEmail(email);
+
+        List<String> providers = userOAuthRepository.findByUserId(user.getId()).stream()
+                .map(UserOAuth::getProvider)
+                .toList();
+
+        return providers;
+
+
+
+    }
+
     // 회원 탈퇴
     @Override
     @Transactional
@@ -298,7 +308,24 @@ public class UserServiceImpl implements UserService {
         user.updateIsDeleted();
     }
 
-    // 테스트용 - 로그인
+    // 연동 해제
+    @Override
+    @Transactional
+    public void unlinkUserOAuth(HttpServletRequest request,String provider, String email) {
+        String token = jwtTokenProvider.resolveToken(request);
+
+        User user = findByEmail(email);
+
+        UserOAuth userOAuth = userOAuthRepository.findByUserIdAndProvider(user.getId(), provider).orElseThrow(
+                ()-> new CustomException(INVALID_OAUTH_USER));
+
+        // 연동 해제
+        oAuth2UnlinkService.unlinkAccount(provider, token);
+
+        userOAuthRepository.delete(userOAuth);
+    }
+
+    // [테스트용] - 로그인
     @Override
     @Transactional
     public TokenResDto testSignIn(SignInReqDto signInReqDto) {
@@ -315,23 +342,30 @@ public class UserServiceImpl implements UserService {
         return TokenResDto.toDto(accessToken, refreshToken);
     }
 
-    // 테스트용 - OAuth 로그인
+    // [테스트용] - OAuth 로그인
     @Override
     @Transactional
     public Map<String, String> testSocialLogin(String email) {
 
         // test용 유저 생성
         User testUser = userRepository.findByEmail(email).orElseGet(() -> {
-            User newUser = User.builder()
+
+            // 유저 정보 저장
+            User newUser = userRepository.save( User.builder()
                     .email(email)
                     .nickname(randomNickname.generateNickname())
                     .image(mainProfile)
-                    .provider("test")
-                    .providerId("test")
                     .role(UserRole.USER)
                     .isDeleted(false)
-                    .build();
-            return userRepository.save(newUser);
+                    .build());
+
+            // OAuth2.0 정보 저장
+            userOAuthRepository.save( UserOAuth.builder()
+                    .user(newUser)
+                    .provider("test")
+                    .providerId("test")
+                    .build());
+            return newUser;
         });
 
         // OAuth2User 생성
@@ -363,6 +397,7 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
+    // [테스트용] 리다이렉트 경로 확인
     @Override
     public Map<String, String> testRedirect(String accessToken) {
         log.info("UserServiceImpl.testRedirect: accessToken - {} ", accessToken);
@@ -390,6 +425,10 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    private User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(AUTHENTICATION_FAILED));
+    }
+
     private Map<String, Object> getUserIdByToken(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
 
@@ -410,12 +449,8 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmailAndIsDeletedFalse(email)) {
             throw new CustomException(USER_ALREADY_EXISTS);
         }
-        ;
     }
 
-    private User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(AUTHENTICATION_FAILED));
-    }
 
     // 이메일 요청 카운트 증가
     private void increaseEmailRequestCount(String email) {

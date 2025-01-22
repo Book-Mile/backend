@@ -34,22 +34,15 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    // OAuth2.0 제공자
-    private String provider;
-
-    // OAuth 로그인 유저의 고유 ID
-    private String providerId;
 
     @Builder
-    public User(String nickname, String email, String password, String image, Boolean isDeleted, UserRole role, String provider, String providerId) {
+    public User(String nickname, String email, String password, String image, Boolean isDeleted, UserRole role) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.image = image;
         this.isDeleted = isDeleted;
         this.role = role;
-        this.provider = provider;
-        this.providerId = providerId;
     }
 
     public void updateNickname(String newNickname) {

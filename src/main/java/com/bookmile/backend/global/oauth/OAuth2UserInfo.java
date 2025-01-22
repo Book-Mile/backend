@@ -32,45 +32,45 @@ public class OAuth2UserInfo {
         this.profile = profile;
     }
 
-    public static OAuth2UserInfo of(String provider, String attributeKey, Map<String, Object> attributes){
+    public static OAuth2UserInfo of(String provider,Map<String, Object> attributes){
         return switch (provider) {
-            case "google" -> ofGoogle(attributeKey, attributes);
-            case "kakao" -> ofKakao(attributeKey, attributes);
-            case "naver" -> ofNaver(attributeKey, attributes);
+            case "google" -> ofGoogle( attributes);
+            case "kakao" -> ofKakao(attributes);
+            case "naver" -> ofNaver(attributes);
             default -> throw new CustomException(PROVIDER_NOT_FOUND);
         };
     }
 
-    private static OAuth2UserInfo ofGoogle(String attributeKey, Map<String, Object> attributes) {
+    private static OAuth2UserInfo ofGoogle(Map<String, Object> attributes) {
         return OAuth2UserInfo.builder()
                 .provider("google")
                 .attributes(attributes)
-                .attributeKey(attributeKey)
+                .attributeKey(String.valueOf(attributes.get("sub")))
                 .email(String.valueOf(attributes.get("email")))
                 .profile((String) attributes.get("picture"))
                 .build();
     }
 
-    private static OAuth2UserInfo ofKakao(String attributeKey, Map<String, Object> attributes) {
+    private static OAuth2UserInfo ofKakao(Map<String, Object> attributes) {
         Map<String, Object> account = (Map<String, Object>) attributes.get("kakao_account");
         Map<String, Object> profile = (Map<String, Object>) account.get("profile");
 
         return OAuth2UserInfo.builder()
                 .provider("kakao")
                 .attributes(attributes)
-                .attributeKey(attributeKey)
+                .attributeKey(String.valueOf(attributes.get("id")))
                 .email(String.valueOf(account.get("email")))
                 .profile(String.valueOf(profile.get("profile_image_url")))
                 .build();
     }
 
-    private static OAuth2UserInfo ofNaver(String attributeKey, Map<String, Object> attributes) {
+    private static OAuth2UserInfo ofNaver(Map<String, Object> attributes) {
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
 
         return OAuth2UserInfo.builder()
                 .provider("naver")
                 .attributes(attributes)
-                .attributeKey(attributeKey)
+                .attributeKey(String.valueOf(attributes.get("id")))
                 .email(String.valueOf(response.get("email")))
                 .profile(String.valueOf(response.get("profile_image")))
                 .build();
@@ -83,8 +83,6 @@ public class OAuth2UserInfo {
                 .nickname(nickname.generateNickname())
                 .email(email)
                 .image(profile)
-                .provider(provider)
-                .providerId(attributeKey)
                 .role(UserRole.USER)
                 .isDeleted(false)
                 .build();
