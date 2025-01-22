@@ -70,7 +70,7 @@ public class OAuth2UserInfo {
         return OAuth2UserInfo.builder()
                 .provider("naver")
                 .attributes(attributes)
-                .attributeKey(String.valueOf(attributes.get("id")))
+                .attributeKey(String.valueOf(response.get("id")))
                 .email(String.valueOf(response.get("email")))
                 .profile(String.valueOf(response.get("profile_image")))
                 .build();
