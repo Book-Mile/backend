@@ -110,7 +110,27 @@ public class OAuth2UnlinkService {
     public void unlinkGoogle(String accessToken) {
         MultiValueMap<String,String> params = new LinkedMultiValueMap<>();
         params.add("token", accessToken);
-        restTemplate.postForObject(GOOGLE_URL, params, String.class);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+
+        try {
+            // 구글 API 로 POST 호출
+            ResponseEntity<Map> response = restTemplate.exchange(GOOGLE_URL, HttpMethod.POST,requestEntity, Map.class);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                log.info("연동 해제 성공");
+            } else {
+                log.error("연동 해제 실패: {}", response.getBody());
+            }
+        } catch(HttpClientErrorException e) {
+            if(e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                log.error("토큰 만료됨.");
+                throw new CustomException(StatusCode.INVALID_TOKEN);
+            }
+        }
     }
 
 
