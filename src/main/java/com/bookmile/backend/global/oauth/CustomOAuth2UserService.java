@@ -4,7 +4,7 @@ import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.domain.user.entity.UserOAuth;
 import com.bookmile.backend.domain.user.repository.UserOAuthRepository;
 import com.bookmile.backend.domain.user.repository.UserRepository;
-import com.bookmile.backend.global.oauth.nickname.RandomNickname;
+import com.bookmile.backend.global.common.RandomNickname;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

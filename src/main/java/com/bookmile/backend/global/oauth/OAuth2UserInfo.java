@@ -3,7 +3,7 @@ package com.bookmile.backend.global.oauth;
 import com.bookmile.backend.domain.user.entity.User;
 import com.bookmile.backend.global.common.UserRole;
 import com.bookmile.backend.global.exception.CustomException;
-import com.bookmile.backend.global.oauth.nickname.RandomNickname;
+import com.bookmile.backend.global.common.RandomNickname;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.bookmile.backend.global.oauth.nickname;
+package com.bookmile.backend.global.common;
 
 import com.bookmile.backend.domain.user.repository.UserRepository;
 import com.bookmile.backend.global.exception.CustomException;

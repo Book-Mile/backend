@@ -10,7 +10,7 @@ import com.bookmile.backend.global.common.UserRole;
 import com.bookmile.backend.global.exception.CustomException;
 import com.bookmile.backend.global.jwt.JwtTokenProvider;
 import com.bookmile.backend.global.oauth.OAuth2UnlinkService;
-import com.bookmile.backend.global.oauth.nickname.RandomNickname;
+import com.bookmile.backend.global.common.RandomNickname;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
