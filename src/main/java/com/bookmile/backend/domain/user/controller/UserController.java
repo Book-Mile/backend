@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -165,16 +166,15 @@ public class UserController {
         return ResponseEntity.ok(CommonResponse.from(USER_FOUND.getMessage(),  userService.getOAuthProviders(userDetails.getUsername())));
     }
 
-    @Operation(summary = "소셜로그인 연동 해제", description = "소셜 로그인 연동을 해제합니다. ")
-    @PostMapping("/oauth2/unlink/{provider}")
-    public ResponseEntity<CommonResponse<Object>> unlink(
+    @Operation(summary = "소셜로그인 연동 해제- 네이버", description = "소셜 로그인 연동을 해제합니다. ")
+    @PostMapping( "/oauth2/unlink/{provider}")
+    public ResponseEntity<CommonResponse<Object>> unlinkNaver(
             HttpServletRequest request,
-            @PathVariable(name = "provider") String provider,
+            @PathVariable(value = "provider") String provider,
             @AuthenticationPrincipal UserDetails userDetails) {
         userService.unlinkUserOAuth(request, provider, userDetails.getUsername());
 
         return ResponseEntity.ok(CommonResponse.from("연동해제 성공"));
-
     }
 }
 

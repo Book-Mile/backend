@@ -11,7 +11,10 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 
 @Slf4j
@@ -23,7 +26,6 @@ public class OAuth2UnlinkService {
     private String KAKAO_URL = "https://kapi.kakao.com/v1/user/unlink";
     private String NAVER_URL = "https://nid.naver.com/oauth2.0/token";
 
-    private final RestTemplate restTemplate;
 
     @Value("${spring.security.oauth2.client.registration.naver.client-id}")
     private String NAVER_CLIENT_ID;
@@ -31,11 +33,13 @@ public class OAuth2UnlinkService {
     @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String NAVER_CLIENT_SECRET;
 
+    @Value("${spring.security.oauth2.client.provider.kakao.admin-key}")
+    private String KAKAO_ADMIN_KEY;
+
+    private final RestTemplate restTemplate;
+
     public void unlinkAccount(String provider, String accessToken) {
         switch (provider.toLowerCase()) {
-            case "kakao":
-                unlinkKakao(accessToken);
-                break;
             case "naver":
                 unlinkNaver(accessToken);
                 break;
@@ -46,6 +50,39 @@ public class OAuth2UnlinkService {
                 throw new CustomException(StatusCode.INPUT_VALUE_INVALID);
         }
     }
+
+    public void unlinkKakao(String providerId) {
+
+            // 헤더에 admin key 넣기
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "KakaoAK " + KAKAO_ADMIN_KEY);
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            // type
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("target_id_type", "user_id");
+            params.add("target_id", providerId);
+            log.info("unlinkKaKao : {}", params);
+
+            HttpEntity<MultiValueMap<String,String>> requestEntity = new HttpEntity<>(params, headers);
+
+            try {
+                // 카카오 API 로 POST 호출
+                ResponseEntity<Map> response = restTemplate.exchange(KAKAO_URL, HttpMethod.POST, requestEntity, Map.class);
+
+                if (response.getStatusCode() == HttpStatus.OK) {
+                    log.info("카카오 연동 해제 성공");
+                } else {
+                    log.error(" 카카오 연동 해제 실패: {}", response.getBody());
+                }
+            } catch(HttpClientErrorException e) {
+                if(e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                    log.error("KaKao 토큰 만료됨.");
+                    throw new CustomException(StatusCode.INVALID_TOKEN);
+                }
+            }
+    }
+
     public void unlinkNaver(String accessToken) {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -69,6 +106,14 @@ public class OAuth2UnlinkService {
 
         log.info("OAuth2UnlinkService.unlinkNaver: {}", response.getBody().getResult());
     }
+
+    public void unlinkGoogle(String accessToken) {
+        MultiValueMap<String,String> params = new LinkedMultiValueMap<>();
+        params.add("token", accessToken);
+        restTemplate.postForObject(GOOGLE_URL, params, String.class);
+    }
+
+
     // 네이버 응답 데이터
     @Getter
     @RequiredArgsConstructor
@@ -77,3 +122,4 @@ public class OAuth2UnlinkService {
         private String accessToken;
         private String result;
     }
+}

@@ -34,7 +34,6 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-
     @Builder
     public User(String nickname, String email, String password, String image, Boolean isDeleted, UserRole role) {
         this.nickname = nickname;

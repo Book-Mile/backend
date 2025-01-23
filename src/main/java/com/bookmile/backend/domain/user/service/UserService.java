@@ -30,7 +30,7 @@ public interface UserService {
     List<String> getOAuthProviders(String email);
     void deleteUser(String email);
     void unlinkUserOAuth(HttpServletRequest request, String provider, String email);
-    
+  //  void unlinkKakao(String email);
     // 테스트 로그인
     TokenResDto testSignIn(SignInReqDto signInReqDto);
     Map<String, String> testSocialLogin(String email);

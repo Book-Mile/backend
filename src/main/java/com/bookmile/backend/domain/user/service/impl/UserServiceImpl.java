@@ -312,11 +312,14 @@ public class UserServiceImpl implements UserService {
 
         User user = findByEmail(email);
 
-        UserOAuth userOAuth = userOAuthRepository.findByUserIdAndProvider(user.getId(), provider).orElseThrow(
-                () -> new CustomException(INVALID_OAUTH_USER));
+       UserOAuth userOAuth = findByUser(user.getId(), provider);
 
         // 연동 해제
-        oAuth2UnlinkService.unlinkAccount(provider, token);
+        if (provider.equals("kakao")){
+            oAuth2UnlinkService.unlinkKakao(userOAuth.getProviderId());
+        }else{
+            oAuth2UnlinkService.unlinkAccount(provider, token);
+        }
 
         userOAuthRepository.delete(userOAuth);
     }
@@ -423,6 +426,12 @@ public class UserServiceImpl implements UserService {
 
     private User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(AUTHENTICATION_FAILED));
+    }
+
+    private UserOAuth findByUser(Long userId, String provider){
+        return userOAuthRepository.findByUserIdAndProvider(userId, provider).orElseThrow(
+                () -> new CustomException(INVALID_OAUTH_USER));
+
     }
 
     private Map<String, Object> getUserIdByToken(HttpServletRequest request) {

@@ -65,7 +65,6 @@ public enum StatusCode {
     FORBIDDEN_TOKEN(FORBIDDEN, "접근 권한이 없습니다."),
     TOKEN_NOT_FOUND(NOT_FOUND, "존재하는 토큰이 없습니다."),
 
-
     /* 400 BAD_REQUEST : 잘못된 요청 */
     PASSWORD_NOT_MATCH(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     PASSWORD_DUPLICATE(BAD_REQUEST, "이전 비밀번호와 동일합니다."),
