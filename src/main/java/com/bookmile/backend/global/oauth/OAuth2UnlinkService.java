@@ -38,19 +38,6 @@ public class OAuth2UnlinkService {
 
     private final RestTemplate restTemplate;
 
-    public void unlinkAccount(String provider, String accessToken) {
-        switch (provider.toLowerCase()) {
-            case "naver":
-                unlinkNaver(accessToken);
-                break;
-            case "google":
-                unlinkGoogle(accessToken);
-                break;
-            default:
-                throw new CustomException(StatusCode.INPUT_VALUE_INVALID);
-        }
-    }
-
     public void unlinkKakao(String providerId) {
 
             // 헤더에 admin key 넣기
@@ -132,7 +119,6 @@ public class OAuth2UnlinkService {
             }
         }
     }
-
 
     // 네이버 응답 데이터
     @Getter

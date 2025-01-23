@@ -82,7 +82,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         userAttributes.put("exist", !isFirstLogin); // 최초 로그인 여부에 따라 T/F
         userAttributes.put("userId", user.getId());
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(findUser.get().getRole().toString())),
+                Collections.singleton(new SimpleGrantedAuthority(user.getRole().toString())),
                 userAttributes, "email");
 
     }
