@@ -26,7 +26,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private String callbackUrl;
 
     @Value("${spring.oauth2.url.sign-up}")
-    private String signUpUrl;
+    private String mainUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -58,8 +58,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 response.sendRedirect(redirectUrl);
             }
             else{
-                // 회원 정보 새로 저장 -> 로그인 페이지로 이동
-                String redirectUrl = UriComponentsBuilder.fromHttpUrl(signUpUrl)
+                // 회원 정보 새로 저장 -> 메인페이지로 이동
+                String redirectUrl = UriComponentsBuilder.fromHttpUrl(mainUrl)
                         .toUriString();
                 response.sendRedirect(redirectUrl);
             }

@@ -11,7 +11,6 @@ import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
 import com.bookmile.backend.domain.record.service.Impl.RecordServiceImpl;
 import com.bookmile.backend.global.common.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

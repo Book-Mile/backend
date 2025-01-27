@@ -1,42 +1,22 @@
 package com.bookmile.backend.domain.user.service.impl;
 
-import static com.bookmile.backend.global.common.StatusCode.AUTHENTICATION_FAILED;
-import static com.bookmile.backend.global.common.StatusCode.EMAIL_CODE_NOT_MATCH;
-import static com.bookmile.backend.global.common.StatusCode.EMAIL_TOO_MANY_REQUESTS;
-import static com.bookmile.backend.global.common.StatusCode.INVALID_FILE_TYPE;
-import static com.bookmile.backend.global.common.StatusCode.INVALID_TOKEN;
-import static com.bookmile.backend.global.common.StatusCode.MAIL_SERVER_ERROR;
-import static com.bookmile.backend.global.common.StatusCode.PASSWORD_DUPLICATE;
-import static com.bookmile.backend.global.common.StatusCode.PASSWORD_NOT_MATCH;
-import static com.bookmile.backend.global.common.StatusCode.TOKEN_NOT_FOUND;
-import static com.bookmile.backend.global.common.StatusCode.USER_ALREADY_EXISTS;
-import static com.bookmile.backend.global.common.StatusCode.USER_NOT_FOUND;
+import static com.bookmile.backend.global.common.StatusCode.*;
 
 import com.bookmile.backend.domain.image.service.ImageService;
-import com.bookmile.backend.domain.user.dto.req.PasswordReqDto;
-import com.bookmile.backend.domain.user.dto.req.SignInReqDto;
-import com.bookmile.backend.domain.user.dto.req.SignUpReqDto;
-import com.bookmile.backend.domain.user.dto.req.UserInfoReqDto;
-import com.bookmile.backend.domain.user.dto.res.TokenResDto;
-import com.bookmile.backend.domain.user.dto.res.UserDetailResDto;
-import com.bookmile.backend.domain.user.dto.res.UserInfoDto;
-import com.bookmile.backend.domain.user.dto.res.UserResDto;
+import com.bookmile.backend.domain.user.dto.req.*;
+import com.bookmile.backend.domain.user.dto.res.*;
 import com.bookmile.backend.domain.user.entity.User;
-import com.bookmile.backend.domain.user.repository.UserRepository;
+import com.bookmile.backend.domain.user.repository.*;
 import com.bookmile.backend.domain.user.service.UserService;
-import com.bookmile.backend.global.common.UserRole;
 import com.bookmile.backend.global.exception.CustomException;
 import com.bookmile.backend.global.jwt.JwtTokenProvider;
-import com.bookmile.backend.global.oauth.nickname.RandomNickname;
-import com.bookmile.backend.global.redis.RefreshToken;
-import com.bookmile.backend.global.redis.RefreshTokenRepository;
+import com.bookmile.backend.global.common.RandomNickname;
+import com.bookmile.backend.global.redis.*;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,14 +25,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
@@ -75,9 +51,6 @@ public class UserServiceImpl implements UserService {
 
     @Value("${aws.main.profile}")
     private String mainProfile;
-
-    @Value("${spring.oauth2.url.callback}")
-    private String callBackUrl;
 
     private static final String[] ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"};
 
@@ -155,15 +128,6 @@ public class UserServiceImpl implements UserService {
         String newRefreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getId());
 
         return TokenResDto.toDto(newAccessToken, newRefreshToken);
-    }
-
-    // 회원 정보 조회
-    @Override
-    public UserInfoDto getUserInfo(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-
-        return UserInfoDto.toDto(user);
     }
 
     // 회원 정보 조회 (토큰)
@@ -298,7 +262,7 @@ public class UserServiceImpl implements UserService {
         user.updateIsDeleted();
     }
 
-    // 테스트용 - 로그인
+    // [테스트용] - 로그인
     @Override
     @Transactional
     public TokenResDto testSignIn(SignInReqDto signInReqDto) {
@@ -315,54 +279,7 @@ public class UserServiceImpl implements UserService {
         return TokenResDto.toDto(accessToken, refreshToken);
     }
 
-    // 테스트용 - OAuth 로그인
-    @Override
-    @Transactional
-    public Map<String, String> testSocialLogin(String email) {
-
-        // test용 유저 생성
-        User testUser = userRepository.findByEmail(email).orElseGet(() -> {
-            User newUser = User.builder()
-                    .email(email)
-                    .nickname(randomNickname.generateNickname())
-                    .image(mainProfile)
-                    .provider("test")
-                    .providerId("test")
-                    .role(UserRole.USER)
-                    .isDeleted(false)
-                    .build();
-            return userRepository.save(newUser);
-        });
-
-        // OAuth2User 생성
-        Map<String, Object> attributes = new HashMap<>();
-        attributes.put("email", testUser.getEmail());
-        attributes.put("exist", true);
-        attributes.put("userId", testUser.getId());
-
-        OAuth2User oAuth2User = new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-                attributes, "email");
-
-        String accessToken = jwtTokenProvider.createTestAccessToken(testUser.getEmail(), testUser.getId(),
-                testUser.getRole().toString());
-        String refreshToken = jwtTokenProvider.createTestRefreshToken(testUser.getEmail(), testUser.getId());
-
-        String redirectUrl = UriComponentsBuilder.fromHttpUrl(callBackUrl)
-                .queryParam("testAccess", accessToken)
-                .queryParam("testRefresh", refreshToken)
-                .toUriString();
-
-        log.info("UserServiceImpl.testSocialLogin: redirectUrl - {},", redirectUrl);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("redirectUrl", redirectUrl);
-        response.put("accessToken", accessToken);
-        response.put("refreshToken", refreshToken);
-
-        return response;
-    }
-
+    // [테스트용] 리다이렉트 경로 확인
     @Override
     public Map<String, String> testRedirect(String accessToken) {
         log.info("UserServiceImpl.testRedirect: accessToken - {} ", accessToken);
@@ -378,7 +295,6 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
-
     private boolean validateImageFile(MultipartFile file) {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase();
 
@@ -388,6 +304,10 @@ public class UserServiceImpl implements UserService {
             }
         }
         return false;
+    }
+
+    private User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(AUTHENTICATION_FAILED));
     }
 
     private Map<String, Object> getUserIdByToken(HttpServletRequest request) {
@@ -410,12 +330,8 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmailAndIsDeletedFalse(email)) {
             throw new CustomException(USER_ALREADY_EXISTS);
         }
-        ;
     }
 
-    private User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(AUTHENTICATION_FAILED));
-    }
 
     // 이메일 요청 카운트 증가
     private void increaseEmailRequestCount(String email) {

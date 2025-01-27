@@ -65,7 +65,6 @@ public enum StatusCode {
     FORBIDDEN_TOKEN(FORBIDDEN, "접근 권한이 없습니다."),
     TOKEN_NOT_FOUND(NOT_FOUND, "존재하는 토큰이 없습니다."),
 
-
     /* 400 BAD_REQUEST : 잘못된 요청 */
     PASSWORD_NOT_MATCH(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     PASSWORD_DUPLICATE(BAD_REQUEST, "이전 비밀번호와 동일합니다."),
@@ -76,6 +75,10 @@ public enum StatusCode {
     CUSTOM_GOAL_REQUIRED(BAD_REQUEST, "GoalType이 CUSTOM일 경우 사용자 정의 목표(customGoal)는 필수입니다."),
     MULTI_PART_FILE_INVALID(BAD_REQUEST,"유효하지 않은 MultiPartFile입니다."),
     FILE_INVALID(BAD_REQUEST,"파일 저장 중 오류가 발생했습니다."),
+    INVALID_REQUEST(BAD_REQUEST,"유효하지 않은 요청입니다."),
+    INVALID_GROUP_STATUS_UPDATE(BAD_REQUEST,"잘못된 요청입니다."),
+    INVALID_GROUP(BAD_REQUEST,"유효하지 않은 그룹입니다." ),
+    INVALID_BOOK_ID(BAD_REQUEST,"존재하지 않는 책입니다." ),
 
     /* 401 UNAUTHORIZED : 비인증 사용자 */
     AUTHENTICATION_FAILED(UNAUTHORIZED, "회원의 정보가 일치하지 않습니다."),
@@ -98,6 +101,7 @@ public enum StatusCode {
     INVALID_GOAL_TYPE(NOT_FOUND, "유효하지 않은 GoalType 값입니다"),
     INVALID_TEMPLATE_ID(NOT_FOUND, "존재하지 않는 템플릿입니다."),
     BOOK_INFO_NOT_FOUND(NOT_FOUND, "책 정보를 가져올 수 없습니다."),
+    INVALID_OAUTH_USER(NOT_FOUND, "해당 소셜 계정이 연동되지 않았습니다."),
 
     /* 409 CONFLICT : 리소스 충돌 */
     USER_ALREADY_EXISTS(CONFLICT, "이미 존재하는 회원입니다."),
@@ -107,15 +111,13 @@ public enum StatusCode {
     NICKNAME_TOO_MANY_REQUESTS(TOO_MANY_REQUESTS, "더이상 생성할 닉네임이 없습니다."),
 
     /* 500 INTERNAL_SERVER_ERROR  Error */
+    SERVER_ERROR(INTERNAL_SERVER_ERROR, "프로그램 서버에 연결할 수 없습니다."),
     REDIS_ERROR(INTERNAL_SERVER_ERROR, "Redis 서버에 연결할 수 없습니다. "),
     MAIL_SERVER_ERROR(INTERNAL_SERVER_ERROR, "메일 서버에 오류가 생겼습니다."),
     INVALID_TEMPLATE_USAGE(NOT_FOUND,"완독한 그룹의 템플릿만 사용할 수 있습니다."),
     GOAL_CONTENT_REQUIRED(NOT_FOUND,"목표 상세 내용은 필수입니다." ),
     NO_PERMISSION(UNAUTHORIZED,"그룹장만 그룹의 상태를 변경할 수 있습니다."),
     NOT_MEMBER(UNAUTHORIZED,"그룹 구성원이 아닙니다." ),
-    INVALID_GROUP_STATUS_UPDATE(BAD_REQUEST,"잘못된 요청입니다."),
-    INVALID_GROUP(BAD_REQUEST,"유효하지 않은 그룹입니다." ),
-    INVALID_BOOK_ID(BAD_REQUEST,"존재하지 않는 책입니다." ),
 
     BESTSELLER_SEARCH(OK,"베스트 셀러 조회에 성공했습니다." ),
     NEWBOOK_SEARCH(OK,"신간 도서 조회에 성공했습니다." ),

@@ -6,7 +6,6 @@ import com.bookmile.backend.domain.user.dto.req.SignUpReqDto;
 import com.bookmile.backend.domain.user.dto.req.UserInfoReqDto;
 import com.bookmile.backend.domain.user.dto.res.TokenResDto;
 import com.bookmile.backend.domain.user.dto.res.UserDetailResDto;
-import com.bookmile.backend.domain.user.dto.res.UserInfoDto;
 import com.bookmile.backend.domain.user.dto.res.UserResDto;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,7 +16,6 @@ public interface UserService {
     UserResDto signUp(SignUpReqDto signUpReqDto);
     TokenResDto signIn(SignInReqDto signInReqDto);
     TokenResDto reIssue(HttpServletRequest request);
-    UserInfoDto getUserInfo(Long userId);
     UserDetailResDto getUser(String email);
     Boolean checkNickname(String nickname);
 
@@ -30,6 +28,5 @@ public interface UserService {
 
     // 테스트 로그인
     TokenResDto testSignIn(SignInReqDto signInReqDto);
-    Map<String, String> testSocialLogin(String email);
     Map<String, String> testRedirect(String accessToken);
 }
