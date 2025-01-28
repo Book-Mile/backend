@@ -8,9 +8,9 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface RecordService {
-    List<RecordListResDto> viewRecordList(Long groupId, Long userId);
+    List<RecordListResDto> viewRecordList(Long groupId, String userEmail);
 
-    Long createRecord(Long groupId, Long userId, List<MultipartFile> files, RecordReqDto recordReqDto);
+    Long createRecord(Long groupId, String userEmail, List<MultipartFile> files, RecordReqDto recordReqDto);
 
     Long updateRecord(Long recordId, UpdateRecordReqDto updateRecordReqDto);
 

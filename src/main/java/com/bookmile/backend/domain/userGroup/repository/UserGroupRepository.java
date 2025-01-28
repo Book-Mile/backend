@@ -19,15 +19,16 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
 
     // 순서상 userId, groupId로 검사하여 -> 404 에러가 뜰 경우 있음
     // @Param으로 명서
-    Optional<UserGroup> findByUserIdAndGroupId(@Param("userId")Long userId, @Param("groupId")Long groupId);
+    Optional<UserGroup> findByUserIdAndGroupId(@Param("userId") Long userId, @Param("groupId") Long groupId);
 
     @Query("SELECT ug FROM UserGroup ug WHERE ug.group.id = :groupId AND ug.role = 'MASTER'")
     Optional<UserGroup> findMasterByGroupId(@Param("groupId") Long groupId);
 
-    @Query(value = "SELECT user_id FROM user_group WHERE group_id = :groupId ORDER BY RAND()", nativeQuery = true)
-    List<Long> findUserRandomSortByGroupId(Long groupId);
-
     @Query("SELECT ug FROM UserGroup ug JOIN ug.group g WHERE ug.user.email = :userEmail AND g.status = :status")
-    List<UserGroup> findGroupsByUserEmailAndStatus(@Param("userEmail") String userEmail, @Param("status") GroupStatus status);
+    List<UserGroup> findGroupsByUserEmailAndStatus(@Param("userEmail") String userEmail,
+                                                   @Param("status") GroupStatus status);
+
+    @Query(value = "SELECT email FROM user_group WHERE group_id = :groupId ORDER BY RAND()", nativeQuery = true)
+    List<String> findUserEmailRandomSortByGroupId(Long groupId);
 
 }
