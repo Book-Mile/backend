@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Arrays;
+
 @Configuration
 public class SwaggerConfig {
 
@@ -39,7 +41,7 @@ public class SwaggerConfig {
 
         return new OpenAPI()
                 .info(apiInfo())
-                .addServersItem(server)
+                .servers(Arrays.asList(localServer, prodServer))
                 .addSecurityItem(securityRequirement)
                 .schemaRequirement("Authorization", securityScheme);
     }
