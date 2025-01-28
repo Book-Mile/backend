@@ -8,18 +8,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 @Configuration
 public class SwaggerConfig {
 
     @Value("${swagger.server-url}")
     private String serverUrl;
 
+    @Value("${swagger.local-url}")
+    private String localUrl;
 
     @Bean
     public OpenAPI openAPI() {
-        Server server = new Server();
-        server.setUrl(serverUrl);
+        Server localServer = new Server();
+        localServer.setUrl(localUrl);
+        localServer.setDescription("Local Server");
+
+        Server prodServer = new Server();
+        prodServer.setUrl(serverUrl);
+        prodServer.setDescription("Bookmile Server");
+
 
         SecurityScheme securityScheme = new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP)
