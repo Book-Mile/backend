@@ -52,10 +52,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안함
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/swagger-ui/**","swagger-ui/index.html#/","/v3/api-docs/**", "/swagger-resources/**").permitAll()
-                        .requestMatchers("/api/v1/users/sign-up", "/api/v1/users/sign-in","/api/v1/users/reissue").permitAll()
+                        .requestMatchers("/api/v1/users/sign-up", "/api/v1/users/sign-in","/api/v1/users/reissue", "/api/v1/users/test/**").permitAll()
                         .requestMatchers("/api/v1/oauth2/test").permitAll()
-                        .requestMatchers("/api/v1/users/test/**").permitAll()
-                        .requestMatchers( "/oauth2/**").permitAll()
+                        .requestMatchers( "/oauth2/**", "/login/oauth2/code/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionHandlerFilter(), JwtAuthenticationFilter.class)

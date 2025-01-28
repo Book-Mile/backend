@@ -66,7 +66,6 @@ jobs:
         key: ${{ secrets.EC2_KEY }}
         debug: true
         script: |
-          # Docker 이미지 업데이트 및 애플리케이션 실행
           cd ~/backend
           docker pull ${{ secrets.DOCKER_USERNAME }}/bookmile-app:latest
           chmod 644 .env
