@@ -3,6 +3,7 @@ package com.bookmile.backend.global.oauth;
 import com.bookmile.backend.global.common.StatusCode;
 import com.bookmile.backend.global.exception.CustomException;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,17 +26,21 @@ public class OAuth2UnlinkService {
     private String KAKAO_URL = "https://kapi.kakao.com/v1/user/unlink";
     private String NAVER_URL = "https://nid.naver.com/oauth2.0/token";
 
-
     @Value("${spring.security.oauth2.client.registration.naver.client-id}")
     private String NAVER_CLIENT_ID;
 
     @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String NAVER_CLIENT_SECRET;
 
-    @Value("${spring.security.oauth2.client.provider.kakao.admin-key}")
+    @Value("${spring.security.oauth2.client.registration.kakao.admin-key}")
     private String KAKAO_ADMIN_KEY;
 
     private final RestTemplate restTemplate;
+
+    @PostConstruct
+    void init() {
+        log.info("kakao admin-key : {}", KAKAO_ADMIN_KEY);
+    }
 
     public void unlinkKakao(String providerId) {
 
