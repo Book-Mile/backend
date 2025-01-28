@@ -41,6 +41,7 @@ jobs:
       # .gitignore에 있는 properties파일 추가
     - name: Add prod_properties
       run: |
+        mkdir -p ./src/main/resources
         touch ./src/main/resources/application.properties
         touch ./src/main/resources/application-oauth.properties
         touch ./src/main/resources/application-private.properties
