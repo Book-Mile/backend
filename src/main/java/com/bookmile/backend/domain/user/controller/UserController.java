@@ -76,7 +76,8 @@ public class UserController {
 
     @Operation(summary = "이메일 인증 코드 전송", description = "이메일 인증을 위한 6자리 난수를 보내는 코드입니다. <br>" +
             "이메일 1개당, 하루 최대 5번의 인증만 가능합니다. <br>" +
-            "해당 이메일의 메일을 통해 코드가 전달됩니다.")
+            "해당 이메일의 메일을 통해 코드가 전달됩니다.<br>" +
+            "중요) 이메일은 중복되지 않아야 하는 unique한 값입니다.")
     @PostMapping("/email")
     public ResponseEntity<CommonResponse<Object>> sendEmailCode(@RequestBody @Valid EmailReqDto emailReqDto) {
         userService.sendEmailCode(emailReqDto.getEmail());

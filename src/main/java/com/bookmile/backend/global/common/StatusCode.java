@@ -66,6 +66,8 @@ public enum StatusCode {
     TOKEN_NOT_FOUND(NOT_FOUND, "존재하는 토큰이 없습니다."),
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
+    INPUT_VALUE_INVALID(BAD_REQUEST, "유효하지 않은 입력입니다."),
+    INVALID_GROUP_ID(BAD_REQUEST, "그룹 ID가 유효하지 않습니다."),
     PASSWORD_NOT_MATCH(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     PASSWORD_DUPLICATE(BAD_REQUEST, "이전 비밀번호와 동일합니다."),
     EMAIL_CODE_NOT_MATCH(BAD_REQUEST, "코드가 일지하지 않습니다."),
@@ -79,6 +81,9 @@ public enum StatusCode {
     INVALID_GROUP_STATUS_UPDATE(BAD_REQUEST,"잘못된 요청입니다."),
     INVALID_GROUP(BAD_REQUEST,"유효하지 않은 그룹입니다." ),
     INVALID_BOOK_ID(BAD_REQUEST,"존재하지 않는 책입니다." ),
+    INVALID_GOAL_TYPE(BAD_REQUEST, "유효하지 않은 GoalType 값입니다"),
+    INVALID_FILE_TYPE(BAD_REQUEST, "유효하지 않은 파일 형식입니다."),
+    INVALID_TEMPLATE_ID(BAD_REQUEST, "존재하지 않는 템플릿입니다."),
 
     /* 401 UNAUTHORIZED : 비인증 사용자 */
     AUTHENTICATION_FAILED(UNAUTHORIZED, "회원의 정보가 일치하지 않습니다."),
@@ -87,8 +92,6 @@ public enum StatusCode {
     /* 403 FORBIDDEN : 권한 없음 */
 
     /* 404 NOT_FOUND : 존재하지 않는 리소스 */
-    INPUT_VALUE_INVALID(NOT_FOUND, "유효하지 않은 입력입니다."),
-    INVALID_GROUP_ID(NOT_FOUND, "그룹 ID가 유효하지 않습니다."),
     USER_NOT_FOUND(NOT_FOUND, "존재하는 회원이 없습니다."),
     BOOK_NOT_FOUND(NOT_FOUND, "존재하는 책이 없습니다."),
     REVIEW_NOT_FOUND(NOT_FOUND, "존재하는 리뷰가 없습니다."),
@@ -97,9 +100,6 @@ public enum StatusCode {
     IMAGE_NOT_FOUND(NOT_FOUND, "존재하는 이미지가 없습니다."),
     NO_USER_OR_NO_GROUP(NOT_FOUND, "사용자 또는 그룹이 존재하지 않습니다."),
     PROVIDER_NOT_FOUND(NOT_FOUND, "존재하는 제공자가 없습니다."),
-    INVALID_FILE_TYPE(NOT_FOUND, "유효하지 않은 파일 형식입니다."),
-    INVALID_GOAL_TYPE(NOT_FOUND, "유효하지 않은 GoalType 값입니다"),
-    INVALID_TEMPLATE_ID(NOT_FOUND, "존재하지 않는 템플릿입니다."),
     BOOK_INFO_NOT_FOUND(NOT_FOUND, "책 정보를 가져올 수 없습니다."),
     INVALID_OAUTH_USER(NOT_FOUND, "해당 소셜 계정이 연동되지 않았습니다."),
 
