@@ -26,7 +26,7 @@ public class TemplateResponseDto {
         this.usageCount = usageCount;
     }
 
-    public static TemplateResponseDto from(Template template, Group group) {
+    public static TemplateResponseDto toDto(Template template, Group group) {
         return TemplateResponseDto.builder()
                 .templateId(template.getId())
                 .groupName(group.getGroupName())

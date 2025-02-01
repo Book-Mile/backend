@@ -27,7 +27,7 @@ public class TemplateController {
         List<Template> templates = templateService.getTopTemplatesByBook(bookId);
 
         List<TemplateResponseDto> responseDtos = templates.stream()
-                .map(TemplateResponseDto::from)
+                .map(TemplateResponseDto::toDto)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(responseDtos);
