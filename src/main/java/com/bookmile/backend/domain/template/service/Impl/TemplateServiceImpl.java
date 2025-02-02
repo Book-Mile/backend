@@ -31,26 +31,26 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public List<TemplateResponseDto> getTopTemplatesByBookIdAndGoalType(Long bookId, GoalType goalType) {
-        Pageable pageable = PageRequest.of(0, 10); // 상위 10개 제한
+        Pageable pageable = PageRequest.of(0, 10);
         List<Template> templates = templateRepository.findTop10ByGroup_Book_IdAndGoalTypeAndIsTemplateTrueOrderByUsageCountDesc(
                 bookId, goalType, pageable);
 
         return templates.stream()
                 .map(template -> {
-                    Group group = getGroupById(template.getGroup().getId()); // 예외 처리 분리
-                    User master = getGroupMaster(group.getId()); // 예외 처리 분리
+                    Group group = getGroupById(template.getGroup().getId());
+                    User master = getGroupMaster(group.getId());
                     return TemplateResponseDto.toDto(template, group, master);
                 })
                 .collect(Collectors.toList());
     }
 
-    private Group getGroupById(Long groupId) {
-        return groupRepository.findById(groupId)
-                .orElseThrow(() -> new CustomException(StatusCode.INVALID_GROUP_ID));
-    }
-
     private User getGroupMaster(Long groupId) {
         return userGroupRepository.findMasterByGroupId(groupId)
                 .orElseThrow(() -> new CustomException(StatusCode.MASTER_NOT_FOUND)).getUser();
+    }
+
+    private Group getGroupById(Long groupId) {
+        return groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(StatusCode.INVALID_GROUP_ID));
     }
 }
