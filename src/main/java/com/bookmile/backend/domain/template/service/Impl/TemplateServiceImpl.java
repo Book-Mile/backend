@@ -11,9 +11,9 @@ import com.bookmile.backend.global.common.StatusCode;
 import com.bookmile.backend.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,9 +25,10 @@ public class TemplateServiceImpl implements TemplateService {
     private final GroupRepository groupRepository;
 
     @Override
-    public List<TemplateResponseDto> getTopTemplatesByBookIdAndGoalType(Long bookId, GoalType goaltype) {
-        List<Template> templates = templateRepository.findTop10ByBookIdAndGoalType(
-                bookId, goaltype, (Pageable) PageRequest.of(0, 10));
+    public List<TemplateResponseDto> getTopTemplatesByBookIdAndGoalType(Long bookId, GoalType goalType) {
+        Pageable pageable = PageRequest.of(0, 10); // 상위 10개 제한
+        List<Template> templates = templateRepository.findTop10ByGroup_Book_IdAndGoalTypeAndIsTemplateTrueOrderByUsageCountDesc(
+                bookId, goalType, pageable);
 
         return templates.stream()
                 .map(template -> {
@@ -37,4 +38,5 @@ public class TemplateServiceImpl implements TemplateService {
                 })
                 .collect(Collectors.toList());
     }
+
 }
