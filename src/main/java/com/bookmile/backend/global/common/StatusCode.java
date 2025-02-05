@@ -118,11 +118,13 @@ public enum StatusCode {
     GOAL_CONTENT_REQUIRED(NOT_FOUND,"목표 상세 내용은 필수입니다." ),
     NO_PERMISSION(UNAUTHORIZED,"그룹장만 그룹의 상태를 변경할 수 있습니다."),
     NOT_MEMBER(UNAUTHORIZED,"그룹 구성원이 아닙니다." ),
+    TEMPLATE_LIST_FOUND(OK, "템플릿 조회에 성공했습니다."),
 
     BESTSELLER_SEARCH(OK,"베스트 셀러 조회에 성공했습니다." ),
     NEWBOOK_SEARCH(OK,"신간 도서 조회에 성공했습니다." ),
     GROUP_LIST_FOUND(OK, "그룹 리스트 조회에 성공했습니다."),
-    GROUP_PRIVATE_UPDATE(OK, "그룹 공개 여부가 업데이트 되었습니다.");
+    GROUP_PRIVATE_UPDATE(OK, "그룹 공개 여부가 업데이트 되었습니다."),
+    MASTER_NOT_FOUND(NOT_FOUND, "그룹장이 존재하지 않습니다.");
 
     private final HttpStatus status;
     private final String message;
