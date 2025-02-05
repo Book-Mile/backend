@@ -43,7 +43,7 @@ public class GroupCreateRequestDto {
     @Schema(description = "도서 목표 방식 (선택사항)", example = "PAGE")
     private String goalType; // GoalType (PAGE, CHAPTER, NUMBER, CUSTOM)
 
-    @Schema(description = "사용자 정의 목표 내용 (CUSTOM인 경우 필수)", example = "하루에 30페이지 읽기")
+    @Schema(description = "사용자 정의 목표 내용 (CUSTOM인 경우 null)", example = "30")
     private String goalContent;
 
 
