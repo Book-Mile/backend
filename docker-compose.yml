@@ -106,6 +106,19 @@ services:
     networks:
       - app-network
 
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.5.1
+    container_name: filebeat
+    user: root
+    command: filebeat -e -strict.perms=false
+    volumes:
+      - ./monitoring/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/log/book-mile:/var/log/book-mile
+    depends_on:
+      - logstash
+    networks:
+      - app-network
+
 volumes:
   mysql_data:
   redis_data:
