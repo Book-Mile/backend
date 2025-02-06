@@ -89,12 +89,14 @@ public class RecordServiceImpl implements RecordService {
         return record.getId();
     }
 
-    /* 고쳐야함!!!!!!!!!
-     * groupId를 사용해서 userId 리스트 가져오기
-     * userId 리스트 가져오면 갖고 있는 groupId와 리스트 안 userId와 조합 해서
+    /* groupId를 사용해서 userEmail 리스트 가져오기
+     * userEmail 리스트 가져오면 갖고 있는 groupId와 리스트 안 userId와 조합 해서
      * userGroupId 가져온다음
      * userGroupId 사용해서 Record 리스트 가져와서
-     * Record에서 이미지 저장이 되어있는거 가져오가
+     * Record에서 이미지 저장이 되어있는거 가져오
+     * */
+    /* 고쳐야함!!!!!!!!!
+     *
      * */
     @Override
     public List<RecentRecordResDto> viewRandomRecord(Long groupId) {
