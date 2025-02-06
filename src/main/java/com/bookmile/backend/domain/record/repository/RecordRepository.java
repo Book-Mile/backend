@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface RecordRepository extends JpaRepository<Record, Long> {
     List<Record> findAllByUserGroupId(Long userGroupId);
 
-    @Query(value = "SELECT * FROM record WHERE usergroup_id = :userGroupId ORDER BY RAND()", nativeQuery = true)
-    List<Record> findAllRandomSortByUserGroupId(Long userGroupId);
+    @Query(value = "SELECT * FROM record  WHERE group_id = :groupId ORDER BY RAND() LIMIT 4", nativeQuery = true)
+    List<Record> findRandomRecordByGroupId(Long groupId);
+
 }
