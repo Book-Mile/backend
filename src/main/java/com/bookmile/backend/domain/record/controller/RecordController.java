@@ -66,7 +66,7 @@ public class RecordController {
                 .body(CommonResponse.from(UPDATE_RECORD.getMessage(), updateRecord));
     }
 
-    @Operation(summary = "글 2 사진 2", description = "해당 그룹의 랜덤한 사람의 랜덤한 기록의 사진과 글들 반환합니다")
+    @Operation(summary = "랜덤 기록 반환", description = "해당 그룹의 랜덤한 사람의 랜덤한 기록의 사진과 글들 반환합니다")
     @GetMapping("/random")
     public ResponseEntity<CommonResponse<List<RecentRecordResDto>>> viewRandomRecord(@RequestParam Long groupId) {
         List<RecentRecordResDto> recentRecordResDtos = recordService.viewRandomRecord(groupId);

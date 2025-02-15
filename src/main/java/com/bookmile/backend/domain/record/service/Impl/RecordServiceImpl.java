@@ -89,43 +89,38 @@ public class RecordServiceImpl implements RecordService {
         return record.getId();
     }
 
-    /* 고쳐야함!!!!!!!!!
-     * groupId를 사용해서 userId 리스트 가져오기
-     * userId 리스트 가져오면 갖고 있는 groupId와 리스트 안 userId와 조합 해서
+    /* groupId를 사용해서 userEmail 리스트 가져오기
+     * userEmail 리스트 가져오면 갖고 있는 groupId와 리스트 안 userId와 조합 해서
      * userGroupId 가져온다음
      * userGroupId 사용해서 Record 리스트 가져와서
-     * Record에서 이미지 저장이 되어있는거 가져오가
+     * Record에서 이미지 저장이 되어있는거 가져오
+     * */
+    /* r고치기 !!!
+     * 아 그냥 레코드 엔티티에 user_id, group_id 추가해줘서 저장해서 쿼리 어떻게 어떻게 잘 날려서 하는거로 하자~
      * */
     @Override
     public List<RecentRecordResDto> viewRandomRecord(Long groupId) {
-        List<String> userEmails = userGroupRepository.findUserEmailRandomSortByGroupId(groupId);
-        List<User> users = new ArrayList<>();
-        for (String userEmail : userEmails) {
-            users.add(findUserByEmail(userEmail));
-        }
-        List<RecentRecordResDto> recentRecordResDtos = new ArrayList<>();
         Random random = new Random();
-        for (User user : users) {
-            UserGroup userGroup = getUserGroup(groupId, user.getId());
+        List<Record> randomRecords = recordRepository.findRandomRecordByGroupId(groupId);
+        List<RecentRecordResDto> recentRecordResDtos = new ArrayList<>();
 
-            List<Record> records = recordRepository.findAllRandomSortByUserGroupId(userGroup.getId());
+        for (Record record : randomRecords) {
+            User user = findUserById(record.getUserId());
 
-            for (Record record : records) {
-                if (record.getImages().isEmpty()) { // 이미지 리스트 비어있으면 그냥 이미지 없는거로 추가
-                    recentRecordResDtos
-                            .add(RecentRecordResDto
-                                    .createRecentRecord(user, record, null));
-                } else {                              // 안 비어있으면 기록의 첫번째 이미지로 추가
-                    int randomImageIndex = random.nextInt(record.getImages().size());
-                    recentRecordResDtos
-                            .add(RecentRecordResDto
-                                    .createRecentRecord(user,
-                                            record,
-                                            record.getImages().get(randomImageIndex).getImageUrl()));
-                }
-                break;
+            if (record.getImages().isEmpty()) { // 이미지 리스트 비어있으면 그냥 이미지 없는거로 추가
+                recentRecordResDtos
+                        .add(RecentRecordResDto
+                                .createRecentRecord(user, record, null));
+            } else {                              // 안 비어있으면 기록의 첫번째 이미지로 추가
+                int randomImageIndex = random.nextInt(record.getImages().size());
+                recentRecordResDtos
+                        .add(RecentRecordResDto
+                                .createRecentRecord(user,
+                                        record,
+                                        record.getImages().get(randomImageIndex).getImageUrl()));
             }
         }
+
         return recentRecordResDtos;
     }
 
@@ -136,6 +131,11 @@ public class RecordServiceImpl implements RecordService {
 
     private User findUserByEmail(String userEmail) {
         return userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 

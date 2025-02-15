@@ -16,8 +16,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
-
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -34,6 +36,12 @@ public class Record extends BaseEntity {
     private UserGroup userGroup;
 
     @Column
+    private Long userId;
+
+    @Column
+    private Long groupId;
+
+    @Column
     private String text;
 
     @Column(nullable = false)
@@ -44,18 +52,22 @@ public class Record extends BaseEntity {
     private List<Image> images = new ArrayList<>();
 
     @Builder
-    public Record(UserGroup userGroup, String text, Integer currentPage) {
+    public Record(UserGroup userGroup, Long userId, Long groupId, String text, Integer currentPage) {
         this.userGroup = userGroup;
+        this.userId = userId;
+        this.groupId = groupId;
         this.text = text;
         this.currentPage = currentPage;
     }
 
     public static Record from(UserGroup userGroup, RecordReqDto recordReqDto) {
-       return Record.builder()
-               .userGroup(userGroup)
-               .text(recordReqDto.getText())
-               .currentPage(recordReqDto.getCurrentPage())
-               .build();
+        return Record.builder()
+                .userGroup(userGroup)
+                .userId(userGroup.getUser().getId())
+                .groupId(userGroup.getGroup().getId())
+                .text(recordReqDto.getText())
+                .currentPage(recordReqDto.getCurrentPage())
+                .build();
     }
 
     public void update(UpdateRecordReqDto updateRecordReqDto) {
