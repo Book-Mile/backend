@@ -27,7 +27,7 @@ public class BookDetailServiceImpl implements BookDetailService {
 
     @Override
     public List<BookDetailResponseDto> detailBooks(BookDetailRequestDto bookDetailRequestDto) {
-        String url = String.format("%s?ttbkey=%s&ItemIdType=ISBN13&ItemId=%s&output=js&Version=20131101",
+        String url = String.format("%s?ttbkey=%s&ItemIdType=ISBN13&ItemId=%s&Cover=Big&output=js&Version=20131101",
                 API_URL, TTB_KEY, bookDetailRequestDto.getIsbn13());
 
         ResponseEntity<BookDetailApiResponse> response = restTemplate.getForEntity(url, BookDetailApiResponse.class);

@@ -10,5 +10,6 @@ public class BestSellerResponseDto {
     private String author;
     private String publisher;
     private String cover;
+    private String isbn13;
     private int customerReviewRank;
 }
