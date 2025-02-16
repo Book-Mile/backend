@@ -46,7 +46,7 @@ public class BookListServiceImpl implements BookListService {
 
     @Override
     public List<BestSellerResponseDto> getBestSellerList() {
-        String url = String.format("%s?ttbkey=%s&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101",
+        String url = String.format("%s?ttbkey=%s&QueryType=Bestseller&MaxResults=12&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101",
                 BOOKLIST_API_URL, TTB_KEY);
 
         ResponseEntity<BestSellerApiResponse> response = restTemplate.getForEntity(url, BestSellerApiResponse.class);
@@ -62,7 +62,7 @@ public class BookListServiceImpl implements BookListService {
 
     @Override
     public List<NewBookResponseDto> getNewBookList() {
-        String url = String.format("%s?ttbkey=%s&QueryType=ItemNewSpecial&MaxResults=10&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101",
+        String url = String.format("%s?ttbkey=%s&QueryType=ItemNewSpecial&MaxResults=12&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101",
                 BOOKLIST_API_URL, TTB_KEY);
 
         ResponseEntity<NewBookApiResponse> response = restTemplate.getForEntity(url, NewBookApiResponse.class);
