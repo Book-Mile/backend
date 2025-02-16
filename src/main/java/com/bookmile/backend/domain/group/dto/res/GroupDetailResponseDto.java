@@ -22,11 +22,12 @@ public class GroupDetailResponseDto {
     private String goalContent;
     private String masterNickname;
     private String masterImage;
+    private Long bookId;
 
     @Builder
     private GroupDetailResponseDto(Long groupId, String groupName, String groupDescription, int maxMembers, int currentMembers,
                                   GroupStatus status, BookResponseDto book, String goalType,
-                                  String goalContent, String masterNickname, String masterImage) {
+                                  String goalContent, String masterNickname, String masterImage, Long bookId) {
         this.groupId = groupId;
         this.groupName = groupName;
         this.groupDescription = groupDescription;
@@ -38,6 +39,7 @@ public class GroupDetailResponseDto {
         this.goalContent = goalContent;
         this.masterNickname = masterNickname;
         this.masterImage = masterImage;
+        this.bookId = bookId;
     }
 
     public static GroupDetailResponseDto toDto(Group group, int currentMembers, User masterUser) {
@@ -53,6 +55,7 @@ public class GroupDetailResponseDto {
                 .goalContent(group.getGoalContent())
                 .masterNickname(masterUser.getNickname())
                 .masterImage(masterUser.getImage())
+                .bookId(group.getBook().getId())
                 .build();
     }
 }
