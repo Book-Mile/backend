@@ -29,7 +29,7 @@ public class BookListServiceImpl implements BookListService {
     @Override
     public List<BookListResponseDto> searchBooks(BookListRequestDto requestDto) {
         // 알라딘 API 요청 URL 구성
-        String url = String.format("%s?ttbkey=%s&Query=%s&QueryType=%s&MaxResults=%d&Sort=%s&output=js&Version=20131101",
+        String url = String.format("%s?ttbkey=%s&Query=%s&QueryType=%s&MaxResults=%d&Sort=%s&Cover=Big&output=js&Version=20131101",
                 API_URL, TTB_KEY, requestDto.getQuery(), requestDto.getQueryType(), requestDto.getMaxResults(), requestDto.getSort());
 
         // JSON 응답을 BookSearchApiResponse로 매핑
@@ -46,7 +46,7 @@ public class BookListServiceImpl implements BookListService {
 
     @Override
     public List<BestSellerResponseDto> getBestSellerList() {
-        String url = String.format("%s?ttbkey=%s&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101",
+        String url = String.format("%s?ttbkey=%s&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101",
                 BOOKLIST_API_URL, TTB_KEY);
 
         ResponseEntity<BestSellerApiResponse> response = restTemplate.getForEntity(url, BestSellerApiResponse.class);
@@ -62,7 +62,7 @@ public class BookListServiceImpl implements BookListService {
 
     @Override
     public List<NewBookResponseDto> getNewBookList() {
-        String url = String.format("%s?ttbkey=%s&QueryType=ItemNewSpecial&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101",
+        String url = String.format("%s?ttbkey=%s&QueryType=ItemNewSpecial&MaxResults=10&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101",
                 BOOKLIST_API_URL, TTB_KEY);
 
         ResponseEntity<NewBookApiResponse> response = restTemplate.getForEntity(url, NewBookApiResponse.class);
