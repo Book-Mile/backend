@@ -66,6 +66,8 @@ services:
     env_file:
       - .env
     command: [ "java", "-jar", "/app.jar" ]
+    volumes:
+      - ./logs:/var/log/book-mile
     networks:
       - app-network
 
@@ -113,7 +115,7 @@ services:
     command: filebeat -e -strict.perms=false
     volumes:
       - ./monitoring/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /var/log/book-mile:/var/log/book-mile
+      - ./logs:/var/log/book-mile
     depends_on:
       - logstash
     networks:
