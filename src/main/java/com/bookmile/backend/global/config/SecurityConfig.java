@@ -57,6 +57,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/books/**").permitAll()
                         .requestMatchers("/api/v1/oauth2/test").permitAll()
                         .requestMatchers( "/oauth2/**", "/login/oauth2/code/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionHandlerFilter(), JwtAuthenticationFilter.class)
