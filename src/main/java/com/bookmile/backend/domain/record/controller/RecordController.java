@@ -8,6 +8,7 @@ import com.bookmile.backend.domain.record.dto.req.RecordReqDto;
 import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
 import com.bookmile.backend.domain.record.dto.res.RecentRecordResDto;
 import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
+import com.bookmile.backend.domain.record.dto.res.RecordProgressChartDto;
 import com.bookmile.backend.domain.record.service.RecordService;
 import com.bookmile.backend.global.common.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,5 +73,11 @@ public class RecordController {
         List<RecentRecordResDto> recentRecordResDtos = recordService.viewRandomRecord(groupId);
         return ResponseEntity.status(VIEW_RECORD.getStatus())
                 .body(CommonResponse.from(VIEW_RECORD.getMessage(), recentRecordResDtos));
+    }
+
+    @Operation(summary = "기록 작성 진행률 조회 (순위 조회)", description = "해당 그룹의 독서 진행률을 조회합니다.")
+    @GetMapping("/progress")
+    public List<RecordProgressChartDto> getGroupReadingProgress(@RequestParam(name = "groupId")Long groupId) {
+        return recordService.getProgressChart(groupId);
     }
 }
