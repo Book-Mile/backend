@@ -27,8 +27,4 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
     @Query("SELECT ug FROM UserGroup ug JOIN ug.group g WHERE ug.user.email = :userEmail AND g.status = :status")
     List<UserGroup> findGroupsByUserEmailAndStatus(@Param("userEmail") String userEmail,
                                                    @Param("status") GroupStatus status);
-
-    @Query(value = "SELECT u.email FROM user_group ug JOIN user u ON ug.user_id = u.user_id WHERE group_id = :groupId ORDER BY RAND()", nativeQuery = true)
-    List<String> findUserEmailRandomSortByGroupId(Long groupId);
-
 }
