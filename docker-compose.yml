@@ -32,7 +32,7 @@ services:
     networks:
       - app-network
     restart: always  # 컨테이너가 종료되면 자동 재시작
-    
+
   redis:
     image: redis:latest
     container_name: book-mile-redis
