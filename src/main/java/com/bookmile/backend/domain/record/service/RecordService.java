@@ -5,6 +5,8 @@ import com.bookmile.backend.domain.record.dto.req.UpdateRecordReqDto;
 import com.bookmile.backend.domain.record.dto.res.RecentRecordResDto;
 import com.bookmile.backend.domain.record.dto.res.RecordListResDto;
 import java.util.List;
+
+import com.bookmile.backend.domain.record.dto.res.RecordProgressChartDto;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface RecordService {
@@ -15,4 +17,7 @@ public interface RecordService {
     Long updateRecord(Long recordId, UpdateRecordReqDto updateRecordReqDto);
 
     List<RecentRecordResDto> viewRandomRecord(Long groupId);
+
+    List<RecordProgressChartDto> getProgressChart(Long groupId);
+
 }
