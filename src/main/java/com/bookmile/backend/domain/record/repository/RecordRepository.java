@@ -2,6 +2,8 @@ package com.bookmile.backend.domain.record.repository;
 
 import com.bookmile.backend.domain.record.entity.Record;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,5 +26,5 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
             "    WHERE r2.usergroup_id = r.usergroup_id " +
             ")",
             nativeQuery = true)
-    Record findLatestRecordByUserAndGroup(@Param("userGroupId") Long userGroupId);
+    Optional<Record> findLatestRecordByUserAndGroup(@Param("userGroupId") Long userGroupId);
 }

@@ -130,6 +130,9 @@ public class RecordServiceImpl implements RecordService {
     public List<RecordProgressChartDto> getProgressChart(Long groupId) {
         // groupId로 해당 그룹 존재
         List<UserGroup> userGroups = userGroupRepository.findByGroupId(groupId);
+        if( userGroups.isEmpty()){
+            throw new CustomException(GROUP_NOT_FOUND);
+        }
         for(UserGroup userGroup : userGroups) {
             log.info("userGroup 리스트 {}- ID : {}", userGroup.getId(), userGroup.getUser().getId());
         }
@@ -146,7 +149,10 @@ public class RecordServiceImpl implements RecordService {
 
     // 개인 진행률 계산
     private double calculateReadingProgress(Long userGroupId) {
-        Record record = recordRepository.findLatestRecordByUserAndGroup(userGroupId);
+        Record record = recordRepository.findLatestRecordByUserAndGroup(userGroupId).orElseThrow(
+                () -> new CustomException(RECORD_NOT_FOUND)
+        );
+
         log.info("개인 진행률 계산 : record - {}, 현재 페이지 {}", record.getId(), record.getCurrentPage());
 
 

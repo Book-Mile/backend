@@ -77,7 +77,9 @@ public class RecordController {
 
     @Operation(summary = "기록 작성 진행률 조회 (순위 조회)", description = "해당 그룹의 독서 진행률을 조회합니다.")
     @GetMapping("/progress")
-    public List<RecordProgressChartDto> getGroupReadingProgress(@RequestParam(name = "groupId")Long groupId) {
-        return recordService.getProgressChart(groupId);
+    public ResponseEntity<CommonResponse<List<RecordProgressChartDto>>> getGroupReadingProgress(@RequestParam(name = "groupId")Long groupId) {
+        return ResponseEntity.status(VIEW_RECORD.getStatus())
+                .body(CommonResponse.from(VIEW_RECORD.getMessage(), recordService.getProgressChart(groupId)));
+        
     }
 }
