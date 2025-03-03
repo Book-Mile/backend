@@ -1,5 +1,6 @@
 package com.bookmile.backend.domain.group.dto.res;
 
+import com.bookmile.backend.domain.book.entity.Book;
 import com.bookmile.backend.domain.group.entity.Group;
 import com.bookmile.backend.domain.template.entity.Template;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.Getter;
 @Getter
 public class GroupCreateResponseDto {
     private final Long groupId;
+    private final Long bookId;
     private final String groupName;
     private final String groupDescription;
     private final int maxMembers;
@@ -17,8 +19,9 @@ public class GroupCreateResponseDto {
     private final String status;
 
     @Builder
-    private GroupCreateResponseDto(Long groupId, String groupName, int maxMembers, String goalType, Long templateId,
+    private GroupCreateResponseDto(Long bookId, Long groupId, String groupName, int maxMembers, String goalType, Long templateId,
                                    String goalContent, String status, String groupDescription) {
+        this.bookId = bookId;
         this.groupId = groupId;
         this.groupName = groupName;
         this.groupDescription = groupDescription;
@@ -29,8 +32,9 @@ public class GroupCreateResponseDto {
         this.status = status;
     }
 
-    public static GroupCreateResponseDto toDto(Group group, Long templateId) {
+    public static GroupCreateResponseDto toDto(Group group, Book book, Long templateId) {
         return GroupCreateResponseDto.builder()
+                .bookId(book.getId())
                 .groupId(group.getId())
                 .groupName(group.getGroupName())
                 .groupDescription(group.getGroupDescription())

@@ -74,7 +74,7 @@ public class GroupServiceImpl implements GroupService {
         }
         registerGroupCreator(user, group);
 
-        return GroupCreateResponseDto.toDto(group, templateId);
+        return GroupCreateResponseDto.toDto(group, book, templateId);
     }
 
     @Override
