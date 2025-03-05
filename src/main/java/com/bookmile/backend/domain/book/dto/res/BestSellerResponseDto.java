@@ -12,4 +12,5 @@ public class BestSellerResponseDto {
     private String cover;
     private String isbn13;
     private int customerReviewRank;
+    private String categoryId;
 }
