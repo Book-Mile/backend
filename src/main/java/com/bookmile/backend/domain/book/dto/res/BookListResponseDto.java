@@ -28,4 +28,6 @@ public class BookListResponseDto {
 
     @Schema(description = "평점", example = "4.5")
     private int customerReviewRank;
+
+    private String categoryId;
 }

@@ -36,6 +36,8 @@ public class BookDetailResponseDto {
     @Schema(description = "평점", example = "4.5")
     private int customerReviewRank;
 
+    private String categoryId;
+
     // SubInfo 내부 클래스
     @Getter
     @NoArgsConstructor
